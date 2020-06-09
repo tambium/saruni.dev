@@ -1,0 +1,29 @@
+{
+  "routes": [
+    {
+      "title": "Documentation",
+      "isHeading": true,
+      "routes": [
+        { "title": "Getting Started", "path": "/docs/getting-started.md" },
+        {
+          "title": "Nested Example",
+          "routes": [
+            {
+              "title": "Nested Example 1",
+              "path": "/docs/nested-example/nested-example-1.md"
+            },
+            {
+              "title": "Nested Example 2",
+              "path": "/docs/nested-example/nested-example-2.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "API Reference",
+      "isHeading": true,
+      "routes": [{ "title": "CLI", "path": "/docs/api-reference/cli.md" }]
+    }
+  ]
+}

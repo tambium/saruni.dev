@@ -1,30 +1,31 @@
 {
-  "name": "docs",
-  "version": "0.0.0",
-  "private": true,
+  "name": "saruni.dev",
+  "version": "1.0.0",
+  "author": "Tambium",
+  "license": "Apache-2.0",
   "scripts": {
-    "start": "docusaurus start",
-    "build": "docusaurus build",
-    "swizzle": "docusaurus swizzle",
-    "deploy": "docusaurus deploy"
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
   },
   "dependencies": {
-    "@docusaurus/core": "^2.0.0-alpha.55",
-    "@docusaurus/preset-classic": "^2.0.0-alpha.55",
-    "classnames": "^2.2.6",
-    "react": "^16.8.4",
-    "react-dom": "^16.8.4"
+    "@emotion/core": "^10.0.28",
+    "@mapbox/rehype-prism": "^0.4.0",
+    "@saruni-ui/theme": "^0.0.3",
+    "gray-matter": "^4.0.2",
+    "next": "^9.4.4",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "rehype-raw": "^4.0.2",
+    "rehype-stringify": "^8.0.0",
+    "remark-parse": "^8.0.2",
+    "remark-rehype": "^7.0.0",
+    "unified": "^9.0.0"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "devDependencies": {
+    "@emotion/babel-preset-css-prop": "^10.0.27",
+    "@types/node": "^14.0.12",
+    "@types/react": "^16.9.35",
+    "typescript": "^3.9.5"
   }
 }

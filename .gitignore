@@ -10,5 +10,5 @@ node_modules
 # logs
 yarn-error.log
 
-# docusaurus
-.docusaurus
+# next
+.next

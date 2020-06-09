@@ -4,25 +4,7 @@
       "title": "Documentation",
       "isHeading": true,
       "routes": [
-        { "title": "Getting Started", "path": "/docs/getting-started.md" },
-        {
-          "title": "Nested Example",
-          "routes": [
-            {
-              "title": "Nested Example 1",
-              "routes": [
-                {
-                  "title": "Nested Example 1a",
-                  "path": "/docs/nested-example/nested-example-1a"
-                }
-              ]
-            },
-            {
-              "title": "Nested Example 2",
-              "path": "/docs/nested-example/nested-example-2.md"
-            }
-          ]
-        }
+        { "title": "Getting Started", "path": "/docs/getting-started.md" }
       ]
     },
     {

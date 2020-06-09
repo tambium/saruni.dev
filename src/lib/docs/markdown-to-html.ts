@@ -37,10 +37,10 @@ export default async function markdownToHtml(md) {
   try {
     // Initialize the processor with custom plugin
     const processor = getProcessor();
-    const file = await processor.process(md);
 
+    const file = await processor.process(md);
     // Replace non-breaking spaces (char code 160) with normal spaces to avoid style issues
-    return file.contents.replace(/\xA0/g, " ");
+    return file.contents.toString().replace(/\xA0/g, " ");
   } catch (error) {
     console.error(`Markdown to HTML error: ${error}`);
     throw error;

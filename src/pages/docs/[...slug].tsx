@@ -3,18 +3,17 @@ import { promises } from "fs";
 import path from "path";
 import matter from "gray-matter";
 import { GetStaticProps } from "next";
-import { useRouter } from "next/router";
-import { DocsLayout } from "../../layouts/docs/DocsLayout";
+import { DocsLayout } from "../../layouts/docs";
 import { getSlug } from "../../lib/docs/utils";
 import { findRouteByPath, getPaths } from "../../lib/docs/page";
 import manifest from "../../manifest.json";
 import markdownToHtml from "../../lib/docs/markdown-to-html";
 
-interface DocsProps {}
+interface DocsProps {
+  html: any;
+}
 
 const Docs: React.FC<DocsProps> = ({ html }) => {
-  const router = useRouter();
-
   return (
     <DocsLayout>
       <div dangerouslySetInnerHTML={{ __html: html }} />

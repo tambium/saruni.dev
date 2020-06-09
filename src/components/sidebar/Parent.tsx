@@ -14,9 +14,9 @@ export const Parent: React.FC<ParentProps> = ({
   title,
 }) => {
   return (
-    <div>
-      <a>{title}</a>
-      {children}
+    <div css={{}}>
+      <a css={{ color: "red" }}>{title}</a>
+      <div css={{ paddingLeft: 16 }}>{children}</div>
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import React from "react";
-import { styled } from "";
 import manifest from "../../manifest.json";
 import { removeFromLast } from "../../lib/docs/utils";
 import { Heading, Parent, Child } from "../../components/sidebar";

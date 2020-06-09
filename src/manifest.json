@@ -10,7 +10,12 @@
           "routes": [
             {
               "title": "Nested Example 1",
-              "path": "/docs/nested-example/nested-example-1.md"
+              "routes": [
+                {
+                  "title": "Nested Example 1a",
+                  "path": "/docs/nested-example/nested-example-1a"
+                }
+              ]
             },
             {
               "title": "Nested Example 2",

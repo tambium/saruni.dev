@@ -8,7 +8,7 @@ interface HeadingProps {
 export const Heading: React.FC<HeadingProps> = ({ title, children }) => {
   return (
     <div>
-      <h4>{title}</h4>
+      <h4 css={{ color: "green" }}>{title}</h4>
       <div>{children}</div>
     </div>
   );

@@ -26,7 +26,7 @@ export const Child: React.FC<ChildProps> = ({ depth, route }) => {
         <a href={pathname}>{title}</a>
       ) : (
         <Link href={href} as={pathname}>
-          <a>{title}</a>
+          <a css={{ color: "blue" }}>{title}</a>
         </Link>
       )}
     </div>

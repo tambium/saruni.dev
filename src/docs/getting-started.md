@@ -5,3 +5,9 @@ description: Get started with Saruni and learn more about the features available
 # Getting Started
 
 Welcome to the Saruni documentation!
+
+```js
+const helloWorld = () => {
+  return `hello, world!`;
+};
+```

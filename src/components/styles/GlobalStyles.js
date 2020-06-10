@@ -796,11 +796,6 @@ export const baseStyles = injectGlobal`
       padding-right: 15px;
     }
 
-    .titleWrapper {
-      padding: 0 15px;
-      display: block;
-    }
-
     .gitBtn {
       display: inline-block;
     }

@@ -15,27 +15,6 @@ import {
   SIDEBAR_WIDTH,
 } from '../constants/layout';
 
-const Content = styled('main')`
-  display: flex;
-  flex-grow: 1;
-
-  padding-top: 32px;
-  padding-left: 64px;
-  padding-bottom: 32px;
-
-  background: ${({ theme }) => theme.colors.background};
-
-  table tr {
-    background: ${({ theme }) => theme.colors.background};
-  }
-
-  @media only screen and (max-width: 1023px) {
-    padding-left: 0;
-    margin: 0 10px;
-    padding-top: 3rem;
-  }
-`;
-
 const Layout = ({ children, location }) => {
   return (
     <ThemeProvider location={location}>
@@ -46,6 +25,8 @@ const Layout = ({ children, location }) => {
               display: 'grid',
               gridTemplateColumns: [
                 '1fr',
+                `minmax(${SIDEBAR_MIN_WIDTH}px, calc((100% - ${CONTENT_WIDTH +
+                  SIDEBAR_WIDTH}px) / 2 + ${SIDEBAR_WIDTH}px)) 1fr`,
                 `minmax(${SIDEBAR_MIN_WIDTH}px, calc((100% - ${CONTENT_WIDTH +
                   SIDEBAR_WIDTH}px) / 2 + ${SIDEBAR_WIDTH}px)) ${CONTENT_WIDTH}px 1fr`,
               ],
@@ -79,7 +60,19 @@ const Layout = ({ children, location }) => {
           {/* {config.sidebar.title ? (
             <div dangerouslySetInnerHTML={{ __html: config.sidebar.title }} />
           ) : null} */}
-          <Content>
+          <div
+            css={theme =>
+              mq({
+                display: 'flex',
+                flexGrow: 1,
+                paddingTop: [16, 32],
+                paddingLeft: [16, 64],
+                paddingBottom: [16, 32],
+                paddingRight: [16, 0],
+                backgroundColor: theme.colors.background,
+              })
+            }
+          >
             <div css={{ display: 'flex', flex: 1, flexDirection: 'column' }}>{children}</div>
             <div
               css={mq({
@@ -90,7 +83,7 @@ const Layout = ({ children, location }) => {
             >
               <RightSidebar location={location} />
             </div>
-          </Content>
+          </div>
         </div>
       </MDXProvider>
     </ThemeProvider>

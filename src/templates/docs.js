@@ -6,7 +6,6 @@ import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer';
 import { Layout, Link } from '../components';
 import NextPrevious from '../components/NextPrevious';
 import config from '../../config';
-import { Edit, StyledHeading, StyledMainWrapper } from '../components/styles/Docs';
 
 const forcedNavOrder = config.sidebar.forcedNavOrder;
 
@@ -91,18 +90,27 @@ export default class MDXRuntimeTest extends Component {
           <link rel="canonical" href={canonicalUrl} />
         </Helmet>
         <div className={'titleWrapper'}>
-          <StyledHeading>{mdx.fields.title}</StyledHeading>
-          <Edit className={'mobileView'}>
+          <h1
+            css={theme => ({
+              color: theme.colors.heading,
+              fontSize: 32,
+              lineHeight: 1.5,
+              fontWeight: 500,
+            })}
+          >
+            {mdx.fields.title}
+          </h1>
+          <div>
             {docsLocation && (
               <Link className={'gitBtn'} to={`${docsLocation}/${mdx.parent.relativePath}`}>
                 <img src={gitHub} alt={'Github logo'} /> Edit on GitHub
               </Link>
             )}
-          </Edit>
+          </div>
         </div>
-        <StyledMainWrapper>
+        <div css={theme => ({ color: theme.colors.text })}>
           <MDXRenderer>{mdx.body}</MDXRenderer>
-        </StyledMainWrapper>
+        </div>
         <div className={'addPaddTopBottom'}>
           <NextPrevious mdx={mdx} nav={nav} />
         </div>

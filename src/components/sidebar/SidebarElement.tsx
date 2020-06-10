@@ -1,8 +1,10 @@
 import React from 'react';
+
 import OpenedSvg from '../images/opened';
 import ClosedSvg from '../images/closed';
 import config from '../../../config';
 import { Link } from '../link';
+import { hexToRgba } from '../../utils/color';
 
 interface SidebarElementProps {}
 
@@ -21,29 +23,42 @@ export const SidebarElement: React.FC<SidebarElementProps> = ({
 
   const hasChildren = items.length !== 0;
 
+  let location;
+
+  if (typeof document != 'undefined') {
+    location = document.location;
+  }
+  const isActive =
+    location && (location.pathname === url || location.pathname === config.gatsby.pathPrefix + url);
+
   return (
     <li
-      css={{
+      css={theme => ({
+        backgroundColor: isActive ? hexToRgba(theme.colors.brand, 0.1) : undefined,
+        borderTopLeftRadius: 4,
+        borderBottomLeftRadius: 4,
         listStyleType: 'none',
         width: 'auto',
-      }}
+      })}
     >
       {title && (
         <Link
-          css={{
+          css={theme => ({
+            color: isActive ? theme.colors.brand : theme.colors.text,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            fontSize: '14px',
-            fontWeight: '500',
-            lineHeight: '1.5',
-            padding: '7px 24px 7px 16px',
-            paddingLeft: '10px',
-            paddingRight: '25px',
+            fontSize: 14,
+            fontWeight: 500,
+            lineHeight: 1.5,
+            padding: '8px 8px 8px 16px',
+            paddingLeft: 10,
+            paddingRight: 25,
             borderStyle: 'solid none solid solid',
             borderWidth: '1px 0px 1px 1px',
             borderColor: 'transparent currentcolor transparent transparent',
-          }}
+            textDecoration: 'none',
+          })}
           to={url}
         >
           {title}

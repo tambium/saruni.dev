@@ -32,7 +32,6 @@ export const baseStyles = injectGlobal`
 
   a {
     transition: color 0.15s;
-    /* color: #663399; */
   }
 
   .visibleMobile {
@@ -54,28 +53,8 @@ export const baseStyles = injectGlobal`
   .displayInline {
     display: inline-block;
   }
-  .navBarToggle {
-    border: 0px solid #fff;
-    border-radius: 4px;
-    width: 36px;
-    height: 33px;
-    position: absolute;
-    right: 20px;
-    padding: 8px 5px;
-    display: none;
-  }
-  .navBarToggle .iconBar {
-    display: block;
-    width: 22px;
-    height: 2px;
-    border-radius: 1px;
-    margin: 0 auto;
-    margin-top: 4px;
-    background-color: #001934;
-  }
-  .navBarToggle .iconBar:first-child {
-    margin-top: 0px;
-  }
+
+
   .video-responsive iframe {
     position: absolute;
     width: 100%;
@@ -800,15 +779,6 @@ export const baseStyles = injectGlobal`
     .navBarDefault {
       display: block;
       height: auto;
-    }
-
-    .navBarToggle {
-      margin-right: 0;
-      display: block;
-      position: absolute;
-      left: 11px;
-      top: 15px;
-      background: #fff;
     }
 
     .navBarHeader {

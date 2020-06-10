@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from '@emotion/styled';
 import { StaticQuery, graphql } from 'gatsby';
 import Loadable from 'react-loadable';
 
@@ -21,6 +20,7 @@ if (isSearchEnabled && config.header.search.indexName) {
 }
 
 import Sidebar from './sidebar';
+import { mq } from '../constants/layout';
 
 const LoadableComponent = Loadable({
   loader: () => import('./search/index'),
@@ -37,18 +37,25 @@ function myFunction() {
   }
 }
 
-const StyledBgDiv = styled('div')`
-  height: 60px;
-  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
-  background-color: #f8f8f8;
-  position: relative;
-  display: none;
-  background: ${props => (props.isDarkThemeActive ? '#001932' : undefined)};
-
-  @media (max-width: 767px) {
-    display: block;
-  }
-`;
+const IconBars = ({ bars = 3 }) => {
+  return Array.from(Array(bars).keys()).map(key => {
+    const isFirst = key === 0;
+    return (
+      <span
+        key={key}
+        css={{
+          display: 'block',
+          width: 22,
+          height: 2,
+          borderRadius: 1,
+          margin: '0 auto',
+          marginTop: !isFirst ? 4 : 0,
+          backgroundColor: '#001934',
+        }}
+      />
+    );
+  });
+};
 
 const Header = ({ location, isDarkThemeActive, toggleActiveTheme }) => (
   <StaticQuery
@@ -111,18 +118,48 @@ const Header = ({ location, isDarkThemeActive, toggleActiveTheme }) => (
               ) : null}
             </ul>
           </div>
-          <StyledBgDiv isDarkThemeActive={isDarkThemeActive}>
-            <div className={'navBarDefault removePadd'}>
+          <div
+            css={mq({
+              height: 60,
+              borderBottom: '1px solid #e1e7ed',
+              position: 'relative',
+              display: ['block', 'none'],
+            })}
+          >
+            {/* <div className={'navBarDefault removePadd'}> */}
+            <div
+              css={{
+                borderRadius: '0',
+                borderTop: '0',
+                marginBottom: '0',
+                border: '0',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '15px',
+                position: 'relative',
+              }}
+            >
               <span
+                css={{
+                  marginRight: 0,
+                  display: 'block',
+                  position: 'absolute',
+                  left: '11px',
+                  top: '15px',
+                  background: '#fff',
+                  border: '0px solid #fff',
+                  borderRadius: '4px',
+                  width: '36px',
+                  height: '33px',
+                  right: '20px',
+                  padding: '8px 5px',
+                }}
                 onClick={myFunction}
-                className={'navBarToggle'}
                 onKeyDown={myFunction}
                 role="button"
                 tabIndex={0}
               >
-                <span className={'iconBar'}></span>
-                <span className={'iconBar'}></span>
-                <span className={'iconBar'}></span>
+                <IconBars />
               </span>
             </div>
             {isSearchEnabled ? (
@@ -130,7 +167,7 @@ const Header = ({ location, isDarkThemeActive, toggleActiveTheme }) => (
                 <LoadableComponent collapse={true} indices={searchIndices} />
               </div>
             ) : null}
-          </StyledBgDiv>
+          </div>
         </div>
       );
     }}

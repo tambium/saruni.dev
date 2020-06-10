@@ -47,7 +47,7 @@ const ListItem = styled(({ className, active, level, ...props }) => {
 
 const Sidebar = styled('aside')`
   width: 100%;
-  height: 100vh;
+  // height: 100vh;
   overflow: auto;
   padding-left: 0px;
   top: 0;
@@ -56,7 +56,7 @@ const Sidebar = styled('aside')`
   @media only screen and (max-width: 1023px) {
     width: 100%;
     /* position: relative; */
-    height: 100vh;
+    // height: 100vh;
   }
 
   @media (min-width: 767px) and (max-width: 1023px) {
@@ -106,7 +106,7 @@ const SidebarLayout = ({ location }) => (
         <Sidebar>
           {config.sidebar.title ? (
             <div
-              className={'sidebarTitle hiddenMobile'}
+              // className={'sidebarTitle hiddenMobile'}
               dangerouslySetInnerHTML={{ __html: config.sidebar.title }}
             />
           ) : null}

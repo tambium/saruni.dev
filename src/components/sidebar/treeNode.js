@@ -13,12 +13,6 @@ const TreeNode = ({ setCollapsed, collapsed, url, title, items, ...rest }) => {
 
   const hasChildren = items.length !== 0;
 
-  let location;
-
-  if (typeof document != 'undefined') {
-    location = document.location;
-  }
-
   return (
     <li
       css={{

@@ -19,7 +19,7 @@ if (isSearchEnabled && config.header.search.indexName) {
   });
 }
 
-import Sidebar from './sidebar';
+import { SidebarLayout } from '../layouts/sidebar-layout';
 import { mq } from '../constants/layout';
 
 const LoadableComponent = Loadable({
@@ -85,7 +85,7 @@ const Header = ({ location, isDarkThemeActive, toggleActiveTheme }) => {
           <div>
             <div id="navbar">
               <div css={{ display: isMobileHeaderOpen ? 'block' : 'none' }}>
-                <Sidebar location={location} />
+                <SidebarLayout />
                 <hr />
               </div>
               <ul>

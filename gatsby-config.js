@@ -17,7 +17,7 @@ const plugins = [
   {
     resolve: `gatsby-plugin-layout`,
     options: {
-      component: require.resolve(`./src/templates/docs.js`),
+      component: require.resolve(`./src/templates/Docs.tsx`),
     },
   },
   'gatsby-plugin-emotion',

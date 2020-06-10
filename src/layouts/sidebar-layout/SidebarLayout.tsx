@@ -1,11 +1,13 @@
 import React from 'react';
-import Tree from './tree';
 import { StaticQuery, graphql } from 'gatsby';
 import styled from '@emotion/styled';
+
+import { Tree } from '../../components/sidebar';
 import { ExternalLink } from 'react-feather';
 import config from '../../../config';
 
-// eslint-disable-next-line no-unused-vars
+interface SidebarLayoutProps {}
+
 const ListItem = styled(({ active, level, ...props }) => {
   return (
     <li>
@@ -85,46 +87,46 @@ const Divider = styled(props => (
   }
 `;
 
-const SidebarLayout = ({ location }) => (
-  <StaticQuery
-    query={graphql`
-      query {
-        allMdx {
-          edges {
-            node {
-              fields {
-                slug
-                title
+export const SidebarLayout: React.FC<SidebarLayoutProps> = () => {
+  return (
+    <StaticQuery
+      query={graphql`
+        query {
+          allMdx {
+            edges {
+              node {
+                fields {
+                  slug
+                  title
+                }
               }
             }
           }
         }
-      }
-    `}
-    render={({ allMdx }) => {
-      return (
-        <Sidebar>
-          {config.sidebar.title ? (
-            <div dangerouslySetInnerHTML={{ __html: config.sidebar.title }} />
-          ) : null}
-          <ul css={{ marginTop: 32 }}>
-            <Tree edges={allMdx.edges} />
-            {config.sidebar.links && config.sidebar.links.length > 0 && <Divider />}
-            {config.sidebar.links.map((link, key) => {
-              if (link.link !== '' && link.text !== '') {
-                return (
-                  <ListItem key={key} to={link.link}>
-                    {link.text}
-                    <ExternalLink size={14} />
-                  </ListItem>
-                );
-              }
-            })}
-          </ul>
-        </Sidebar>
-      );
-    }}
-  />
-);
-
-export default SidebarLayout;
+      `}
+      render={({ allMdx }) => {
+        return (
+          <Sidebar>
+            {config.sidebar.title ? (
+              <div dangerouslySetInnerHTML={{ __html: config.sidebar.title }} />
+            ) : null}
+            <ul css={{ marginTop: 32 }}>
+              <Tree edges={allMdx.edges} />
+              {config.sidebar.links && config.sidebar.links.length > 0 && <Divider />}
+              {config.sidebar.links.map((link, key) => {
+                if (link.link !== '' && link.text !== '') {
+                  return (
+                    <ListItem key={key} to={link.link}>
+                      {link.text}
+                      <ExternalLink size={14} />
+                    </ListItem>
+                  );
+                }
+              })}
+            </ul>
+          </Sidebar>
+        );
+      }}
+    />
+  );
+};

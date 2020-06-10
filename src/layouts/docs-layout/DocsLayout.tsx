@@ -1,11 +1,10 @@
 import React from 'react';
-import styled from '@emotion/styled';
 import { MDXProvider } from '@mdx-js/react';
 
-import ThemeProvider from './theme/themeProvider';
-import mdxComponents from './mdxComponents';
-import Sidebar from './sidebar';
-import RightSidebar from './rightSidebar';
+import ThemeProvider from '../../components/theme/themeProvider';
+import mdxComponents from '../../components/mdxComponents';
+import { SidebarLayout } from '../../layouts/sidebar-layout';
+import RightSidebar from '../../components/rightSidebar';
 import {
   ASIDE_PADDING_LEFT,
   ASIDE_WIDTH,
@@ -13,11 +12,15 @@ import {
   mq,
   SIDEBAR_MIN_WIDTH,
   SIDEBAR_WIDTH,
-} from '../constants/layout';
+} from '../../constants/layout';
 
-const Layout = ({ children, location }) => {
+interface DocsLayoutProps {
+  children: React.ReactChild;
+}
+
+export const DocsLayout: React.FC<DocsLayoutProps> = ({ children }) => {
   return (
-    <ThemeProvider location={location}>
+    <ThemeProvider>
       <MDXProvider components={mdxComponents}>
         <div
           css={theme =>
@@ -54,7 +57,7 @@ const Layout = ({ children, location }) => {
                 top: 0,
               })}
             >
-              <Sidebar location={location} />
+              <SidebarLayout />
             </div>
           </div>
           {/* {config.sidebar.title ? (
@@ -89,5 +92,3 @@ const Layout = ({ children, location }) => {
     </ThemeProvider>
   );
 };
-
-export default Layout;

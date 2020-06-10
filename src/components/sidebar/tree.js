@@ -116,7 +116,7 @@ const calculateTreeData = edges => {
   }, tree);
 };
 
-const Tree = ({ edges }) => {
+export const Tree = ({ edges }) => {
   let [treeData] = useState(() => {
     return calculateTreeData(edges);
   });
@@ -141,5 +141,3 @@ const Tree = ({ edges }) => {
 
   return <TreeNode setCollapsed={toggle} collapsed={collapsed} {...treeData} />;
 };
-
-export default Tree;

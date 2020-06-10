@@ -2,7 +2,7 @@ import React from 'react';
 import { Link as GatsbyLink } from 'gatsby';
 import isAbsoluteUrl from 'is-absolute-url';
 
-const Link = ({ to, ...props }) =>
+export const Link = ({ to, ...props }) =>
   isAbsoluteUrl(to) ? (
     <a href={to} {...props}>
       {props.children}
@@ -10,5 +10,3 @@ const Link = ({ to, ...props }) =>
   ) : (
     <GatsbyLink to={to} {...props} />
   );
-
-export default Link;

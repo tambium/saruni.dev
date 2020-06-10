@@ -1,82 +1,83 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Helmet from 'react-helmet';
 import { graphql } from 'gatsby';
 import MDXRenderer from 'gatsby-plugin-mdx/mdx-renderer';
 
-import { Layout, Link } from '../components';
+import { DocsLayout } from '../layouts/docs-layout';
+import { Link } from '../components/link';
 import NextPrevious from '../components/NextPrevious';
 import config from '../../config';
 
 const forcedNavOrder = config.sidebar.forcedNavOrder;
 
-export default class MDXRuntimeTest extends Component {
-  render() {
-    const { data } = this.props;
+interface DocsProps {}
 
-    if (!data) {
-      return null;
-    }
-    const {
-      allMdx,
-      mdx,
-      site: {
-        siteMetadata: { docsLocation, title },
-      },
-    } = data;
+const Docs: React.FC<DocsProps> = ({ data }) => {
+  if (!data) {
+    return null;
+  }
+  const {
+    allMdx,
+    mdx,
+    site: {
+      siteMetadata: { docsLocation, title },
+    },
+  } = data;
 
-    const gitHub = require('../components/images/github.svg');
+  const gitHub = require('../components/images/github.svg');
 
-    const navItems = allMdx.edges
-      .map(({ node }) => node.fields.slug)
-      .filter(slug => slug !== '/')
-      .sort()
-      .reduce(
-        (acc, cur) => {
-          if (forcedNavOrder.find(url => url === cur)) {
-            return { ...acc, [cur]: [cur] };
-          }
-
-          let prefix = cur.split('/')[1];
-
-          if (config.gatsby && config.gatsby.trailingSlash) {
-            prefix = prefix + '/';
-          }
-
-          if (prefix && forcedNavOrder.find(url => url === `/${prefix}`)) {
-            return { ...acc, [`/${prefix}`]: [...acc[`/${prefix}`], cur] };
-          } else {
-            return { ...acc, items: [...acc.items, cur] };
-          }
-        },
-        { items: [] }
-      );
-
-    const nav = forcedNavOrder
-      .reduce((acc, cur) => {
-        return acc.concat(navItems[cur]);
-      }, [])
-      .concat(navItems.items)
-      .map(slug => {
-        if (slug) {
-          const { node } = allMdx.edges.find(({ node }) => node.fields.slug === slug);
-
-          return { title: node.fields.title, url: node.fields.slug };
+  const navItems = allMdx.edges
+    .map(({ node }) => node.fields.slug)
+    .filter(slug => slug !== '/')
+    .sort()
+    .reduce(
+      (acc, cur) => {
+        if (forcedNavOrder.find(url => url === cur)) {
+          return { ...acc, [cur]: [cur] };
         }
-      });
 
-    // meta tags
-    const metaTitle = mdx.frontmatter.metaTitle;
+        let prefix = cur.split('/')[1];
 
-    const metaDescription = mdx.frontmatter.metaDescription;
+        if (config.gatsby && config.gatsby.trailingSlash) {
+          prefix = prefix + '/';
+        }
 
-    let canonicalUrl = config.gatsby.siteUrl;
+        if (prefix && forcedNavOrder.find(url => url === `/${prefix}`)) {
+          return { ...acc, [`/${prefix}`]: [...acc[`/${prefix}`], cur] };
+        } else {
+          return { ...acc, items: [...acc.items, cur] };
+        }
+      },
+      { items: [] }
+    );
 
-    canonicalUrl =
-      config.gatsby.pathPrefix !== '/' ? canonicalUrl + config.gatsby.pathPrefix : canonicalUrl;
-    canonicalUrl = canonicalUrl + mdx.fields.slug;
+  const nav = forcedNavOrder
+    .reduce((acc, cur) => {
+      return acc.concat(navItems[cur]);
+    }, [])
+    .concat(navItems.items)
+    .map(slug => {
+      if (slug) {
+        const { node } = allMdx.edges.find(({ node }) => node.fields.slug === slug);
 
-    return (
-      <Layout {...this.props}>
+        return { title: node.fields.title, url: node.fields.slug };
+      }
+    });
+
+  // meta tags
+  const metaTitle = mdx.frontmatter.metaTitle;
+
+  const metaDescription = mdx.frontmatter.metaDescription;
+
+  let canonicalUrl = config.gatsby.siteUrl;
+
+  canonicalUrl =
+    config.gatsby.pathPrefix !== '/' ? canonicalUrl + config.gatsby.pathPrefix : canonicalUrl;
+  canonicalUrl = canonicalUrl + mdx.fields.slug;
+
+  return (
+    <DocsLayout>
+      <React.Fragment>
         <Helmet>
           {metaTitle ? <title>{metaTitle}</title> : null}
           {metaTitle ? <meta name="title" content={metaTitle} /> : null}
@@ -131,10 +132,12 @@ export default class MDXRuntimeTest extends Component {
         <div>
           <NextPrevious mdx={mdx} nav={nav} />
         </div>
-      </Layout>
-    );
-  }
-}
+      </React.Fragment>
+    </DocsLayout>
+  );
+};
+
+export default Docs;
 
 export const pageQuery = graphql`
   query($id: String!) {

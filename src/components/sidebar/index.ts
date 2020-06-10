@@ -1,3 +1,4 @@
-import { Tree } from './tree';
+import { Sidebar } from './Sidebar';
+import { SidebarElement } from './SidebarElement';
 
-export { Tree };
+export { Sidebar, SidebarElement };

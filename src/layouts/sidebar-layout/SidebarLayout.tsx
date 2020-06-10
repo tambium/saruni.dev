@@ -2,9 +2,10 @@ import React from 'react';
 import { StaticQuery, graphql } from 'gatsby';
 import styled from '@emotion/styled';
 
-import { Tree } from '../../components/sidebar';
+import { Sidebar } from '../../components/sidebar';
 import { ExternalLink } from 'react-feather';
 import config from '../../../config';
+import { TOPBAR_HEIGHT } from '../../constants/layout';
 
 interface SidebarLayoutProps {}
 
@@ -47,30 +48,6 @@ const ListItem = styled(({ active, level, ...props }) => {
   }
 `;
 
-const Sidebar = styled('aside')`
-  width: 100%;
-  // height: 100vh;
-  overflow: auto;
-  padding-left: 0px;
-  top: 0;
-  padding-right: 0;
-
-  @media only screen and (max-width: 1023px) {
-    width: 100%;
-    /* position: relative; */
-    // height: 100vh;
-  }
-
-  @media (min-width: 767px) and (max-width: 1023px) {
-    padding-left: 0;
-  }
-
-  @media only screen and (max-width: 767px) {
-    padding-left: 0px;
-    height: auto;
-  }
-`;
-
 const Divider = styled(props => (
   <li {...props}>
     <hr />
@@ -106,12 +83,26 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = () => {
       `}
       render={({ allMdx }) => {
         return (
-          <Sidebar>
-            {config.sidebar.title ? (
-              <div dangerouslySetInnerHTML={{ __html: config.sidebar.title }} />
-            ) : null}
-            <ul css={{ marginTop: 32 }}>
-              <Tree edges={allMdx.edges} />
+          <aside>
+            <div css={{ height: TOPBAR_HEIGHT, padding: '16px 0px 16px 8px' }}>
+              <span css={{ fontSize: 21, fontWeight: 700 }}>{config?.sidebar?.title}</span>
+              <span
+                css={theme => {
+                  return {
+                    color: theme.colors?.brand,
+                    fontSize: 18,
+                    fontWeight: 600,
+                    letterSpacing: 1,
+                    textTransform: 'uppercase',
+                    paddingLeft: 6,
+                  };
+                }}
+              >
+                Docs
+              </span>
+            </div>
+            <ul css={{ paddingTop: 8 }}>
+              <Sidebar edges={allMdx.edges} />
               {config.sidebar.links && config.sidebar.links.length > 0 && <Divider />}
               {config.sidebar.links.map((link, key) => {
                 if (link.link !== '' && link.text !== '') {
@@ -124,7 +115,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = () => {
                 }
               })}
             </ul>
-          </Sidebar>
+          </aside>
         );
       }}
     />

@@ -2,9 +2,17 @@ import React from 'react';
 import OpenedSvg from '../images/opened';
 import ClosedSvg from '../images/closed';
 import config from '../../../config';
-import Link from '../link';
+import { Link } from '../link';
 
-const TreeNode = ({ setCollapsed, collapsed, url, title, items, ...rest }) => {
+interface SidebarElementProps {}
+
+export const SidebarElement: React.FC<SidebarElementProps> = ({
+  setCollapsed,
+  collapsed,
+  url,
+  title,
+  items,
+}) => {
   const isCollapsed = collapsed[url];
 
   const collapse = () => {
@@ -50,7 +58,7 @@ const TreeNode = ({ setCollapsed, collapsed, url, title, items, ...rest }) => {
       {!isCollapsed && hasChildren ? (
         <ul>
           {items.map((item, index) => (
-            <TreeNode
+            <SidebarElement
               key={item.url + index.toString()}
               setCollapsed={setCollapsed}
               collapsed={collapsed}
@@ -62,5 +70,3 @@ const TreeNode = ({ setCollapsed, collapsed, url, title, items, ...rest }) => {
     </li>
   );
 };
-
-export default TreeNode;

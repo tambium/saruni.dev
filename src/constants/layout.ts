@@ -1,5 +1,7 @@
 import facepaint from 'facepaint';
 
+export const TOPBAR_HEIGHT = 60;
+
 export const SIDEBAR_WIDTH = 225;
 export const SIDEBAR_MIN_WIDTH = 250;
 

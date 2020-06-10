@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
-import config from '../../../config';
-import TreeNode from './treeNode';
+import config from '../../../../config';
 
-const calculateTreeData = edges => {
+export const buildSidebarItems = edges => {
   const originalData = config.sidebar.ignoreIndex
     ? edges.filter(
         ({
@@ -114,30 +112,4 @@ const calculateTreeData = edges => {
     }
     return accu;
   }, tree);
-};
-
-export const Tree = ({ edges }) => {
-  let [treeData] = useState(() => {
-    return calculateTreeData(edges);
-  });
-
-  const defaultCollapsed = {};
-
-  treeData.items.forEach(item => {
-    if (config.sidebar.collapsedNav && config.sidebar.collapsedNav.includes(item.url)) {
-      defaultCollapsed[item.url] = true;
-    } else {
-      defaultCollapsed[item.url] = false;
-    }
-  });
-  const [collapsed, setCollapsed] = useState(defaultCollapsed);
-
-  const toggle = url => {
-    setCollapsed({
-      ...collapsed,
-      [url]: !collapsed[url],
-    });
-  };
-
-  return <TreeNode setCollapsed={toggle} collapsed={collapsed} {...treeData} />;
 };

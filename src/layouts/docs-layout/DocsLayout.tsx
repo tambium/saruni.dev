@@ -1,7 +1,7 @@
 import React from 'react';
 import { MDXProvider } from '@mdx-js/react';
 
-import ThemeProvider from '../../components/theme/themeProvider';
+import { ThemeProvider } from '../../components/theme-provider';
 import mdxComponents from '../../components/mdxComponents';
 import { SidebarLayout } from '../../layouts/sidebar-layout';
 import RightSidebar from '../../components/rightSidebar';
@@ -60,9 +60,6 @@ export const DocsLayout: React.FC<DocsLayoutProps> = ({ children }) => {
               <SidebarLayout />
             </div>
           </div>
-          {/* {config.sidebar.title ? (
-            <div dangerouslySetInnerHTML={{ __html: config.sidebar.title }} />
-          ) : null} */}
           <div
             css={theme =>
               mq({

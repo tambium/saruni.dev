@@ -47,7 +47,7 @@ const IconBars = ({ bars = 3 }) => {
   });
 };
 
-const Header = ({ location, isDarkThemeActive, toggleActiveTheme }) => {
+const Header = ({ isDarkThemeActive, toggleActiveTheme }) => {
   const [isMobileHeaderOpen, setMobileHeaderOpen] = React.useState(false);
 
   const toggleMobileHeader = () => setMobileHeaderOpen(prevState => !prevState);

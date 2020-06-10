@@ -10,9 +10,9 @@ import config from '../../config';
 
 const forcedNavOrder = config.sidebar.forcedNavOrder;
 
-interface DocsProps {}
+interface DocsTemplateProps {}
 
-const Docs: React.FC<DocsProps> = ({ data }) => {
+const DocsTemplate: React.FC<DocsTemplateProps> = ({ data }) => {
   if (!data) {
     return null;
   }
@@ -137,7 +137,7 @@ const Docs: React.FC<DocsProps> = ({ data }) => {
   );
 };
 
-export default Docs;
+export default DocsTemplate;
 
 export const pageQuery = graphql`
   query($id: String!) {

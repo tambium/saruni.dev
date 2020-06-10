@@ -1,8 +1,6 @@
 import { injectGlobal } from 'emotion';
 
 export const baseStyles = injectGlobal`
-  @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap');
-  @import url('https://fonts.googleapis.com/css?family=Poppins:300,400,500,600&display=swap');
   * {
     margin: 0;
     padding: 0;
@@ -37,9 +35,6 @@ export const baseStyles = injectGlobal`
     /* color: #663399; */
   }
 
-  body {
-    font-family: 'Roboto';
-  }
   .visibleMobile {
     display: none;
   }
@@ -368,10 +363,7 @@ export const baseStyles = injectGlobal`
   }
   /* Header section ends here */
   .sidebarTitle {
-    /* box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16); */
-    background-color: #f8f8f8;
     padding: 18px 16px;
-    font-family: 'Poppins';
     font-size: 18px;
     font-weight: 600;
     color: #001934;
@@ -427,7 +419,9 @@ export const baseStyles = injectGlobal`
   }
 
   .sideBarUL li a {
-    /* color: #fff; */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-size: 14px;
     font-weight: 500;
     line-height: 1.5;
@@ -450,7 +444,7 @@ export const baseStyles = injectGlobal`
   }
 
   .hideFrontLine .active > a {
-    background-color: #1ed3c6;
+    background-color: #D44F3E;
     color: #fff !important;
   }
   .firstLevel ul li .collapser svg path {
@@ -470,7 +464,7 @@ export const baseStyles = injectGlobal`
   }
 
   .sideBarUL .item > a {
-    color: #1ED3C6;
+    color: #D44F3E;
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -508,7 +502,7 @@ export const baseStyles = injectGlobal`
     border-color: rgb(230, 236, 241) !important;
     border-style: solid none solid solid;
     border-width: 1px 0px 1px 1px;
-    background-color: #1ed3c6 !important;
+    background-color: #D44F3E !important;
     color: #fff;
   }
 

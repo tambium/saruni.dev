@@ -4,6 +4,14 @@ const queries = require('./src/utils/algolia');
 const config = require('./config');
 
 const plugins = [
+  {
+    resolve: `gatsby-plugin-typescript`,
+    options: {
+      isTSX: true,
+      jsxPragma: `jsx`,
+      allExtensions: true,
+    },
+  },
   'gatsby-plugin-sitemap',
   'gatsby-plugin-sharp',
   {

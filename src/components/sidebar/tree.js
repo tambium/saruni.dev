@@ -71,6 +71,7 @@ const calculateTreeData = edges => {
 
   if (config.gatsby && config.gatsby.trailingSlash) {
   }
+
   tmp.reverse();
   return tmp.reduce((accu, slug) => {
     const parts = slug.split('/');
@@ -138,14 +139,7 @@ const Tree = ({ edges }) => {
     });
   };
 
-  return (
-    <TreeNode
-      className={`${config.sidebar.frontLine ? 'showFrontLine' : 'hideFrontLine'} firstLevel`}
-      setCollapsed={toggle}
-      collapsed={collapsed}
-      {...treeData}
-    />
-  );
+  return <TreeNode setCollapsed={toggle} collapsed={collapsed} {...treeData} />;
 };
 
 export default Tree;

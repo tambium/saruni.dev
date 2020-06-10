@@ -79,10 +79,9 @@ export default connectSearchBox(({ refine, ...rest }) => {
   };
 
   return (
-    <Form className={'formElement'} onSubmit={preventSubmit}>
+    <Form onSubmit={preventSubmit}>
       {/* <SearchIcon /> */}
       <Input
-        className={'searchInput '}
         type="text"
         placeholder="Search"
         aria-label="Search"

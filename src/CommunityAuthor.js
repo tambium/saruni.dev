@@ -3,13 +3,13 @@ import React from 'react';
 const CommunityAuthor = ({ name, imageUrl, twitterUrl, githubUrl, description }) => {
   return (
     <>
-      <h2 className="communitySection">About the community author</h2>
-      <div className="authorSection">
-        <div className="authorImg">
+      <h2>About the community author</h2>
+      <div>
+        <div>
           <img src={imageUrl} alt={name} />
         </div>
-        <div className="authorDetails">
-          <div className="authorName">
+        <div>
+          <div>
             <strong>{name}</strong>
             {twitterUrl ? (
               <a href={twitterUrl} target="_blank" rel="noopener noreferrer">
@@ -22,7 +22,7 @@ const CommunityAuthor = ({ name, imageUrl, twitterUrl, githubUrl, description })
               </a>
             ) : null}
           </div>
-          <div className="authorDesc">{description}</div>
+          <div>{description}</div>
         </div>
       </div>
     </>

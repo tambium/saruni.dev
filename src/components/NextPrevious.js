@@ -50,8 +50,8 @@ const NextPrevious = ({ mdx, nav }) => {
   return (
     <StyledNextPrevious>
       {previousInfo.url && currentIndex >= 0 ? (
-        <Link to={nav[currentIndex - 1].url} className={'previousBtn'}>
-          <div className={'leftArrow'}>
+        <Link to={nav[currentIndex - 1].url}>
+          <div>
             <svg
               preserveAspectRatio="xMidYMid meet"
               height="1em"
@@ -63,7 +63,6 @@ const NextPrevious = ({ mdx, nav }) => {
               strokeLinecap="round"
               strokeLinejoin="round"
               stroke="currentColor"
-              className="_13gjrqj"
             >
               <g>
                 <line x1="19" y1="12" x2="5" y2="12" />
@@ -71,27 +70,27 @@ const NextPrevious = ({ mdx, nav }) => {
               </g>
             </svg>
           </div>
-          <div className={'preRightWrapper'}>
-            <div className={'smallContent'}>
+          <div>
+            <div>
               <span>Previous</span>
             </div>
-            <div className={'nextPreviousTitle'}>
+            <div>
               <span>{nav[currentIndex - 1].title}</span>
             </div>
           </div>
         </Link>
       ) : null}
       {nextInfo.url && currentIndex >= 0 ? (
-        <Link to={nav[currentIndex + 1].url} className={'nextBtn'}>
-          <div className={'nextRightWrapper'}>
-            <div className={'smallContent'}>
+        <Link to={nav[currentIndex + 1].url}>
+          <div>
+            <div>
               <span>Next</span>
             </div>
-            <div className={'nextPreviousTitle'}>
+            <div>
               <span>{nav[currentIndex + 1] && nav[currentIndex + 1].title}</span>
             </div>
           </div>
-          <div className={'rightArrow'}>
+          <div>
             <svg
               preserveAspectRatio="xMidYMid meet"
               height="1em"
@@ -103,7 +102,6 @@ const NextPrevious = ({ mdx, nav }) => {
               strokeLinecap="round"
               strokeLinejoin="round"
               stroke="currentColor"
-              className="_13gjrqj"
             >
               <g>
                 <line x1="5" y1="12" x2="19" y2="12" />

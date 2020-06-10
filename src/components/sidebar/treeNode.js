@@ -4,7 +4,7 @@ import ClosedSvg from '../images/closed';
 import config from '../../../config';
 import Link from '../link';
 
-const TreeNode = ({ className = '', setCollapsed, collapsed, url, title, items, ...rest }) => {
+const TreeNode = ({ setCollapsed, collapsed, url, title, items, ...rest }) => {
   const isCollapsed = collapsed[url];
 
   const collapse = () => {
@@ -18,18 +18,35 @@ const TreeNode = ({ className = '', setCollapsed, collapsed, url, title, items, 
   if (typeof document != 'undefined') {
     location = document.location;
   }
-  const active =
-    location && (location.pathname === url || location.pathname === config.gatsby.pathPrefix + url);
-
-  const calculatedClassName = `${className} item ${active ? 'active' : ''}`;
 
   return (
-    <li className={calculatedClassName}>
+    <li
+      css={{
+        listStyleType: 'none',
+        width: 'auto',
+      }}
+    >
       {title && (
-        <Link to={url}>
+        <Link
+          css={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            fontSize: '14px',
+            fontWeight: '500',
+            lineHeight: '1.5',
+            padding: '7px 24px 7px 16px',
+            paddingLeft: '10px',
+            paddingRight: '25px',
+            borderStyle: 'solid none solid solid',
+            borderWidth: '1px 0px 1px 1px',
+            borderColor: 'transparent currentcolor transparent transparent',
+          }}
+          to={url}
+        >
           {title}
           {!config.sidebar.frontLine && title && hasChildren ? (
-            <button onClick={collapse} aria-label="collapse" className="collapser">
+            <button onClick={collapse} aria-label="collapse">
               {!isCollapsed ? <OpenedSvg /> : <ClosedSvg />}
             </button>
           ) : null}

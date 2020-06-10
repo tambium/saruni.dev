@@ -81,14 +81,14 @@ const StyledSwitch = styled('div')`
 
 export const DarkModeSwitch = ({ isDarkThemeActive, toggleActiveTheme }) => (
   <StyledSwitch>
-    <label id="switch" className="switch">
+    <label id="switch">
       <input
         type="checkbox"
         id="slider"
         onChange={toggleActiveTheme}
         checked={isDarkThemeActive ? false : true}
       />
-      <span className="slider round"></span>
+      <span></span>
     </label>
   </StyledSwitch>
 );

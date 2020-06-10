@@ -6,9 +6,9 @@ import { ExternalLink } from 'react-feather';
 import config from '../../../config';
 
 // eslint-disable-next-line no-unused-vars
-const ListItem = styled(({ className, active, level, ...props }) => {
+const ListItem = styled(({ active, level, ...props }) => {
   return (
-    <li className={className}>
+    <li>
       <a href={props.to} {...props} target="_blank" rel="noopener noreferrer">
         {props.children}
       </a>
@@ -105,12 +105,9 @@ const SidebarLayout = ({ location }) => (
       return (
         <Sidebar>
           {config.sidebar.title ? (
-            <div
-              // className={'sidebarTitle hiddenMobile'}
-              dangerouslySetInnerHTML={{ __html: config.sidebar.title }}
-            />
+            <div dangerouslySetInnerHTML={{ __html: config.sidebar.title }} />
           ) : null}
-          <ul className={'sideBarUL'}>
+          <ul css={{ marginTop: 32 }}>
             <Tree edges={allMdx.edges} />
             {config.sidebar.links && config.sidebar.links.length > 0 && <Divider />}
             {config.sidebar.links.map((link, key) => {

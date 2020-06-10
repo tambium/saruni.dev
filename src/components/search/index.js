@@ -119,7 +119,6 @@ export default function SearchComponent({ indices, collapse, hitsAsGrid }) {
   );
 
   useClickOutside(ref, () => setFocus(false));
-  const displayResult = query.length > 0 && focus ? 'showResults' : 'hideResults';
 
   return (
     <InstantSearch
@@ -129,11 +128,7 @@ export default function SearchComponent({ indices, collapse, hitsAsGrid }) {
       root={{ Root, props: { ref } }}
     >
       <Input onFocus={() => setFocus(true)} {...{ collapse, focus }} />
-      <HitsWrapper
-        className={'hitWrapper ' + displayResult}
-        show={query.length > 0 && focus}
-        asGrid={hitsAsGrid}
-      >
+      <HitsWrapper show={query.length > 0 && focus} asGrid={hitsAsGrid}>
         {indices.map(({ name, title, hitComp, type }) => {
           return (
             <Index key={name} indexName={name}>

@@ -31,8 +31,8 @@ const CodeBlock = ({ children: exampleCode, ...props }) => {
   } else {
     return (
       <Highlight {...defaultProps} code={exampleCode} language="javascript" theme={prismTheme}>
-        {({ className, style, tokens, getLineProps, getTokenProps }) => (
-          <pre className={className + ' pre'} style={style} p={3}>
+        {({ style, tokens, getLineProps, getTokenProps }) => (
+          <pre style={style} p={3}>
             {cleanTokens(tokens).map((line, i) => {
               let lineClass = {};
 

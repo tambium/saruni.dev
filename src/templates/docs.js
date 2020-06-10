@@ -89,7 +89,7 @@ export default class MDXRuntimeTest extends Component {
           ) : null}
           <link rel="canonical" href={canonicalUrl} />
         </Helmet>
-        <div className={'titleWrapper'}>
+        <div>
           <h1
             css={theme => ({
               color: theme.colors.heading,
@@ -102,8 +102,25 @@ export default class MDXRuntimeTest extends Component {
           </h1>
           <div>
             {docsLocation && (
-              <Link className={'gitBtn'} to={`${docsLocation}/${mdx.parent.relativePath}`}>
-                <img src={gitHub} alt={'Github logo'} /> Edit on GitHub
+              <Link
+                css={{
+                  height: '30px',
+                  minHeight: '30px',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+                to={`${docsLocation}/${mdx.parent.relativePath}`}
+              >
+                <img
+                  css={{
+                    width: '15px',
+                    display: 'inline-block',
+                    marginRight: '5px',
+                  }}
+                  src={gitHub}
+                  alt={'Github logo'}
+                />{' '}
+                Edit on GitHub
               </Link>
             )}
           </div>
@@ -111,7 +128,7 @@ export default class MDXRuntimeTest extends Component {
         <div css={theme => ({ color: theme.colors.text })}>
           <MDXRenderer>{mdx.body}</MDXRenderer>
         </div>
-        <div className={'addPaddTopBottom'}>
+        <div>
           <NextPrevious mdx={mdx} nav={nav} />
         </div>
       </Layout>

@@ -1,31 +1,33 @@
 {
-  "name": "saruni.dev",
+  "name": "saruni.dev-experimental",
   "version": "1.0.0",
-  "author": "Tambium",
-  "license": "Apache-2.0",
   "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "start": "next start"
+    "dev": "gatsby develop"
   },
   "dependencies": {
     "@emotion/core": "^10.0.28",
-    "@mapbox/rehype-prism": "^0.4.0",
-    "@saruni-ui/theme": "^0.0.3",
-    "gray-matter": "^4.0.2",
-    "next": "^9.4.4",
+    "@emotion/is-prop-valid": "^0.8.8",
+    "@emotion/styled": "^10.0.27",
+    "@mdx-js/mdx": "^1.6.5",
+    "emotion-theming": "^10.0.27",
+    "facepaint": "^1.2.1",
+    "gatsby": "^2.23.3",
+    "gatsby-plugin-emotion": "^4.3.4",
+    "gatsby-plugin-mdx": "^1.2.15",
+    "gatsby-plugin-sharp": "^2.6.11",
+    "gatsby-remark-autolink-headers": "^2.3.5",
+    "gatsby-remark-copy-linked-files": "^2.3.5",
+    "gatsby-remark-embedder": "^2.1.1",
+    "gatsby-remark-images": "^3.3.10",
+    "gatsby-remark-responsive-iframe": "^2.4.5",
+    "gatsby-source-filesystem": "^2.3.11",
+    "gatsby-transformer-sharp": "^2.5.5",
+    "gatsby-transformer-yaml": "^2.4.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "rehype-raw": "^4.0.2",
-    "rehype-stringify": "^8.0.0",
-    "remark-parse": "^8.0.2",
-    "remark-rehype": "^7.0.0",
-    "unified": "^9.0.0"
+    "slugify": "^1.4.0"
   },
   "devDependencies": {
-    "@emotion/babel-preset-css-prop": "^10.0.27",
-    "@types/node": "^14.0.12",
-    "@types/react": "^16.9.35",
-    "typescript": "^3.9.5"
+    "@types/facepaint": "^1.2.1"
   }
 }

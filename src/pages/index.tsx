@@ -1,5 +1,7 @@
+import React from "react";
+
 const Home = () => {
-  return <div>Welcome to Saruni Docs!</div>;
+  return <h1>Hello, saruni.dev!</h1>;
 };
 
 export default Home;

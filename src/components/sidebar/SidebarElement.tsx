@@ -9,6 +9,7 @@ import { hexToRgba } from '../../utils/color';
 interface SidebarElementProps {}
 
 export const SidebarElement: React.FC<SidebarElementProps> = ({
+  depth = -1,
   setCollapsed,
   collapsed,
   url,
@@ -28,8 +29,11 @@ export const SidebarElement: React.FC<SidebarElementProps> = ({
   if (typeof document != 'undefined') {
     location = document.location;
   }
+
   const isActive =
     location && (location.pathname === url || location.pathname === config.gatsby.pathPrefix + url);
+
+  // console.log(location.pathname, url);
 
   return (
     <li
@@ -38,6 +42,7 @@ export const SidebarElement: React.FC<SidebarElementProps> = ({
         borderTopLeftRadius: 4,
         borderBottomLeftRadius: 4,
         listStyleType: 'none',
+        paddingLeft: depth * 16,
         width: 'auto',
       })}
     >
@@ -72,14 +77,17 @@ export const SidebarElement: React.FC<SidebarElementProps> = ({
 
       {!isCollapsed && hasChildren ? (
         <ul>
-          {items.map((item, index) => (
-            <SidebarElement
-              key={item.url + index.toString()}
-              setCollapsed={setCollapsed}
-              collapsed={collapsed}
-              {...item}
-            />
-          ))}
+          {items.map((item, index) => {
+            return (
+              <SidebarElement
+                depth={depth + 1}
+                key={item.url + index.toString()}
+                setCollapsed={setCollapsed}
+                collapsed={collapsed}
+                {...item}
+              />
+            );
+          })}
         </ul>
       ) : null}
     </li>

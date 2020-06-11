@@ -51,10 +51,12 @@ export const DocsLayout: React.FC<DocsLayoutProps> = ({ children }) => {
           >
             <div
               css={mq({
-                position: 'sticky',
-                width: SIDEBAR_WIDTH,
+                display: 'flex',
+                flexDirection: 'column',
                 height: [null, '100vh'],
+                position: 'sticky',
                 top: 0,
+                width: SIDEBAR_WIDTH,
               })}
             >
               <SidebarLayout />

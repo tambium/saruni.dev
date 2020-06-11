@@ -3,28 +3,28 @@ import isPropValid from "@emotion/is-prop-valid";
 import { hexToRGBA } from "../../utils/color";
 import { mq, SIDEBAR_MIN_WIDTH, SIDEBAR_WIDTH } from "../../constants/layout";
 
-export const SidebarContainer = styled.div`
-  ${mq({
-    borderRight: "1px solid #e1e7ed",
+export const SidebarContainer = styled.div((props) =>
+  mq({
+    borderRight: `1px solid ${props.theme.colors.surface}`,
     display: ["none", "flex"],
     alignItems: "flex-end",
     flexDirection: "column",
     flexGrow: 1,
     minWidth: SIDEBAR_MIN_WIDTH,
     width: "100%",
-  })};
-`;
+  })
+);
 
-export const SidebarWrapper = styled.div`
-  ${mq({
+export const SidebarWrapper = styled.div((props) =>
+  mq({
     display: "flex",
     flexDirection: "column",
     height: [null, "100vh"],
     position: "sticky",
     top: 0,
     width: SIDEBAR_WIDTH,
-  })};
-`;
+  })
+);
 
 export const SidebarList = styled.ul`
   flex: 1;

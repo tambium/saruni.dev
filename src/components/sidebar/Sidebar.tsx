@@ -77,19 +77,21 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
   return (
     <React.Fragment>
       <div
-        css={mq({
-          alignItems: "center",
-          backgroundColor: "#fff",
-          borderBottom: "1px solid #e1e7ed",
-          display: ["flex", "none"],
-          height: SIDEBAR_MOBILE_HEIGHT,
-          left: 0,
-          position: "fixed",
-          right: 0,
-          top: 0,
-          width: "100%",
-          zIndex: ZINDEX.ZINDEX_SIDEBAR_MOBILE,
-        })}
+        css={(theme) =>
+          mq({
+            alignItems: "center",
+            backgroundColor: theme.colors.background,
+            borderBottom: `1px solid ${theme.colors.surface}`,
+            display: ["flex", "none"],
+            height: SIDEBAR_MOBILE_HEIGHT,
+            left: 0,
+            position: "fixed",
+            right: 0,
+            top: 0,
+            width: "100%",
+            zIndex: ZINDEX.ZINDEX_SIDEBAR_MOBILE,
+          })
+        }
       >
         <div
           css={{

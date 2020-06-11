@@ -8,6 +8,7 @@ yarn-error.log*
 
 # gatsby
 .cache
+public
 
 # OS
 .DS_Store

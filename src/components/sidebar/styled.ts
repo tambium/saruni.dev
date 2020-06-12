@@ -71,19 +71,3 @@ export const StyledLink = styled("a", {
     ${(p: StyledLinkProps) => !p.isActive && `color: ${p.theme.colors.text}`}
   }
 `;
-
-export const SidebarMobileSelect = styled.select`
-  appearance: none;
-  background: transparent;
-  border: none;
-  color: hsla(0, 0%, 100%, 0);
-  font-size: 13px;
-  font-weight: 500;
-  max-width: 100%;
-  padding: 12px 16px;
-  position: absolute;
-  z-index: 100;
-  &:focus {
-    outline: none;
-  }
-`;

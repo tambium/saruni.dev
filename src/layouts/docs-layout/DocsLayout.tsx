@@ -12,6 +12,7 @@ import {
 import { Sidebar } from "../../components/sidebar";
 import { TOC } from "../../components/toc";
 import { ITOCItem } from "../../types";
+import { Topbar } from "../../components/topbar";
 
 interface DocsLayoutProps {
   children: React.ReactNode;
@@ -55,6 +56,7 @@ export const DocsLayout: React.FC<DocsLayoutProps> = (props) => {
         })
       }
     >
+      <Topbar />
       <Sidebar />
       <div
         css={(theme) =>

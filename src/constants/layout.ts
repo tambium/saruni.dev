@@ -24,7 +24,8 @@ export const BREAKPOINTS = [
 ];
 
 export const ZINDEX = {
-  ZINDEX_SIDEBAR_MOBILE: 100,
+  ZINDEX_TOPBAR: 99,
+  ZINDEX_TOPBAR_SELECT: 100,
 };
 
 export const mq = facepaint(BREAKPOINTS);

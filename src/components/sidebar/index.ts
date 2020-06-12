@@ -1,5 +1,3 @@
-import { Child } from "./Child";
-import { Heading } from "./Heading";
-import { Parent } from "./Parent";
+import { Sidebar } from "./Sidebar";
 
-export { Child, Heading, Parent };
+export { Sidebar };

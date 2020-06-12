@@ -1,14 +1,14 @@
-# OS
-.DS_Store
-
-# editor
-.vscode
-
-# deps
-node_modules
+# dependencies
+node_modules/
 
 # logs
-yarn-error.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# next
-.next
+# gatsby
+.cache
+public
+
+# OS
+.DS_Store

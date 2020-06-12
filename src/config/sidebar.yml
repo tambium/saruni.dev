@@ -1,0 +1,12 @@
+- label: "Introduction"
+  link: "/"
+- label: "Getting started"
+  link: "/getting-started"
+- label: "Docs"
+  items:
+    - label: "Authentication"
+      link: "/docs/authentication"
+    - label: "Forms"
+      link: "/docs/forms"
+- label: "CLI"
+  link: "/cli"

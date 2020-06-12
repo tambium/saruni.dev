@@ -33,7 +33,6 @@ export const SidebarList = styled.ul`
 `;
 
 interface SidebarListItemProps {
-  depth: number;
   isActive: boolean;
 }
 
@@ -43,19 +42,20 @@ export const SidebarListItem = styled.li<SidebarListItemProps>`
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
   list-style-type: none;
-  padding-left: ${(p) => p.depth * 16}px;
+  padding-left: ${(p) => p.depth * 8}px;
   width: auto;
 `;
 
 interface StyledLinkProps {
   as: React.ElementType;
+  depth: number;
   isActive: boolean;
   href?: string;
   to?: string;
 }
 
 export const StyledLink = styled("a", {
-  shouldForwardProp: (prop) => isPropValid(prop) && prop !== "isActive",
+  shouldForwardProp: (prop) => isPropValid(prop),
 })`
   align-items: center;
   color: ${(p: StyledLinkProps) =>
@@ -64,9 +64,7 @@ export const StyledLink = styled("a", {
   font-size: 14px;
   font-weight: 500px;
   justify-content: space-between;
-  padding-left: 10px;
-  padding-right: 25px;
-  padding: 8px 8px 8px 16px;
+  padding: 8px 16px 8px ${(p) => 12 + p.depth * 8}px;
   text-decoration: none;
 `;
 

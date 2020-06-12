@@ -26,8 +26,8 @@ import { Moon, Sun, ChevronDown } from "../icon/glyphs";
 
 interface SidebarProps {}
 
-const Link = ({ isActive, link, label }) => {
-  const shared = { isActive };
+const Link = ({ isActive, depth, link, label }) => {
+  const shared = { depth, isActive };
 
   if (isExternalUrl(link)) {
     return (
@@ -158,7 +158,7 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
               display: "flex",
               height: TOPBAR_HEIGHT,
               justifyContent: "space-between",
-              padding: "16px 16px 16px 8px",
+              padding: "16px 16px 16px 12px",
             }}
           >
             <div>
@@ -197,12 +197,13 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
                   isActive = link === pathname;
 
                   return (
-                    <SidebarListItem
-                      isActive={isActive}
-                      depth={depth}
-                      key={link}
-                    >
-                      <Link isActive={isActive} link={link} label={label} />
+                    <SidebarListItem isActive={isActive} key={link}>
+                      <Link
+                        isActive={isActive}
+                        depth={depth}
+                        link={link}
+                        label={label}
+                      />
                     </SidebarListItem>
                   );
                 });
@@ -212,8 +213,13 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
 
               isActive = link === pathname;
               return (
-                <SidebarListItem isActive={isActive} depth={depth} key={id}>
-                  <Link isActive={isActive} link={link} label={label} />
+                <SidebarListItem isActive={isActive} key={id}>
+                  <Link
+                    isActive={isActive}
+                    depth={depth}
+                    link={link}
+                    label={label}
+                  />
                 </SidebarListItem>
               );
             })}

@@ -1,6 +1,7 @@
 import React from "react";
 import slugify from "slugify";
 import { TOCHeading, TOCList, TOCListItem, TOCWrapper } from "./styled";
+import { useTheme } from "emotion-theming";
 
 interface IHeading {
   depth: number;
@@ -12,6 +13,8 @@ interface TOCProps {
 }
 
 export const TOC: React.FC<TOCProps> = ({ headings }) => {
+  const theme = useTheme();
+
   return (
     <TOCWrapper>
       <TOCHeading>On this page</TOCHeading>
@@ -21,7 +24,15 @@ export const TOC: React.FC<TOCProps> = ({ headings }) => {
           .map((heading, idx) => {
             return (
               <TOCListItem key={`${idx}-${heading.value}`}>
-                <a href={`#${slugify(heading.value)}`}>{heading.value}</a>
+                <a
+                  css={{
+                    color: theme.colors.text,
+                    textDecoration: "none",
+                  }}
+                  href={`#${slugify(heading.value)}`}
+                >
+                  {heading.value}
+                </a>
               </TOCListItem>
             );
           })}

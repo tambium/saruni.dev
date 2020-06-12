@@ -7,7 +7,7 @@ import {
   mq,
   SIDEBAR_MIN_WIDTH,
   SIDEBAR_WIDTH,
-  SIDEBAR_MOBILE_HEIGHT,
+  TOPBAR_HEIGHT,
 } from "../../constants/layout";
 import { Sidebar } from "../../components/sidebar";
 import { TOC } from "../../components/toc";
@@ -61,22 +61,30 @@ export const DocsLayout: React.FC<DocsLayoutProps> = (props) => {
       <div
         css={(theme) =>
           mq({
-            display: "flex",
-            flexGrow: 1,
-            paddingTop: [16 + SIDEBAR_MOBILE_HEIGHT, 48],
-            paddingLeft: [16, 64],
-            paddingBottom: [16, 32],
-            paddingRight: [16, 0],
             backgroundColor: theme.colors.background,
+            display: "flex",
+            paddingTop: [16 + TOPBAR_HEIGHT, 48],
+            paddingLeft: [16, 32, 64],
+            paddingBottom: [16, 32],
+            paddingRight: [16, 32, 0],
+            minWidth: 0,
           })
         }
       >
-        <div css={{ display: "flex", flex: 1, flexDirection: "column" }}>
+        <div
+          css={{
+            display: "flex",
+            flexDirection: "column",
+            minWidth: 0,
+            width: "100%",
+          }}
+        >
           {children}
         </div>
         <div
           css={mq({
-            display: ["none", "none", "block"],
+            display: ["none", "none", "flex"],
+            flexShrink: 0,
             paddingLeft: ASIDE_PADDING_LEFT,
             width: ASIDE_WIDTH,
           })}

@@ -32,7 +32,9 @@ export const DocsLayout: React.FC<DocsLayoutProps> = (props) => {
   } = props;
 
   const isTOCDisabled =
-    disableTableOfContents === true || tableOfContents.items.length === 0;
+    disableTableOfContents === true ||
+    !tableOfContents.hasOwnProperty("items") ||
+    tableOfContents?.items.length === 0;
 
   return (
     <div

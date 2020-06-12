@@ -1,3 +1,4 @@
-import { TOC } from "./TableOfContents";
+import { TOC } from "./TOC";
+import { TOCItems } from "./TOCItems";
 
-export { TOC };
+export { TOC, TOCItems };

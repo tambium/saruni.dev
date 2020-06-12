@@ -8,15 +8,18 @@ const baseTheme = {
       tiny: 12,
       micro: 13,
       small: 14,
-      subtitle: 16,
       body: 16,
+      subtitle: 18,
       dek: 22,
       section: 20,
       title: 28,
+      supertitle: 42,
     },
   },
   colors: {
-    brand: "#D44F3E",
+    white: "#FFF",
+    brand: "#CC2A48",
+    brandSubdued: "#B72B44",
   },
 };
 

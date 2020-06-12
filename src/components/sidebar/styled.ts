@@ -1,7 +1,12 @@
 import styled from "@emotion/styled";
 import isPropValid from "@emotion/is-prop-valid";
 import { hexToRGBA } from "../../utils/color";
-import { mq, SIDEBAR_MIN_WIDTH, SIDEBAR_WIDTH } from "../../constants/layout";
+import {
+  mq,
+  SIDEBAR_MIN_WIDTH,
+  SIDEBAR_WIDTH,
+  SIDEBAR_LOGO_CONTAINER_HEIGHT,
+} from "../../constants/layout";
 
 export const SidebarContainer = styled.div((props) =>
   mq({
@@ -25,6 +30,23 @@ export const SidebarWrapper = styled.div((props) =>
     width: SIDEBAR_WIDTH,
   })
 );
+
+export const SidebarLogoContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: ${SIDEBAR_LOGO_CONTAINER_HEIGHT}px;
+  justify-content: space-between;
+  padding: 16px 16px 16px 12px;
+`;
+
+export const SidebarDocsHighlight = styled.span`
+  color: ${(p) => p.theme.colors.brand};
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding-left: 6px;
+  text-transform: uppercase;
+`;
 
 export const SidebarList = styled.ul`
   flex: 1;

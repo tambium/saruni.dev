@@ -16,7 +16,9 @@ exports.createPages = (
   const docsTemplate = require.resolve(
     `./src/templates/docs-template/DocsTemplate.tsx`
   );
-  const homeTemplate = require.resolve(`./src/templates/HomeTemplate.tsx`);
+  const homeTemplate = require.resolve(
+    `./src/templates/home-template/HomeTemplate.tsx`
+  );
 
   return graphql(
     `

@@ -1,14 +1,18 @@
 import facepaint from "facepaint";
 
-export const TOPBAR_HEIGHT = 60;
+// mobile-only top bar
+export const TOPBAR_HEIGHT = 50;
 
+// non-mobile sidebar
 export const SIDEBAR_WIDTH = 225;
 export const SIDEBAR_MIN_WIDTH = 250;
-export const SIDEBAR_MOBILE_HEIGHT = 50;
+export const SIDEBAR_LOGO_CONTAINER_HEIGHT = 50;
 
+// non-mobile aside (TOC)
 export const ASIDE_WIDTH = 250;
 export const ASIDE_PADDING_LEFT = 50;
 
+// all device main content
 export const CONTENT_WIDTH = 1000;
 
 /**

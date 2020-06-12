@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-import { mq, SIDEBAR_MOBILE_HEIGHT, ZINDEX } from "../../constants/layout";
+import { mq, TOPBAR_HEIGHT, ZINDEX } from "../../constants/layout";
 
 export const TopbarContainer = styled.div((props) =>
   mq({
@@ -8,7 +8,7 @@ export const TopbarContainer = styled.div((props) =>
     backgroundColor: props.theme.colors.background,
     borderBottom: `1px solid ${props.theme.colors.surface}`,
     display: ["flex", "none"],
-    height: SIDEBAR_MOBILE_HEIGHT,
+    height: TOPBAR_HEIGHT,
     left: 0,
     position: "fixed",
     right: 0,

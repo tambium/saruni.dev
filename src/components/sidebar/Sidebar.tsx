@@ -6,8 +6,9 @@ import { useTheme as useEmotionTheme } from "emotion-theming";
 import { useSidebar } from "../../hooks/use-sidebar";
 import { useTheme } from "../../hooks/use-theme";
 import { isExternalUrl } from "../../../utils/url";
-import { TOPBAR_HEIGHT } from "../../constants/layout";
 import {
+  SidebarDocsHighlight,
+  SidebarLogoContainer,
   SidebarList,
   SidebarListItem,
   StyledLink,
@@ -61,31 +62,10 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
   return (
     <SidebarContainer>
       <SidebarWrapper>
-        <div
-          css={{
-            alignItems: "center",
-            display: "flex",
-            height: TOPBAR_HEIGHT,
-            justifyContent: "space-between",
-            padding: "16px 16px 16px 12px",
-          }}
-        >
+        <SidebarLogoContainer>
           <div>
-            <span css={{ fontSize: 21, fontWeight: 700 }}>Saruni</span>
-            <span
-              css={(theme) => {
-                return {
-                  color: theme.colors.brand,
-                  fontSize: 18,
-                  fontWeight: 600,
-                  letterSpacing: 1,
-                  textTransform: "uppercase",
-                  paddingLeft: 6,
-                };
-              }}
-            >
-              Docs
-            </span>
+            <span css={{ fontSize: 21, fontWeight: 600 }}>Saruni</span>
+            <SidebarDocsHighlight>Docs</SidebarDocsHighlight>
           </div>
           <IconButton
             ariaLabel="Toggle theme"
@@ -94,7 +74,7 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
             icon={isLight ? <Moon size={14} /> : <Sun size={14} />}
             onClick={switchTheme}
           />
-        </div>
+        </SidebarLogoContainer>
         <SidebarList>
           {data.map(({ node: { label, link, items, id } }) => {
             let depth = 0;

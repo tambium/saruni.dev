@@ -11,23 +11,28 @@ import {
 } from "../../constants/layout";
 import { Sidebar } from "../../components/sidebar";
 import { TOC } from "../../components/toc";
-
-interface IHeading {
-  depth: number;
-  value: string;
-}
+import { ITOCItem } from "../../types";
 
 interface DocsLayoutProps {
   children: React.ReactNode;
   disableTableOfContents: boolean;
-  headings: IHeading[];
+  location: Location;
+  tableOfContents: {
+    items: ITOCItem[];
+  };
+  tableOfContentsDepth: number;
 }
 
 export const DocsLayout: React.FC<DocsLayoutProps> = (props) => {
-  const { children, disableTableOfContents, headings } = props;
+  const {
+    children,
+    disableTableOfContents,
+    tableOfContents,
+    tableOfContentsDepth,
+  } = props;
 
   const isTOCDisabled =
-    disableTableOfContents === true || !headings || headings.length === 0;
+    disableTableOfContents === true || tableOfContents.items.length === 0;
 
   return (
     <div
@@ -72,7 +77,13 @@ export const DocsLayout: React.FC<DocsLayoutProps> = (props) => {
             width: ASIDE_WIDTH,
           })}
         >
-          {!isTOCDisabled && <TOC headings={headings} />}
+          {!isTOCDisabled && (
+            <TOC
+              location={location}
+              tableOfContents={tableOfContents}
+              tableOfContentsDepth={tableOfContentsDepth}
+            />
+          )}
         </div>
       </div>
     </div>

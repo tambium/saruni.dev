@@ -3,10 +3,16 @@ import { graphql } from "gatsby";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { DocsLayout } from "../../layouts/docs-layout/DocsLayout";
 
-export default function Docs({ data: { mdx }, pageContext }) {
+export default function Docs({ data: { mdx }, location, pageContext }) {
   const { prev, next, githubEditUrl } = pageContext;
-  const { title, description, image, disableTableOfContents } = mdx.frontmatter;
-  const { headings, body } = mdx;
+  const {
+    title,
+    description,
+    image,
+    disableTableOfContents,
+    tableOfContentsDepth,
+  } = mdx.frontmatter;
+  const { headings, body, tableOfContents } = mdx;
   const { slug } = mdx.fields;
 
   return (
@@ -19,7 +25,9 @@ export default function Docs({ data: { mdx }, pageContext }) {
       > */}
       <DocsLayout
         disableTableOfContents={disableTableOfContents}
-        headings={headings}
+        location={location}
+        tableOfContents={tableOfContents}
+        tableOfContentsDepth={tableOfContentsDepth}
       >
         <MDXRenderer>{body}</MDXRenderer>
       </DocsLayout>
@@ -43,12 +51,14 @@ export const query = graphql`
         description
         image
         disableTableOfContents
+        tableOfContentsDepth
       }
       body
       headings {
         depth
         value
       }
+      tableOfContents
     }
   }
 `;

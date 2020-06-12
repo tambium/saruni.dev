@@ -135,6 +135,7 @@ exports.createSchemaCustomization = ({ actions }) => {
       description: String
       image: String
       disableTableOfContents: Boolean
+      tableOfContentsDepth: Int
     }
   `);
 

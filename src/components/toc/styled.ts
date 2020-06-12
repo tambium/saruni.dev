@@ -19,8 +19,3 @@ export const TOCHeading = styled.h4`
 export const TOCList = styled.ul`
   list-style: none;
 `;
-
-export const TOCListItem = styled.li`
-  padding: 4px 0;
-  margin-bottom: 4px;
-`;

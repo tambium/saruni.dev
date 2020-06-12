@@ -27,6 +27,7 @@ export const lightTheme = {
     background: "#FFF",
     surface: "#E0E6EB",
     text: "#2D3146",
+    textSubtle: "#687386",
   },
 };
 
@@ -37,5 +38,6 @@ export const darkTheme = {
     background: "#001628",
     surface: "#003055",
     text: "#E0E6EB",
+    textSubtle: "#A3ACBA",
   },
 };

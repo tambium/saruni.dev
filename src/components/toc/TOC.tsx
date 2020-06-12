@@ -1,6 +1,6 @@
 import React from "react";
 
-import { TOCHeading, TOCList, TOCListItem, TOCWrapper } from "./styled";
+import { TOCHeading, TOCList, TOCWrapper } from "./styled";
 import { useActiveHash } from "../../hooks/use-active-hash";
 import { ITOCItem } from "../../types";
 import { getHeadingIds } from "./utils";

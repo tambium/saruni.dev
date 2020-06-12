@@ -59,13 +59,17 @@ export const StyledLink = styled("a", {
 })`
   align-items: center;
   color: ${(p: StyledLinkProps) =>
-    p.isActive ? p.theme.colors.brand : p.theme.colors.text};
+    p.isActive ? p.theme.colors.brand : p.theme.colors.textSubtle};
   display: flex;
   font-size: 14px;
   font-weight: 500px;
   justify-content: space-between;
   padding: 8px 16px 8px ${(p) => 12 + p.depth * 8}px;
   text-decoration: none;
+  transition: color 0.2s ease;
+  &:hover {
+    ${(p: StyledLinkProps) => !p.isActive && `color: ${p.theme.colors.text}`}
+  }
 `;
 
 export const SidebarMobileSelect = styled.select`

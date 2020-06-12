@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "gatsby";
+import { useTheme } from "emotion-theming";
 
 import { isBelowDepthLimit } from "./utils";
 import { ITOCItem } from "../../types";
@@ -19,6 +20,8 @@ export const TOCItems: React.FC<TOCItemsProps> = ({
   minDepth,
   maxDepth,
 }) => {
+  const theme = useTheme();
+
   return (
     <React.Fragment>
       {items &&
@@ -32,11 +35,15 @@ export const TOCItems: React.FC<TOCItemsProps> = ({
               {item.url && (
                 <Link
                   css={{
-                    color: isActive ? "red" : "green",
+                    color: isActive
+                      ? theme.colors.brand
+                      : theme.colors.textSubtle,
                     border: 0,
-                    transition: `all 0.2s`,
+                    fontSize: theme.fonts.size.small,
+                    transition: `color 0.2s ease`,
+                    textDecoration: "none",
                     "&:hover": {
-                      color: `link.color`,
+                      color: theme.colors.text,
                     },
                   }}
                   to={location.pathname + item.url}
@@ -45,7 +52,13 @@ export const TOCItems: React.FC<TOCItemsProps> = ({
                 </Link>
               )}
               {item.items && isBelowDepthLimit(minDepth, maxDepth) && (
-                <ul sx={{ color: `textMuted`, listStyle: `none`, ml: 5 }}>
+                <ul
+                  css={{
+                    color: theme.colors.textSuble,
+                    listStyle: `none`,
+                    marginLeft: 5,
+                  }}
+                >
                   <TOCItems
                     items={item.items}
                     location={location}

@@ -7,7 +7,6 @@ import { darkTheme } from "../../theme";
 
 export const Pre = styled.pre`
   border-radius: 0 0 4px 4px;
-  box-shadow: 1px 1px 20px rgba(20, 20, 20, 0.27);
   margin: 0 0 16px 0;
   overflow: auto;
   padding: 12px;
@@ -23,7 +22,6 @@ export const Pre = styled.pre`
 export const LiveWrapper = styled.div`
   align-items: stretch;
   border-radius: 4px;
-  box-shadow: 1px 1px 20px rgba(20, 20, 20, 0.27);
   display: flex;
   flex-direction: row;
   justify-content: stretch;
@@ -83,20 +81,4 @@ export const LineNumber = styled.span`
   opacity: 0.3;
   user-select: none;
   width: 2rem;
-`;
-
-export const CopyCode = styled.button`
-  background: none;
-  border-radius: 4px;
-  border: 0;
-  border: none;
-  color: rgb(248, 248, 242);
-  cursor: pointer;
-  margin: 0.25em;
-  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
-  &:hover {
-    box-shadow: rgba(46, 41, 51, 0.08) 0px 1px 2px,
-      rgba(71, 63, 79, 0.08) 0px 2px 4px;
-    opacity: 0.8;
-  }
 `;

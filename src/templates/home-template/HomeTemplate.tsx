@@ -30,7 +30,7 @@ export default ({ data }) => {
     <React.Fragment>
       <div
         css={{
-          backgroundColor: theme.colors.brand,
+          backgroundColor: theme.colors.brandSubdued,
           display: "flex",
           justifyContent: "center",
           minHeight: 50,
@@ -54,7 +54,7 @@ export default ({ data }) => {
       </div>
       <section
         css={{
-          backgroundColor: theme.colors.brand,
+          backgroundColor: theme.colors.brandSubdued,
           color: theme.colors.white,
           display: "flex",
           justifyContent: "center",
@@ -110,7 +110,7 @@ export default ({ data }) => {
 
       <section
         css={{
-          backgroundColor: theme.colors.brandSubdued,
+          backgroundColor: theme.colors.brand,
           color: theme.colors.white,
           display: "flex",
           justifyContent: "center",

@@ -1,21 +1,20 @@
 import styled from "@emotion/styled";
-import { css } from "@emotion/core";
 import {
   LiveError as AuxLiveError,
   LivePreview as AuxLivePreview,
 } from "react-live";
+import { darkTheme } from "../../theme";
 
 export const Pre = styled.pre`
   border-radius: ${({ hasTitle }) => (hasTitle ? "0 0 3px 3px" : "3px")};
   box-shadow: 1px 1px 20px rgba(20, 20, 20, 0.27);
   margin: 0 0 16px 0;
   overflow: auto;
-  padding: 2rem 1rem 1rem 1rem;
+  padding: 12px;
   text-align: left;
   word-wrap: normal;
   webkit-overflow-scrolling: touch;
   & .token-line {
-    font-size: 15px;
     height: 1.3rem;
     line-height: 1.3rem;
   }
@@ -33,7 +32,6 @@ export const LiveWrapper = styled.div`
 `;
 
 export const StyledEditor = styled.div`
-  font-size: 16px;
   line-height: 1.3rem;
   height: 350px;
   max-height: 350px;
@@ -63,7 +61,6 @@ export const LiveError = styled(AuxLiveError)`
   border-radius: 3px;
   color: rgb(248, 248, 242);
   display: block;
-  font-size: 15px;
   margin-bottom: 32px;
   padding: 0.5rem;
   text-align: left;
@@ -71,12 +68,14 @@ export const LiveError = styled(AuxLiveError)`
 `;
 
 export const PreHeader = styled.div`
-  background-color: #282a36;
+  align-items: center;
+  background-color: ${darkTheme.colors.surfaceSubdued};
   border-radius: 3px 3px 0 0;
-  color: rgba(248, 248, 242, 0.75);
-  font-size: 0.75rem;
-  margin-top: 0.5rem;
-  padding: 0.8rem 1rem;
+  color: ${darkTheme.colors.textSubtle};
+  display: flex;
+  font-size: ${(p) => p.theme.fonts.size.micro}px;
+  justify-content: space-between;
+  padding: 8px 12px;
 `;
 
 export const LineNumber = styled.span`
@@ -94,9 +93,6 @@ export const CopyCode = styled.button`
   color: rgb(248, 248, 242);
   cursor: pointer;
   margin: 0.25em;
-  position: absolute;
-  right: 0.75rem;
-  top: 0.25rem;
   transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
   &:hover {
     box-shadow: rgba(46, 41, 51, 0.08) 0px 1px 2px,

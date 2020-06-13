@@ -1,5 +1,6 @@
 import React from "react";
 import Highlight, { defaultProps } from "prism-react-renderer";
+import type { Language } from "prism-react-renderer";
 import { LiveProvider, LiveEditor } from "react-live";
 import { mdx } from "@mdx-js/react";
 
@@ -33,7 +34,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   shouldIncludeLineNumbers,
 }) => {
   const codeString = children.trim();
-  const language = className.replace(/language-/, "");
+  const language = className.replace(/language-/, "") as Language;
 
   if (isLive) {
     return (
@@ -61,9 +62,6 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
       <PreHeader>
         <span>{title || language}</span>
         <CodeCopier codeString={codeString} />
-        {/* <CopyCode onClick={() => console.log("copied")}>
-          {true ? "Copied!" : "Copy"}
-        </CopyCode> */}
       </PreHeader>
       <div className="gatsby-highlight">
         <Highlight
@@ -80,7 +78,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
             getTokenProps,
           }) => {
             return (
-              <Pre className={blockClassName} style={style} hasTitle={title}>
+              <Pre className={blockClassName} style={style}>
                 <code>
                   {tokens.map((line, i) => (
                     <div {...getLineProps({ line, key: i })}>

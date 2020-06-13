@@ -44,7 +44,7 @@ export const darkTheme = {
     ...baseTheme.colors,
     background: "#1D1B1C",
     surface: "#262425",
-    surfaceSubdued: "#242222",
+    surfaceSubdued: "#222020",
     text: "#E0E6EB",
     textSubtle: "#A3ACBA",
   },

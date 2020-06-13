@@ -6,7 +6,7 @@ import {
 import { darkTheme } from "../../theme";
 
 export const Pre = styled.pre`
-  border-radius: ${({ hasTitle }) => (hasTitle ? "0 0 3px 3px" : "3px")};
+  border-radius: 0 0 4px 4px;
   box-shadow: 1px 1px 20px rgba(20, 20, 20, 0.27);
   margin: 0 0 16px 0;
   overflow: auto;
@@ -22,7 +22,7 @@ export const Pre = styled.pre`
 
 export const LiveWrapper = styled.div`
   align-items: stretch;
-  border-radius: 3px;
+  border-radius: 4px;
   box-shadow: 1px 1px 20px rgba(20, 20, 20, 0.27);
   display: flex;
   flex-direction: row;
@@ -58,7 +58,7 @@ export const LivePreview = styled(AuxLivePreview)`
 
 export const LiveError = styled(AuxLiveError)`
   background: rgb(255, 85, 85);
-  border-radius: 3px;
+  border-radius: 4px;
   color: rgb(248, 248, 242);
   display: block;
   margin-bottom: 32px;
@@ -70,7 +70,7 @@ export const LiveError = styled(AuxLiveError)`
 export const PreHeader = styled.div`
   align-items: center;
   background-color: ${darkTheme.colors.surfaceSubdued};
-  border-radius: 3px 3px 0 0;
+  border-radius: 4px 4px 0 0;
   color: ${darkTheme.colors.textSubtle};
   display: flex;
   font-size: ${(p) => p.theme.fonts.size.micro}px;

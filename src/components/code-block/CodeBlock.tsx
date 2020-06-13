@@ -1,7 +1,10 @@
 import React from "react";
 import Highlight, { defaultProps } from "prism-react-renderer";
+import type { Language } from "prism-react-renderer";
 import { LiveProvider, LiveEditor } from "react-live";
 import { mdx } from "@mdx-js/react";
+
+import { codeTheme } from "../../theme";
 
 import {
   CopyCode,
@@ -13,6 +16,7 @@ import {
   LiveError,
   StyledEditor,
 } from "./styled";
+import { CodeCopier } from "./.";
 
 interface CodeBlockProps {
   children: string;
@@ -30,14 +34,14 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   shouldIncludeLineNumbers,
 }) => {
   const codeString = children.trim();
-  const language = className.replace(/language-/, "");
+  const language = className.replace(/language-/, "") as Language;
 
   if (isLive) {
     return (
       <LiveProvider
         code={codeString}
         noInline
-        // theme={theme}
+        theme={codeTheme}
         transformCode={(code) => `/** @jsx mdx */${code}`}
         scope={{ mdx }}
       >
@@ -55,13 +59,16 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
 
   return (
     <React.Fragment>
-      {title && <PreHeader>{title}</PreHeader>}
+      <PreHeader>
+        <span>{title || language}</span>
+        <CodeCopier codeString={codeString} />
+      </PreHeader>
       <div className="gatsby-highlight">
         <Highlight
           {...defaultProps}
           code={codeString}
           language={language}
-          // theme={theme}
+          theme={codeTheme}
         >
           {({
             className: blockClassName,
@@ -69,25 +76,24 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
             tokens,
             getLineProps,
             getTokenProps,
-          }) => (
-            <Pre className={blockClassName} style={style} hasTitle={title}>
-              <CopyCode onClick={() => console.log("copied")}>
-                {/* {copied ? 'Copied!' : 'Copy'} */}
-              </CopyCode>
-              <code>
-                {tokens.map((line, i) => (
-                  <div {...getLineProps({ line, key: i })}>
-                    {shouldIncludeLineNumbers && (
-                      <LineNumber>{i + 1}</LineNumber>
-                    )}
-                    {line.map((token, key) => (
-                      <span {...getTokenProps({ token, key })} />
-                    ))}
-                  </div>
-                ))}
-              </code>
-            </Pre>
-          )}
+          }) => {
+            return (
+              <Pre className={blockClassName} style={style}>
+                <code>
+                  {tokens.map((line, i) => (
+                    <div {...getLineProps({ line, key: i })}>
+                      {shouldIncludeLineNumbers && (
+                        <LineNumber>{i + 1}</LineNumber>
+                      )}
+                      {line.map((token, key) => (
+                        <span {...getTokenProps({ token, key })} />
+                      ))}
+                    </div>
+                  ))}
+                </code>
+              </Pre>
+            );
+          }}
         </Highlight>
       </div>
     </React.Fragment>

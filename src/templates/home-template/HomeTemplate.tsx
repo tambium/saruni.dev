@@ -85,7 +85,7 @@ export default ({ data }) => {
                 padding: "16px 24px",
                 textDecoration: "none",
               }}
-              to="/getting-started"
+              to="/docs/getting-started"
             >
               Get started
             </Link>

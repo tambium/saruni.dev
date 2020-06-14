@@ -9,7 +9,8 @@ import {
   SIDEBAR_WIDTH,
   TOPBAR_HEIGHT,
 } from "../../constants/layout";
-import { Sidebar } from "../../components/sidebar";
+import { Sidebar as SidebarLegacy } from "../../components/sidebar";
+import { Sidebar } from "../../components/sidebar-next";
 import { TOC } from "../../components/toc";
 import { ITOCItem } from "../../types";
 import { Topbar } from "../../components/topbar";
@@ -57,7 +58,8 @@ export const DocsLayout: React.FC<DocsLayoutProps> = (props) => {
       }
     >
       <Topbar />
-      <Sidebar />
+      {/* <SidebarLegacy /> */}
+      <Sidebar location={location} />
       <div
         css={(theme) =>
           mq({

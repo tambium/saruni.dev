@@ -5,6 +5,7 @@ import { DocsLayout } from "../../layouts/docs-layout/DocsLayout";
 
 export default function Docs({ data: { mdx }, location, pageContext }) {
   const { prev, next, githubEditUrl } = pageContext;
+
   const {
     title,
     description,
@@ -26,6 +27,7 @@ export default function Docs({ data: { mdx }, location, pageContext }) {
       <DocsLayout
         disableTableOfContents={disableTableOfContents}
         location={location}
+        prevNext={{ prev, next }}
         tableOfContents={tableOfContents}
         tableOfContentsDepth={tableOfContentsDepth}
       >

@@ -3,6 +3,7 @@ const { createFilePath } = require(`gatsby-source-filesystem`);
 
 const { normalizeBasePath } = require(`./utils/url`);
 const withDefault = require(`./utils/with-default`);
+const { getPrevAndNext } = require(`./utils/get-prev-and-next`);
 
 exports.createPages = (
   { graphql, actions: { createPage }, reporter },
@@ -61,6 +62,9 @@ exports.createPages = (
         relativePath,
       } = doc.node;
 
+      if (!slug) return;
+      const prevAndNext = getPrevAndNext(slug);
+
       let githubEditUrl;
 
       if (githubUrl) {
@@ -78,6 +82,7 @@ exports.createPages = (
         context: {
           slug,
           githubEditUrl,
+          ...prevAndNext,
         },
       });
     });

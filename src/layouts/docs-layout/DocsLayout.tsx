@@ -11,13 +11,15 @@ import {
 } from "../../constants/layout";
 import { Sidebar } from "../../components/sidebar";
 import { TOC } from "../../components/toc";
-import { ITOCItem } from "../../types";
+import { ITOCItem, IPrevNext } from "../../types";
 import { Topbar } from "../../components/topbar";
+import { DocsLayoutFooter } from "./DocsLayoutFooter";
 
 interface DocsLayoutProps {
   children: React.ReactNode;
   disableTableOfContents: boolean;
   location: Location;
+  prevNext: IPrevNext;
   tableOfContents: {
     items: ITOCItem[];
   };
@@ -28,6 +30,7 @@ export const DocsLayout: React.FC<DocsLayoutProps> = (props) => {
   const {
     children,
     disableTableOfContents,
+    prevNext,
     tableOfContents,
     tableOfContentsDepth,
   } = props;
@@ -80,6 +83,7 @@ export const DocsLayout: React.FC<DocsLayoutProps> = (props) => {
           }}
         >
           {children}
+          <DocsLayoutFooter prevNext={prevNext} />
         </div>
         <div
           css={mq({

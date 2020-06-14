@@ -1,7 +1,6 @@
 import React from "react";
-import { navigate } from "@reach/router";
+import { navigate } from "gatsby";
 import { useLocation } from "@reach/router";
-import { useTheme as useEmotionTheme } from "emotion-theming";
 
 import {
   TopbarContainer,
@@ -10,32 +9,24 @@ import {
   TopbarSelectLabel,
   TopbarSelectLabelIconWrapper,
 } from "./styled";
-import { useSidebar } from "../../hooks/use-sidebar";
 import { ChevronDown } from "../icon/glyphs";
+import { getItemList, getActiveItem } from "../../utils/sidebar";
 
-interface TopbarProps {}
+interface TopbarProps {
+  location: Location;
+}
 
-export const Topbar: React.FC<TopbarProps> = ({}) => {
-  const selectRef = React.createRef<HTMLSelectElement>();
-  const [selectRefValue, setSelectRefValue] = React.useState(null);
+export const Topbar: React.FC<TopbarProps> = ({ location }) => {
+  const itemList = getItemList(location);
+  const activeItem = getActiveItem(itemList.items, location);
 
-  const data = useSidebar();
   const { pathname } = useLocation();
-  const theme = useEmotionTheme();
-
-  React.useEffect(() => {
-    if (selectRef.current) {
-      setSelectRefValue(selectRef.current);
-    }
-  }, [selectRef]);
 
   return (
     <TopbarContainer>
       <TopbarLeftside>
         <TopbarSelectLabel>
-          <span>
-            {selectRefValue?.options[selectRefValue?.selectedIndex].label}
-          </span>
+          <span>{activeItem?.title}</span>
           <TopbarSelectLabelIconWrapper>
             <ChevronDown size={12} />
           </TopbarSelectLabelIconWrapper>
@@ -43,20 +34,25 @@ export const Topbar: React.FC<TopbarProps> = ({}) => {
         <TopbarSelect
           defaultValue={pathname}
           onChange={(e) => navigate(e.target.value)}
-          ref={selectRef}
         >
-          {data.map(({ node: { label, link, items, id } }) => {
-            if (Array.isArray(items)) {
-              const subitems = items.map(({ label, link }) => {
-                return <option key={link} label={label} value={link} />;
+          {itemList.items.map((item, idx) => {
+            if (Array.isArray(item.items)) {
+              const subitems = item.items.map((item) => {
+                return (
+                  <option
+                    key={item.link}
+                    label={item.title}
+                    value={item.link}
+                  />
+                );
               });
               return (
-                <optgroup key={link} label={label}>
+                <optgroup key={`${idx}-${item.title}`} label={item.title}>
                   {subitems}
                 </optgroup>
               );
             }
-            return <option key={id} label={label} value={link} />;
+            return <option key={idx} label={item.title} value={item.link} />;
           })}
         </TopbarSelect>
       </TopbarLeftside>

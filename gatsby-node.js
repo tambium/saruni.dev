@@ -1,8 +1,7 @@
 const path = require(`path`);
 const { createFilePath } = require(`gatsby-source-filesystem`);
-const fs = require(`fs`);
 
-const { normalizeBasePath, resolveLink } = require(`./utils/url`);
+const { normalizeBasePath } = require(`./utils/url`);
 const withDefault = require(`./utils/with-default`);
 
 exports.createPages = (
@@ -36,19 +35,6 @@ exports.createPages = (
             }
           }
         }
-        sidebar: allSidebarItems {
-          edges {
-            node {
-              label
-              link
-              items {
-                label
-                link
-              }
-              id
-            }
-          }
-        }
       }
     `
   ).then((result) => {
@@ -63,26 +49,6 @@ exports.createPages = (
     createPage({
       path: basePath,
       component: homeTemplate,
-    });
-
-    // Generate prev/next items based on sidebar.yml file
-    const sidebar = result.data.sidebar.edges;
-    const listOfItems = [];
-
-    sidebar.forEach(({ node: { label, link, items } }) => {
-      if (Array.isArray(items)) {
-        items.forEach((item) => {
-          listOfItems.push({
-            label: item.label,
-            link: resolveLink(item.link, basePath),
-          });
-        });
-      } else {
-        listOfItems.push({
-          label,
-          link: resolveLink(link, basePath),
-        });
-      }
     });
 
     // Generate docs pages
@@ -106,21 +72,11 @@ exports.createPages = (
         );
       }
 
-      const pageLink = slug.slice(0, slug.length - 1);
-      const currentPageIndex = listOfItems.findIndex(
-        (page) => page.link === pageLink
-      );
-
-      const prev = listOfItems[currentPageIndex - 1];
-      const next = listOfItems[currentPageIndex + 1];
-
       createPage({
         path: slug,
         component: docsTemplate,
         context: {
           slug,
-          prev,
-          next,
           githubEditUrl,
         },
       });
@@ -138,18 +94,6 @@ exports.createSchemaCustomization = ({ actions }) => {
       image: String
       disableTableOfContents: Boolean
       tableOfContentsDepth: Int
-    }
-  `);
-
-  actions.createTypes(`
-    type SidebarItems implements Node {
-      label: String!
-      link: String
-      items: [SidebarItemsItems]
-    }
-    type SidebarItemsItems {
-      label: String
-      link: String
     }
   `);
 };

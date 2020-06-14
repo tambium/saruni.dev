@@ -1,6 +1,7 @@
 import { getPathDetails } from "../path";
+import { ISidebarItem } from "../../types";
 
-const isItemActive = (location: Location, item) => {
+const isItemActive = (location: Location, item: ISidebarItem) => {
   const { basePath } = getPathDetails(location);
 
   const linkMatchesPathname = item.link === basePath;
@@ -15,7 +16,7 @@ const isItemActive = (location: Location, item) => {
   return false;
 };
 
-export const getActiveItem = (itemList, location: Location) => {
+export const getActiveItem = (itemList: ISidebarItem[], location: Location) => {
   for (let item of itemList) {
     if (item.link) {
       if (isItemActive(location, item)) return item;

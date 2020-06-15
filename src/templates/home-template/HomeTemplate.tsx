@@ -25,7 +25,6 @@ export default ({ data }) => {
   const theme = useTheme();
   const maxWidth = SIDEBAR_WIDTH + CONTENT_WIDTH;
 
-  // return <pre>{JSON.stringify(data, null, 2)}</pre>;
   return (
     <React.Fragment>
       <div
@@ -85,7 +84,7 @@ export default ({ data }) => {
                 padding: "16px 24px",
                 textDecoration: "none",
               }}
-              to="/docs/getting-started"
+              to="/docs/overview"
             >
               Get started
             </Link>

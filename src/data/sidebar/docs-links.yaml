@@ -1,15 +1,17 @@
 - title: Documentation
   key: docs
   items:
-    - title: Introduction
-      link: /
     - title: Getting started
-      link: /docs/getting-started
-    - title: Example Section
       items:
-        - title: Authentication
-          link: /docs/authentication
-        - title: Forms
-          link: /docs/forms
+        - title: Overview
+          link: /docs/overview
+        - title: Installation
+          link: /docs/installation
+    - title: Markdown tests
+      items:
+        - title: Code
+          link: /docs/code
+        - title: Text
+          link: /docs/text
     - title: CLI
       link: /docs/cli

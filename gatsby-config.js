@@ -24,19 +24,6 @@ module.exports = {
       },
     },
     {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        name: `config`,
-        path: `src/config`,
-      },
-    },
-    {
-      resolve: `gatsby-transformer-yaml`,
-      options: {
-        typeName: `SidebarItems`,
-      },
-    },
-    {
       resolve: `gatsby-plugin-mdx`,
       options: {
         extensions: [`.mdx`, `.md`],

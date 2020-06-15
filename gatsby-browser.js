@@ -8,7 +8,9 @@ import { CodeBlock } from "./src/components/code-block";
 
 const components = {
   code: CodeBlock,
+  h1: (props) => <h1 {...props} />,
   inlineCode: (props) => <code {...props} />,
+  p: (props) => <p css={{ paddingBottom: 12 }} {...props} />,
 };
 
 export function wrapPageElement({ element }) {

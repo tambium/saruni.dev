@@ -7,7 +7,6 @@ import { mdx } from "@mdx-js/react";
 import { codeTheme } from "../../theme";
 
 import {
-  CopyCode,
   LineNumber,
   Pre,
   PreHeader,

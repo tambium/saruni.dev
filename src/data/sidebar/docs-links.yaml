@@ -7,11 +7,17 @@
           link: /docs/overview
         - title: Installation
           link: /docs/installation
+    - title: Database
+      items:
+        - title: Migrations
+          link: /docs/migrations
     - title: Markdown tests
       items:
         - title: Code
           link: /docs/code
         - title: Text
           link: /docs/text
+    - title: Authentication
+      link: /docs/authentication
     - title: CLI
       link: /docs/cli

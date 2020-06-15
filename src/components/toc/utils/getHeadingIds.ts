@@ -23,7 +23,7 @@ export const getHeadingIds = ({
         idList.push(hashToId(item.url));
       }
 
-      /**
+      /*
        * We should only traverse sub-items if specified in frontmatter
        * through `tableOfContentsDepth` field.
        */

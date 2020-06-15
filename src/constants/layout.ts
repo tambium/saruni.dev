@@ -15,7 +15,7 @@ export const ASIDE_PADDING_LEFT = 50;
 // all device main content
 export const CONTENT_WIDTH = 1000;
 
-/**
+/*
  * Breakpoint 1: Abitrary introduction of sidebar,
  * trusting the full width of sidebar can be accomodated.
  *

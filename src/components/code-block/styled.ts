@@ -7,7 +7,6 @@ import { darkTheme } from "../../theme";
 
 export const Pre = styled.pre`
   border-radius: 0 0 4px 4px;
-  margin: 0 0 16px 0;
   overflow: auto;
   padding: 12px;
   text-align: left;
@@ -25,7 +24,6 @@ export const LiveWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: stretch;
-  margin-bottom: 32px;
   overflow: hidden;
 `;
 
@@ -59,7 +57,6 @@ export const LiveError = styled(AuxLiveError)`
   border-radius: 4px;
   color: rgb(248, 248, 242);
   display: block;
-  margin-bottom: 32px;
   padding: 0.5rem;
   text-align: left;
   white-space: pre-wrap;

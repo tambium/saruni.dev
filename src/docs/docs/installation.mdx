@@ -2,8 +2,45 @@
 title: "Installation"
 ---
 
-Installation bla bla bla
+# Installation
 
-```js
-export const helloWorld = () => `hello, world!`;
+You can create a new Saruni project with `yarn` (classic).
+
+You could also use `npx` but we recommend `yarn` since most commands used during development with Saruni will depend upon it.
+
+```bash
+yarn create saruni-app ./my-app
+cd my-app
 ```
+
+## Configuration
+
+Saruni uses the tried-and-tested PostgreSQL as a data store. Follow the [instructions for installation](https://www.postgresql.org/download/) and then create a local database instance to get started.
+
+```bash
+psql
+CREATE DATABASE database_name;
+```
+
+Saruni interacts with your database instance through [Prisma](https://www.prisma.io/docs/understand-prisma/introduction) behind the scenes. For that to happen, update the `DATABASE_URL` variable following the PostgreSQL connection URL syntax.
+
+```packages/api/prisma/.env
+DATABASE_URL="postgres://username:password@localhost:5432/database_name
+```
+
+You’ll want to ensure the `username` supplied has suitable read/write permissions.
+
+```bash
+psql
+\du # list database roles
+```
+
+## Run development servers
+
+To work on your Saruni project simply run the `saruni dev` command.
+
+```bash
+yarn saruni dev
+```
+
+This command launches development servers that boot up local instances of our cloud functions, Prisma client and Next.js project.

@@ -26,7 +26,7 @@ const PrevNext = ({ prevNext }: { prevNext: IPrevNext }) => {
             }}
             key={key}
           >
-            {prevNext[key].link && (
+            {prevNext[key]?.link && (
               <Link
                 css={{
                   display: "flex",

@@ -1,0 +1,39 @@
+---
+title: "Migrations"
+---
+
+# Migrations
+
+## Introduction
+
+Migrations are like version control for your database, allowing for replicable modifications to the database schema.
+
+Through use of [Prisma](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-migrate) under the hood, Saruni allows you to write migrations declaratively by updating the `schema.prisma` file.
+
+```packages/api/prisma/schema.prisma
+model User {
+  id    Int     @default(autoincrement()) @id
+  email String  @unique
+  name  String?
+}
+```
+
+## Generating migrations
+
+To create a migration, use the `db migrate save` command.
+
+```bash
+yarn saruni db migrate save
+```
+
+You will be asked to supply a name for the migration and then you’re done! Each time you run the `save` command, a directory will be created in `prisma/migrations` with a dedicated `README.md` detailing the changes made.
+
+## Running migrations
+
+To run outstanding migrations, use the `db migrate up` command.
+
+```bash
+yarn saruni db migrate up
+```
+
+This command executes migrations against your database.

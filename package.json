@@ -1,8 +1,10 @@
 {
-  "name": "saruni.dev-experimental",
+  "name": "saruni.dev",
   "version": "1.0.0",
   "scripts": {
-    "dev": "gatsby develop"
+    "dev": "gatsby develop",
+    "build": "gatsby build",
+    "serve": "gatsby serve"
   },
   "dependencies": {
     "@emotion/core": "^10.0.28",

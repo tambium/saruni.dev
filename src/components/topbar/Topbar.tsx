@@ -1,6 +1,7 @@
 import React from "react";
 import { navigate } from "gatsby";
 import { useLocation } from "@reach/router";
+import { useGlobalTheme } from "@saruni-ui/theme";
 
 import {
   TopbarContainer,
@@ -17,15 +18,18 @@ interface TopbarProps {
 }
 
 export const Topbar: React.FC<TopbarProps> = ({ location }) => {
+  const {
+    tokens: { mode },
+  } = useGlobalTheme({});
   const itemList = getItemList(location);
   const activeItem = getActiveItem(itemList.items, location);
 
   const { pathname } = useLocation();
 
   return (
-    <TopbarContainer>
+    <TopbarContainer mode={mode}>
       <TopbarLeftside>
-        <TopbarSelectLabel>
+        <TopbarSelectLabel mode={mode}>
           <span>{activeItem?.title}</span>
           <TopbarSelectLabelIconWrapper>
             <ChevronDown size={12} />

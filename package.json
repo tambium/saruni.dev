@@ -12,6 +12,7 @@
     "@emotion/styled": "^10.0.27",
     "@mdx-js/mdx": "^1.6.5",
     "@mdx-js/react": "^1.6.5",
+    "@saruni-ui/theme": "^0.0.8",
     "emotion-theming": "^10.0.27",
     "facepaint": "^1.2.1",
     "gatsby": "^2.23.3",
@@ -33,6 +34,7 @@
     "react-live": "^2.2.2"
   },
   "devDependencies": {
-    "@types/facepaint": "^1.2.1"
+    "@types/facepaint": "^1.2.1",
+    "eslint-config-react-app": "^5.2.1"
   }
 }

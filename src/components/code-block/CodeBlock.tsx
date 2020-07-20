@@ -1,11 +1,11 @@
 import React from "react";
+import { useGlobalTheme } from "@saruni-ui/theme";
 import Highlight, { defaultProps } from "prism-react-renderer";
 import type { Language } from "prism-react-renderer";
 import { LiveProvider, LiveEditor } from "react-live";
 import { mdx } from "@mdx-js/react";
 
 import { codeTheme } from "../../theme";
-
 import {
   LineNumber,
   Pre,
@@ -32,6 +32,9 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   title,
   shouldIncludeLineNumbers,
 }) => {
+  const {
+    tokens: { mode },
+  } = useGlobalTheme({});
   const codeString = children.trim();
   const language = className.replace(/language-/, "") as Language;
 
@@ -58,7 +61,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
 
   return (
     <React.Fragment>
-      <PreHeader>
+      <PreHeader mode={mode}>
         <span>{title || language}</span>
         <CodeCopier codeString={codeString} />
       </PreHeader>

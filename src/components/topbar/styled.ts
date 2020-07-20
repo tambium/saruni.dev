@@ -1,12 +1,13 @@
 import styled from "@emotion/styled";
+import { colors, ThemeModes, font } from "@saruni-ui/theme";
 
 import { mq, TOPBAR_HEIGHT, ZINDEX } from "../../constants/layout";
 
-export const TopbarContainer = styled.div((props) =>
+export const TopbarContainer = styled.div<{ mode: ThemeModes }>((props) =>
   mq({
     alignItems: "center",
-    backgroundColor: props.theme.colors.background,
-    borderBottom: `1px solid ${props.theme.colors.surface}`,
+    backgroundColor: colors.background[props.mode],
+    borderBottom: `1px solid ${colors.borderSubdued[props.mode]}`,
     display: ["flex", "none"],
     height: TOPBAR_HEIGHT,
     left: 0,
@@ -27,11 +28,13 @@ export const TopbarLeftside = styled.div`
   position: relative;
 `;
 
+type TopbarSelectLabelProps = { mode: ThemeModes };
+
 export const TopbarSelectLabel = styled.label`
   align-items: center;
-  color: ${(p) => p.theme.colors.textSubtle};
+  color: ${(p: TopbarSelectLabelProps) => colors.text[p.mode]};
   display: flex;
-  font-size: ${(p) => p.theme.fonts.size.micro}px;
+  font-size: ${font.size.caption}px;
   font-weight: 500px;
   padding-left: 16px;
   padding-right: 16px;

@@ -1,6 +1,9 @@
 import React from "react";
-import { Themes } from "./.";
-import { getSystemTheme, onSystemThemeChange } from "./utils";
+import {
+  DEFAULT_THEME_MODE,
+  GlobalThemeProvider,
+  ThemeModes,
+} from "@saruni-ui/theme";
 
 export const ThemeContext = React.createContext(null);
 
@@ -9,46 +12,25 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [initialized, setInitialized] = React.useState(false);
-  const [theme, setTheme] = React.useState<Themes>(null);
+  const [mode, setMode] = React.useState<ThemeModes>(DEFAULT_THEME_MODE);
 
-  const updateTheme = React.useCallback(
-    (newTheme) => {
-      if (typeof newTheme === "function") {
-        setTheme((currentTheme) => {
-          return newTheme(currentTheme);
-        });
-      } else {
-        setTheme(newTheme);
-      }
-    },
-    [setTheme]
-  );
+  const switchMode = () => {
+    setMode(mode === "light" ? "dark" : "light");
+  };
 
-  const isLight = theme === "light";
-
-  const switchTheme = () => updateTheme(isLight ? "dark" : "light");
-
-  React.useEffect(() => {
-    if (!initialized) {
-      setTheme(getSystemTheme());
-      setInitialized(true);
-    }
-    return onSystemThemeChange(updateTheme);
-  }, [initialized, setInitialized, setTheme, updateTheme]);
-
-  if (!initialized) return null;
+  const isLight = mode === "light";
 
   return (
-    <ThemeContext.Provider
-      value={{
-        isLight,
-        theme,
-        setTheme,
-        switchTheme,
-      }}
-    >
-      {children}
-    </ThemeContext.Provider>
+    <GlobalThemeProvider theme={() => ({ mode })}>
+      <ThemeContext.Provider
+        value={{
+          isLight,
+          mode,
+          switchMode,
+        }}
+      >
+        {children}
+      </ThemeContext.Provider>
+    </GlobalThemeProvider>
   );
 };

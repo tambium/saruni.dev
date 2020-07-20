@@ -11,13 +11,10 @@ exports.createPages = (
 ) => {
   reporter.success(`onCreateDocs`);
 
-  const { basePath, baseDir, docsPath, githubUrl } = withDefault(themeOptions);
+  const { baseDir, docsPath, githubUrl } = withDefault(themeOptions);
 
-  const docsTemplate = require.resolve(
-    `./src/templates/docs-template/DocsTemplate.tsx`
-  );
-  const homeTemplate = require.resolve(
-    `./src/templates/home-template/HomeTemplate.tsx`
+  const contentTemplate = require.resolve(
+    `./src/templates/content-template/ContentTemplate.tsx`
   );
 
   return graphql(
@@ -47,22 +44,22 @@ exports.createPages = (
       return;
     }
 
-    createPage({
-      path: basePath,
-      component: homeTemplate,
-    });
+    // Generate content pages
+    const content = result.data.files.edges;
 
-    // Generate docs pages
-    const docs = result.data.files.edges;
-    docs.forEach((doc) => {
+    content.forEach((page) => {
       const {
         childMdx: {
           fields: { slug },
         },
         relativePath,
-      } = doc.node;
+      } = page.node;
 
       if (!slug) return;
+
+      // docs, guides, etc.
+      const section = slug.split("/")[1];
+
       const prevAndNext = getPrevAndNext(slug);
 
       let githubEditUrl;
@@ -77,9 +74,10 @@ exports.createPages = (
       }
 
       createPage({
-        path: slug,
-        component: docsTemplate,
+        path: `${slug}`,
+        component: contentTemplate,
         context: {
+          section,
           slug,
           githubEditUrl,
           ...prevAndNext,

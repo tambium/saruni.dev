@@ -14,6 +14,7 @@ import { TOC } from "../../components/toc";
 import { ITOCItem, IPrevNext } from "../../types";
 import { Topbar } from "../../components/topbar";
 import { DocsLayoutFooter } from "./DocsLayoutFooter";
+import { colors, useGlobalTheme } from "@saruni-ui/theme";
 
 interface DocsLayoutProps {
   children: React.ReactNode;
@@ -27,6 +28,9 @@ interface DocsLayoutProps {
 }
 
 export const DocsLayout: React.FC<DocsLayoutProps> = (props) => {
+  const {
+    tokens: { mode },
+  } = useGlobalTheme({});
   const {
     children,
     disableTableOfContents,
@@ -42,7 +46,7 @@ export const DocsLayout: React.FC<DocsLayoutProps> = (props) => {
 
   return (
     <div
-      css={(theme) =>
+      css={() =>
         mq({
           display: "grid",
           gridTemplateColumns: [
@@ -55,16 +59,16 @@ export const DocsLayout: React.FC<DocsLayoutProps> = (props) => {
             }px) / 2 + ${SIDEBAR_WIDTH}px)) ${CONTENT_WIDTH}px 1fr`,
           ],
           height: "100%",
-          backgroundColor: theme.colors.background,
+          backgroundColor: colors.background[mode],
         })
       }
     >
       <Topbar location={location} />
       <Sidebar location={location} />
       <div
-        css={(theme) =>
+        css={() =>
           mq({
-            backgroundColor: theme.colors.background,
+            backgroundColor: colors.background[mode],
             display: "flex",
             paddingTop: [16 + TOPBAR_HEIGHT, 48],
             paddingLeft: [16, 32, 64],

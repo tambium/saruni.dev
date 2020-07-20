@@ -1,5 +1,6 @@
 import { ISidebarList } from "../../types";
 import docsSidebar from "../../data/sidebar/docs-links.yaml";
+import guidesSidebar from "../../data/sidebar/guides-links.yaml";
 import { getPathDetails } from "../path";
 
 const createHash = (link) => {
@@ -37,9 +38,11 @@ const extendSidebarData = (item) => {
 };
 
 const itemListDocs = extendSidebarData(docsSidebar);
+const itemListGuides = extendSidebarData(guidesSidebar);
 
 const itemListLookup = {
   docs: itemListDocs,
+  guides: itemListGuides,
 };
 
 export const getItemList = (location: Location): ISidebarList => {

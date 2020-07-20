@@ -1016,7 +1016,7 @@
     "@emotion/utils" "0.11.3"
     "@emotion/weak-memoize" "0.2.5"
 
-"@emotion/core@^10.0.0", "@emotion/core@^10.0.28":
+"@emotion/core@^10.0.0", "@emotion/core@^10.0.27", "@emotion/core@^10.0.28":
   version "10.0.28"
   resolved "https://registry.yarnpkg.com/@emotion/core/-/core-10.0.28.tgz#bb65af7262a234593a9e952c041d0f1c9b9bef3d"
   integrity sha512-pH8UueKYO5jgg0Iq+AmCLxBsvuGtvlmiDCOuv8fGNYn3cowFpLN98L8zO56U0H1PjDIyAlXymgL3Wu7u7v6hbA==
@@ -1927,6 +1927,13 @@
   integrity sha512-RWC2CZsEB6sUOMnBCiuemyesMVNOOKJP53j4RgbdaJ2zGFL6N+bh/E5bfZnAiVhjJ0G0laViE9s7iROaRWNFew==
   dependencies:
     tslib "^1.11.2"
+
+"@saruni-ui/theme@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@saruni-ui/theme/-/theme-0.0.8.tgz#f61e25c24ee72c3981d3c674fe27f9cac37ebf17"
+  integrity sha512-i6pykEvCCSr8Bm4C/PUkaX1af9eC1xcmptt7WRHXx3l0tsQnJB5J4cN9PIdqu88CQZC/cNh5O25gwK3NwWpQEg==
+  dependencies:
+    "@emotion/core" "^10.0.27"
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"

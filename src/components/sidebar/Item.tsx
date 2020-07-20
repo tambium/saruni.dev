@@ -12,8 +12,6 @@ interface ItemProps {
 }
 
 export const Item: React.FC<ItemProps> = ({ item }) => {
-  const theme = useTheme();
-
   const { getItemState } = useSidebar();
   const { isActive } = getItemState(item);
 
@@ -24,7 +22,7 @@ export const Item: React.FC<ItemProps> = ({ item }) => {
   return (
     <li
       css={{
-        backgroundColor: isActive ? hexToRGBA(theme.colors.brand, 0.1) : null,
+        backgroundColor: isActive ? hexToRGBA("pink", 0.1) : null,
         borderRadius: "4px 0 0 4px",
       }}
     >

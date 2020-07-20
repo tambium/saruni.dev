@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "gatsby";
 import { useTheme } from "emotion-theming";
+import { colors, useGlobalTheme } from "@saruni-ui/theme";
+
 import { IPrevNext } from "../../types";
 
 interface DocsLayoutFooterProps {
@@ -67,12 +69,14 @@ const PrevNext = ({ prevNext }: { prevNext: IPrevNext }) => {
 export const DocsLayoutFooter: React.FC<DocsLayoutFooterProps> = ({
   prevNext,
 }) => {
-  const theme = useTheme();
+  const {
+    tokens: { mode },
+  } = useGlobalTheme({});
 
   return (
     <div
       css={{
-        borderTop: `1px solid ${theme.colors.surface}`,
+        borderTop: `1px solid ${colors.surface[mode]}`,
         marginTop: 24,
         paddingTop: 24,
       }}

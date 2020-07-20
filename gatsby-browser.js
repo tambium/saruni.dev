@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "gatsby";
-import { ThemeProvider as EmotionThemeProvider } from "emotion-theming";
 import { MDXProvider } from "@mdx-js/react";
+import { Reset } from "@saruni-ui/theme";
+import { Global, css } from "@emotion/core";
 
-import { ThemeContext, ThemeProvider } from "./src/context/theme";
-import { darkTheme, GlobalStyle, lightTheme } from "./src/theme";
+import { ThemeProvider } from "./src/context/theme";
 import { CodeBlock } from "./src/components/code-block";
 import { isExternal as isExternalURL } from "./src/utils/url";
 
@@ -26,11 +26,12 @@ const components = {
       return (
         <a
           css={(theme) => ({
-            color: theme.colors.brand,
+            color: "pink",
             textDecoration: "none",
           })}
           href={href}
           rel="noopener noreferrer"
+          target="_blank"
           {...rest}
         >
           {children}
@@ -40,7 +41,7 @@ const components = {
       return (
         <Link
           css={(theme) => ({
-            color: theme.colors.brand,
+            color: "pink",
             textDecoration: "none",
           })}
           to={href}
@@ -103,20 +104,16 @@ export function wrapPageElement({ element }) {
 export function wrapRootElement({ element }) {
   return (
     <ThemeProvider>
-      <ThemeContext.Consumer>
-        {({ theme }) => {
-          return (
-            <EmotionThemeProvider
-              theme={theme === "light" ? lightTheme : darkTheme}
-            >
-              <React.Fragment>
-                <GlobalStyle />
-                {element}
-              </React.Fragment>
-            </EmotionThemeProvider>
-          );
-        }}
-      </ThemeContext.Consumer>
+      <Global
+        styles={css`
+          @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+          html,
+          body {
+            font-family: "Inter", sans-serif !important;
+          }
+        `}
+      />
+      <Reset toke>{element}</Reset>
     </ThemeProvider>
   );
 }

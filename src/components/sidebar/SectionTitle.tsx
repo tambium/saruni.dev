@@ -1,5 +1,7 @@
 import React from "react";
 import { useTheme } from "emotion-theming";
+import { font } from "@saruni-ui/theme";
+
 import { ItemLink } from "./ItemLink";
 import { ISidebarItem } from "../../types";
 
@@ -16,12 +18,10 @@ interface TitleProps {
 }
 
 export const Title: React.FC<TitleProps> = ({ item }) => {
-  const theme = useTheme();
-
   return (
     <h5
       css={{
-        fontSize: theme.fonts.size.tiny,
+        fontSize: font.size.caption,
         fontWeight: 600,
         textTransform: "uppercase",
         marginBottom: 4,

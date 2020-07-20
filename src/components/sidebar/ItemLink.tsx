@@ -1,6 +1,6 @@
 import React from "react";
-import { useTheme } from "emotion-theming";
 import { Link } from "gatsby";
+import { colors, font, useGlobalTheme } from "@saruni-ui/theme";
 
 import { useSidebar } from "../../hooks/use-sidebar-next";
 import type { ISidebarItem } from "../../types";
@@ -10,7 +10,9 @@ interface ItemLinkProps {
 }
 
 export const ItemLink: React.FC<ItemLinkProps> = ({ item }) => {
-  const theme = useTheme();
+  const {
+    tokens: { mode },
+  } = useGlobalTheme({});
   const { getItemState } = useSidebar();
   const { isActive } = getItemState(item);
 
@@ -18,9 +20,9 @@ export const ItemLink: React.FC<ItemLinkProps> = ({ item }) => {
   return (
     <Link
       css={{
-        color: isActive ? theme.colors.brand : theme.colors.textSubtle,
+        color: isActive ? "pink" : colors.text[mode],
         display: "flex",
-        fontSize: theme.fonts.size.small,
+        fontSize: font.size.caption,
         padding: "4px 16px 4px 12px",
         textDecoration: "none",
       }}

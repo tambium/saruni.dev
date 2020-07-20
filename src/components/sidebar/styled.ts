@@ -1,24 +1,27 @@
 import styled from "@emotion/styled";
 import isPropValid from "@emotion/is-prop-valid";
+import { colors, ThemeModes } from "@saruni-ui/theme";
+
 import { hexToRGBA } from "../../utils/color";
 import {
   mq,
   SIDEBAR_MIN_WIDTH,
   SIDEBAR_WIDTH,
   SIDEBAR_LOGO_CONTAINER_HEIGHT,
+  TOPBAR_HEIGHT,
 } from "../../constants/layout";
 
-export const SidebarContainer = styled.div((props) =>
-  mq({
-    borderRight: `1px solid ${props.theme.colors.surface}`,
+export const SidebarContainer = styled.div(({ mode }: { mode: ThemeModes }) => {
+  return mq({
+    borderRight: `1px solid ${colors.surface[mode]}`,
     display: ["none", "flex"],
     alignItems: "flex-end",
     flexDirection: "column",
     flexGrow: 1,
     minWidth: SIDEBAR_MIN_WIDTH,
     width: "100%",
-  })
-);
+  });
+});
 
 export const SidebarWrapper = styled.div((props) =>
   mq({
@@ -26,27 +29,10 @@ export const SidebarWrapper = styled.div((props) =>
     flexDirection: "column",
     height: [null, "100vh"],
     position: "sticky",
-    top: 0,
+    top: TOPBAR_HEIGHT,
     width: SIDEBAR_WIDTH,
   })
 );
-
-export const SidebarLogoContainer = styled.div`
-  align-items: center;
-  display: flex;
-  height: ${SIDEBAR_LOGO_CONTAINER_HEIGHT}px;
-  justify-content: space-between;
-  padding: 16px 16px 16px 12px;
-`;
-
-export const SidebarDocsHighlight = styled.span`
-  color: ${(p) => p.theme.colors.brand};
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  padding-left: 6px;
-  text-transform: uppercase;
-`;
 
 export const SidebarList = styled.ul`
   flex: 1;

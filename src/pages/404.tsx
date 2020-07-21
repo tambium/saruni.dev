@@ -1,10 +1,12 @@
 import React from "react";
-import { useTheme } from "emotion-theming";
+import { useGlobalTheme, colors, font } from "@saruni-ui/theme";
 
 interface FourOhFourProps {}
 
 const FourOhFour: React.FC<FourOhFourProps> = ({}) => {
-  const theme = useTheme();
+  const {
+    tokens: { mode },
+  } = useGlobalTheme({});
 
   return (
     <div
@@ -17,8 +19,8 @@ const FourOhFour: React.FC<FourOhFourProps> = ({}) => {
     >
       <h4
         css={{
-          borderRight: `1px solid ${theme.colors.surface}`,
-          fontSize: theme.fonts.size.dek,
+          borderRight: `1px solid ${colors.borderSubdued[mode]}`,
+          fontSize: font.size.subheading,
           fontWeight: 500,
           padding: "10px 24px 10px 0",
           marginRight: 24,

@@ -35,7 +35,7 @@ export const ContentContainer = styled.main(
     return mq({
       backgroundColor: colors.background[mode],
       display: "flex",
-      paddingTop: [16 + TOPBAR_HEIGHT, CONTENT_PADDING_VERTICAL],
+      paddingTop: [CONTENT_PADDING_VERTICAL / 2, CONTENT_PADDING_VERTICAL],
       paddingLeft: [16, 32, 64],
       paddingBottom: [16, 32],
       paddingRight: [16, 32, 0],

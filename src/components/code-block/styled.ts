@@ -9,7 +9,7 @@ import {
 export const Pre = styled.pre`
   border-radius: 0 0 4px 4px;
   overflow: auto;
-  padding: 12px;
+  padding: 16px;
   text-align: left;
   word-wrap: normal;
   webkit-overflow-scrolling: touch;
@@ -70,7 +70,7 @@ export const PreHeader = styled("div")(
     display: "flex",
     fontSize: `${font.size.body}px`,
     justifyContent: "space-between",
-    padding: "8px 12px",
+    padding: "10px 16px",
   },
   ({ mode }: { mode: ThemeModes }) => ({
     backgroundColor: `${colors.surfaceNeutralSubdued["dark"]}`,

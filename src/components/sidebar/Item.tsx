@@ -1,4 +1,5 @@
 import React from "react";
+import { colors, useGlobalTheme } from "@saruni-ui/theme";
 
 import { Accordion } from "./Accordion";
 import { ItemLink } from "./ItemLink";
@@ -10,6 +11,9 @@ interface ItemProps {
 }
 
 export const Item: React.FC<ItemProps> = ({ item }) => {
+  const {
+    tokens: { mode },
+  } = useGlobalTheme({});
   const { getItemState } = useSidebar();
   const { isActive } = getItemState(item);
 
@@ -20,7 +24,7 @@ export const Item: React.FC<ItemProps> = ({ item }) => {
   return (
     <li
       css={{
-        backgroundColor: isActive ? "#f2f7fe" : null,
+        backgroundColor: isActive ? colors.surfaceSelectedPressed[mode] : null,
         borderRadius: "4px 0 0 4px",
       }}
     >

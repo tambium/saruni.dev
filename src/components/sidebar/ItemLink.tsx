@@ -24,7 +24,7 @@ export const ItemLink: React.FC<ItemLinkProps> = ({ item }) => {
         display: "flex",
         fontSize: font.size.body,
         fontWeight: isActive ? 500 : undefined,
-        padding: "4px 16px 4px 12px",
+        padding: "4px 16px 4px 16px",
         textDecoration: "none",
         transition: "color 0.2s ease",
         "&:hover": {

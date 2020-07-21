@@ -11,6 +11,10 @@ const ContentTemplate: React.FC<ContentTemplateProps> = ({
   location,
   pageContext,
 }) => {
+  const { prev, next, githubEditUrl } = pageContext;
+
+  console.log(prev, next);
+
   const {
     title,
     description,

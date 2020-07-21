@@ -1,5 +1,4 @@
 import React from "react";
-import { useTheme } from "emotion-theming";
 import { font } from "@saruni-ui/theme";
 
 import { ItemLink } from "./ItemLink";
@@ -26,7 +25,7 @@ export const Title: React.FC<TitleProps> = ({ item }) => {
         letterSpacing: "0.2px",
         textTransform: "uppercase",
         marginBottom: 4,
-        paddingLeft: 12,
+        paddingLeft: 16,
         "&:not(:first-of-type)": {
           marginTop: 16,
         },

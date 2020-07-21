@@ -1,66 +1,120 @@
 import React from "react";
-import { navigate } from "gatsby";
-import { useLocation } from "@reach/router";
-import { useGlobalTheme } from "@saruni-ui/theme";
+import { colors, useGlobalTheme } from "@saruni-ui/theme";
+import { Link } from "gatsby";
 
-import {
-  TopbarContainer,
-  TopbarLeftside,
-  TopbarSelect,
-  TopbarSelectLabel,
-  TopbarSelectLabelIconWrapper,
-} from "./styled";
-import { ChevronDown } from "../icon/glyphs";
-import { getItemList, getActiveItem } from "../../utils/sidebar";
+import { TOPBAR_HEIGHT, ZINDEX, mq } from "../../constants/layout";
+import { useTheme } from "../../hooks/use-theme";
+import { IconButton } from "../button";
+import { Moon, Sun } from "../icon/glyphs";
+import { Branding } from "./Branding";
+import { MobileSelect } from "./MobileSelect";
 
 interface TopbarProps {
-  location: Location;
+  isContentLayout?: boolean;
+  maxWidth: number;
+  section?: string;
 }
 
-export const Topbar: React.FC<TopbarProps> = ({ location }) => {
+export const Topbar: React.FC<TopbarProps> = ({
+  isContentLayout = false,
+  maxWidth,
+}) => {
   const {
     tokens: { mode },
   } = useGlobalTheme({});
-  const itemList = getItemList(location);
-  const activeItem = getActiveItem(itemList.items, location);
-
-  const { pathname } = useLocation();
+  const { isLight, switchMode } = useTheme();
 
   return (
-    <TopbarContainer mode={mode}>
-      <TopbarLeftside>
-        <TopbarSelectLabel mode={mode}>
-          <span>{activeItem?.title}</span>
-          <TopbarSelectLabelIconWrapper>
-            <ChevronDown size={12} />
-          </TopbarSelectLabelIconWrapper>
-        </TopbarSelectLabel>
-        <TopbarSelect
-          defaultValue={pathname}
-          onChange={(e) => navigate(e.target.value)}
-        >
-          {itemList.items.map((item, idx) => {
-            if (Array.isArray(item.items)) {
-              const subitems = item.items.map((item) => {
-                return (
-                  <option
-                    key={item.link}
-                    label={item.title}
-                    value={item.link}
-                  />
-                );
-              });
-              return (
-                <optgroup key={`${idx}-${item.title}`} label={item.title}>
-                  {subitems}
-                </optgroup>
-              );
-            }
-            return <option key={idx} label={item.title} value={item.link} />;
+    <div
+      css={{
+        zIndex: ZINDEX.ZINDEX_TOPBAR,
+        ...(isContentLayout && {
+          backgroundColor: colors.surface[mode],
+          borderBottom: `1px solid ${colors.borderSubdued[mode]}`,
+          position: "fixed",
+          left: 0,
+          right: 0,
+          top: 0,
+        }),
+      }}
+    >
+      <div
+        css={{
+          alignItems: "center",
+          display: "flex",
+          height: `${TOPBAR_HEIGHT}px`,
+          justifyContent: "space-between",
+          margin: "0 auto",
+          maxWidth,
+          padding: "0 16px",
+          position: "relative",
+        }}
+      >
+        <div
+          css={mq({
+            ...(isContentLayout && {
+              display: ["none", "flex"],
+            }),
           })}
-        </TopbarSelect>
-      </TopbarLeftside>
-      <div />
-    </TopbarContainer>
+        >
+          <Branding />
+        </div>
+        {isContentLayout && (
+          <div
+            css={mq({
+              display: ["inline-flex", "none"],
+              height: TOPBAR_HEIGHT,
+              position: "relative",
+            })}
+          >
+            <MobileSelect />
+          </div>
+        )}
+        <div
+          css={{
+            alignItems: "center",
+            display: "flex",
+          }}
+        >
+          <Link
+            css={{
+              color: colors.text[mode],
+              fontWeight: 500,
+              marginRight: 16,
+            }}
+            to="/docs/overview"
+          >
+            Docs
+          </Link>
+          <Link
+            css={{
+              color: colors.text[mode],
+              fontWeight: 500,
+              marginRight: 16,
+            }}
+            to="/guides/cors"
+          >
+            Guides
+          </Link>
+          <a
+            css={{
+              color: colors.text[mode],
+              fontWeight: 500,
+              marginRight: 16,
+            }}
+            href="https://github.com/tambium/saruni"
+          >
+            GitHub
+          </a>
+          <IconButton
+            ariaLabel="Toggle theme"
+            backgroundColor={colors.surfaceNeutralSubdued[mode]}
+            color={colors.text[mode]}
+            icon={isLight ? <Moon size={14} /> : <Sun size={14} />}
+            onClick={switchMode}
+          />
+        </div>
+      </div>
+    </div>
   );
 };

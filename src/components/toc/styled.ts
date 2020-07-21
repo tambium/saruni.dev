@@ -16,7 +16,7 @@ export const TOCHeading = styled.h4`
   font-weight: 600;
   letter-spacing: 0.2px;
   text-transform: uppercase;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 `;
 
 export const TOCList = styled.ul`

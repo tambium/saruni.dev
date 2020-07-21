@@ -1,10 +1,11 @@
 import React from "react";
 import { font, colors, useGlobalTheme } from "@saruni-ui/theme";
 
-import { Topbar } from "../../components/topbar-next";
+import { Topbar } from "../../components/topbar";
 import { oppositeMode } from "../../utils/color/oppositeMode";
 import { Link } from "gatsby";
 import { Tambium } from "../../components/icon/glyphs";
+import { mq } from "../../constants/layout";
 
 interface HomeProps {}
 
@@ -56,7 +57,7 @@ export const Home: React.FC<HomeProps> = ({}) => {
             css={{
               margin: "0 auto",
               maxWidth: 752,
-              padding: "72px 12px 104px",
+              padding: "72px 16px 104px",
               width: "100%",
             }}
           >
@@ -89,7 +90,7 @@ export const Home: React.FC<HomeProps> = ({}) => {
                 css={{
                   backgroundColor: colors.background[oppositeMode(mode)],
                   borderRadius: 50,
-                  color: colors.text[oppositeMode(mode)],
+                  color: colors.background[mode],
                   display: "inline-flex",
                   padding: "6px 16px",
                   fontSize: font.size.subtitle,
@@ -115,15 +116,15 @@ export const Home: React.FC<HomeProps> = ({}) => {
           </div>
         </section>
       </div>
-      <section css={{ padding: 48, paddingBottom: 96 }}>
+      <section css={{ paddingBottom: 96 }}>
         <div css={{ margin: "0 auto", maxWidth: 792, width: "100%" }}>
-          <div css={{ padding: "0 12px" }}>
+          <div css={{ padding: "0 16px" }}>
             <div
-              css={{
+              css={mq({
                 display: "grid",
-                gridTemplateColumns: "repeat(2, 1fr)",
+                gridTemplateColumns: ["repeat(1, 1fr)", "repeat(2, 1fr)"],
                 gridGap: 32,
-              }}
+              })}
             >
               {FEATURES.map((feature, idx) => {
                 return (
@@ -131,7 +132,7 @@ export const Home: React.FC<HomeProps> = ({}) => {
                     css={{
                       backgroundColor: colors.surfaceNeutralSubdued[mode],
                       borderRadius: 4,
-                      padding: 20,
+                      padding: 16,
                     }}
                     key={idx}
                   >
@@ -156,7 +157,7 @@ export const Home: React.FC<HomeProps> = ({}) => {
           </div>
         </div>
       </section>
-      <footer css={{ padding: 48, paddingBottom: 96 }}>
+      <footer css={{ padding: "0 16px" }}>
         <div
           css={{
             margin: "0 auto",
@@ -165,7 +166,7 @@ export const Home: React.FC<HomeProps> = ({}) => {
             width: "100%",
           }}
         >
-          <div css={{ padding: "48px 12px" }}>
+          <div css={{ padding: "48px 0 64px" }}>
             <div css={{ marginBottom: 16 }}>
               <Tambium size={48} />
             </div>

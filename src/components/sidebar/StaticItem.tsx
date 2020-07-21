@@ -15,7 +15,7 @@ export const StaticItem: React.FC<StaticItemProps> = ({
   title,
 }) => {
   return (
-    <li css={{ display: "flex", padding: "4px 12px" }}>
+    <li css={{ display: "flex", padding: "4px 16px" }}>
       <div css={{ color: iconColor, marginRight: 12 }}>{icon}</div>
       <div
         css={{

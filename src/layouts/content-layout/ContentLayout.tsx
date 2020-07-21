@@ -8,7 +8,7 @@ import {
   ContentWrapper,
   LayoutContainer,
 } from "./styled";
-import { Topbar } from "../../components/topbar-next";
+import { Topbar } from "../../components/topbar";
 import { Sidebar } from "../../components/sidebar";
 import { CONTENT_WIDTH, SIDEBAR_WIDTH } from "../../constants/layout";
 import { TOC } from "../../components/toc";
@@ -44,11 +44,7 @@ export const ContentLayout: React.FC<ContentLayoutProps> = ({
 
   return (
     <React.Fragment>
-      <Topbar
-        isFixed
-        maxWidth={CONTENT_WIDTH + SIDEBAR_WIDTH}
-        section={section}
-      />
+      <Topbar isContentLayout maxWidth={CONTENT_WIDTH + SIDEBAR_WIDTH} />
       <LayoutContainer mode={mode}>
         <Sidebar location={window.location} section={section} />
         <ContentContainer mode={mode}>

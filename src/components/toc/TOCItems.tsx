@@ -41,8 +41,10 @@ export const TOCItems: React.FC<TOCItemsProps> = ({
                       ? colors.interactive[mode]
                       : colors.textSubdued[mode],
                     border: 0,
+                    display: "inline-flex",
                     fontSize: font.size.body,
                     fontWeight: isActive ? 500 : undefined,
+                    padding: "2px 0",
                     transition: `color 0.2s ease`,
                     textDecoration: "none",
                     "&:hover": {

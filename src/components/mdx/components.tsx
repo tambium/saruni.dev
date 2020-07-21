@@ -85,9 +85,9 @@ export const components = ({ mode }: { mode: ThemeModes }) => ({
     </h6>
   ),
   inlineCode: (props) => <code {...props} />,
-  p: (props) => <p css={{ lineHeight: 1.5, paddingBottom: 12 }} {...props} />,
+  p: (props) => <p css={{ lineHeight: 1.5, paddingBottom: 16 }} {...props} />,
   pre: (props) => <pre css={{ marginBottom: 24 }} {...props} />,
-  li: (props) => <li {...props} />,
+  li: (props) => <li css={{ padding: "4px 0" }} {...props} />,
   ul: (props) => (
     <ul
       css={{

@@ -50,7 +50,7 @@ export const ContentLayout: React.FC<ContentLayoutProps> = ({
         section={section}
       />
       <LayoutContainer mode={mode}>
-        <Sidebar location={window.location} />
+        <Sidebar location={window.location} section={section} />
         <ContentContainer mode={mode}>
           <MDXProvider components={components({ mode })}>
             <ContentWrapper>{children}</ContentWrapper>

@@ -4,6 +4,7 @@ import {
   GlobalThemeProvider,
   ThemeModes,
 } from "@saruni-ui/theme";
+import { getSystemMode, onSystemModeChange } from "./utils";
 
 export const ThemeContext = React.createContext(null);
 
@@ -12,6 +13,7 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
+  const [initialized, setInitialized] = React.useState(false);
   const [mode, setMode] = React.useState<ThemeModes>(DEFAULT_THEME_MODE);
 
   const switchMode = () => {
@@ -19,6 +21,16 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   };
 
   const isLight = mode === "light";
+
+  React.useEffect(() => {
+    if (!initialized) {
+      setMode(getSystemMode());
+      setInitialized(true);
+    }
+    return onSystemModeChange(setMode);
+  }, [initialized, setInitialized, setMode]);
+
+  if (!initialized) return null;
 
   return (
     <GlobalThemeProvider theme={() => ({ mode })}>

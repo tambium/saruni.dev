@@ -172,6 +172,9 @@ export const Home: React.FC<HomeProps> = ({}) => {
             <div css={{ fontSize: font.size.body }}>
               © Tambium {new Date().getFullYear()}
             </div>
+            <div css={{ fontSize: font.size.body, marginTop: 4 }}>
+              Written by Endre Vegh and Dominic Chapman
+            </div>
           </div>
         </div>
       </footer>

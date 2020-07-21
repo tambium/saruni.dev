@@ -11,9 +11,10 @@ import { hexToRGBA } from "../../utils/color";
 
 interface SidebarProps {
   location: Location;
+  section?: string;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ location }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ location, section }) => {
   const {
     tokens: { mode },
   } = useGlobalTheme({});
@@ -27,6 +28,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ location }) => {
         <SidebarWrapper>
           <ul css={{ listStyle: "none", marginBottom: 32 }}>
             <StaticItem
+              isActive={section === "docs"}
               iconColor="#59C297"
               icon={
                 <Book secondaryColor={hexToRGBA("#59C297", 0.5)} size={20} />
@@ -34,6 +36,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ location }) => {
               title="Docs"
             />
             <StaticItem
+              isActive={section === "guides"}
               iconColor="#83B5DB"
               icon={
                 <Notepad secondaryColor={hexToRGBA("#83B5DB", 0.5)} size={20} />

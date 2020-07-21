@@ -1,11 +1,11 @@
 import React from "react";
 import { font, colors, useGlobalTheme } from "@saruni-ui/theme";
 
-import { Topbar } from "../../components/topbar";
-import { oppositeMode } from "../../utils/color/oppositeMode";
+import { Topbar } from "../components/topbar";
+import { oppositeMode } from "../utils/color/oppositeMode";
 import { Link } from "gatsby";
-import { Tambium } from "../../components/icon/glyphs";
-import { mq } from "../../constants/layout";
+import { Tambium } from "../components/icon/glyphs";
+import { mq } from "../constants/layout";
 
 interface HomeProps {}
 
@@ -30,7 +30,7 @@ const FEATURES = [
   },
 ];
 
-export const Home: React.FC<HomeProps> = ({}) => {
+const Home: React.FC<HomeProps> = ({}) => {
   const {
     tokens: { mode },
   } = useGlobalTheme({});
@@ -182,3 +182,5 @@ export const Home: React.FC<HomeProps> = ({}) => {
     </React.Fragment>
   );
 };
+
+export default Home;

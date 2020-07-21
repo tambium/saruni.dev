@@ -68,13 +68,13 @@ export const PreHeader = styled("div")(
     alignItems: "center",
     borderRadius: "4px 4px 0 0",
     display: "flex",
-    fontSize: `${font.size.caption}px`,
+    fontSize: `${font.size.body}px`,
     justifyContent: "space-between",
     padding: "8px 12px",
   },
   ({ mode }: { mode: ThemeModes }) => ({
-    backgroundColor: `${colors.surface[mode]}`,
-    color: `${colors.text[mode]}`,
+    backgroundColor: `${colors.surfaceNeutralSubdued["dark"]}`,
+    color: `${colors.text["dark"]}`,
   })
 );
 

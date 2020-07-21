@@ -1,4 +1,5 @@
 import React from "react";
+import { MDXProvider } from "@mdx-js/react";
 import { useGlobalTheme } from "@saruni-ui/theme";
 
 import {
@@ -12,6 +13,7 @@ import { Sidebar } from "../../components/sidebar";
 import { CONTENT_WIDTH, SIDEBAR_WIDTH } from "../../constants/layout";
 import { TOC } from "../../components/toc";
 import { ITOCItem } from "../../types";
+import { components } from "../../components/mdx";
 
 interface ContentLayoutProps {
   children: React.ReactNode;
@@ -50,7 +52,9 @@ export const ContentLayout: React.FC<ContentLayoutProps> = ({
       <LayoutContainer mode={mode}>
         <Sidebar location={window.location} />
         <ContentContainer mode={mode}>
-          <ContentWrapper>{children}</ContentWrapper>
+          <MDXProvider components={components({ mode })}>
+            <ContentWrapper>{children}</ContentWrapper>
+          </MDXProvider>
           <AsideContainer>
             {!isTOCDisabled && (
               <TOC

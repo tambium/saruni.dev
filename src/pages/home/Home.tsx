@@ -81,7 +81,8 @@ export const Home: React.FC<HomeProps> = ({}) => {
             >
               Saruni is web application framework that provides the foundational
               tooling startups need to write and release apps. Modern workflows
-              provide a dreamy developer experience for faster iteration.
+              provide a dreamy developer experience for faster iteration
+              thereafter.
             </div>
             <div css={{ alignItems: "center", display: "flex" }}>
               <Link

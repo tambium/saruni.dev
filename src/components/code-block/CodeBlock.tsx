@@ -1,5 +1,5 @@
 import React from "react";
-import { useGlobalTheme } from "@saruni-ui/theme";
+import { useGlobalTheme, colors } from "@saruni-ui/theme";
 import Highlight, { defaultProps } from "prism-react-renderer";
 import type { Language } from "prism-react-renderer";
 import { LiveProvider, LiveEditor } from "react-live";
@@ -80,7 +80,13 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
             getTokenProps,
           }) => {
             return (
-              <Pre className={blockClassName} style={style}>
+              <Pre
+                className={blockClassName}
+                style={{
+                  ...style,
+                  backgroundColor: colors.surface["dark"],
+                }}
+              >
                 <code>
                   {tokens.map((line, i) => (
                     <div {...getLineProps({ line, key: i })}>

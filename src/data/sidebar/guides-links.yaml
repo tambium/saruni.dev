@@ -1,0 +1,7 @@
+- title: Guides
+  key: guides
+  items:
+    - title: Deployment
+      items:
+        - title: Cors
+          link: /guides/cors

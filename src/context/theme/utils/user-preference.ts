@@ -1,4 +1,4 @@
-import { Themes } from "../.";
+import { ThemeModes } from "@saruni-ui/theme";
 
 const getPreference = (): MediaQueryList => {
   return (
@@ -7,12 +7,12 @@ const getPreference = (): MediaQueryList => {
   );
 };
 
-export const getSystemTheme = () => {
+export const getSystemMode = () => {
   const preference = getPreference();
   return preference && preference.matches ? "dark" : "light";
 };
 
-export const onSystemThemeChange = (callback: (theme: Themes) => void) => {
+export const onSystemModeChange = (callback: (mode: ThemeModes) => void) => {
   const preference = getPreference();
   const preferenceListener = (e: any) => callback(e.matches ? "dark" : "light");
   preference && preference.addListener(preferenceListener);

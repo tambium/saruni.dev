@@ -1,3 +1,3 @@
-import { getSystemTheme, onSystemThemeChange } from "./userPreference";
+import { getSystemMode, onSystemModeChange } from "./user-preference";
 
-export { getSystemTheme, onSystemThemeChange };
+export { getSystemMode, onSystemModeChange };

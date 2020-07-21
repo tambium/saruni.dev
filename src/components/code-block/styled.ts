@@ -1,14 +1,15 @@
 import styled from "@emotion/styled";
+import { font, colors, ThemeModes } from "@saruni-ui/theme";
+
 import {
   LiveError as AuxLiveError,
   LivePreview as AuxLivePreview,
 } from "react-live";
-import { darkTheme } from "../../theme";
 
 export const Pre = styled.pre`
   border-radius: 0 0 4px 4px;
   overflow: auto;
-  padding: 12px;
+  padding: 16px;
   text-align: left;
   word-wrap: normal;
   webkit-overflow-scrolling: touch;
@@ -62,16 +63,20 @@ export const LiveError = styled(AuxLiveError)`
   white-space: pre-wrap;
 `;
 
-export const PreHeader = styled.div`
-  align-items: center;
-  background-color: ${darkTheme.colors.surfaceSubdued};
-  border-radius: 4px 4px 0 0;
-  color: ${darkTheme.colors.textSubtle};
-  display: flex;
-  font-size: ${(p) => p.theme.fonts.size.micro}px;
-  justify-content: space-between;
-  padding: 8px 12px;
-`;
+export const PreHeader = styled("div")(
+  {
+    alignItems: "center",
+    borderRadius: "4px 4px 0 0",
+    display: "flex",
+    fontSize: `${font.size.body}px`,
+    justifyContent: "space-between",
+    padding: "10px 16px",
+  },
+  ({ mode }: { mode: ThemeModes }) => ({
+    backgroundColor: `${colors.surfaceNeutralSubdued["dark"]}`,
+    color: `${colors.text["dark"]}`,
+  })
+);
 
 export const LineNumber = styled.span`
   display: inline-block;

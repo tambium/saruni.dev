@@ -1,47 +1,57 @@
 import React from "react";
-import { useTheme as useEmotionTheme } from "emotion-theming";
+import { useGlobalTheme } from "@saruni-ui/theme";
 
 import { Item } from "./Item";
 import { getItemList, getActiveItem } from "../../utils/sidebar";
-import {
-  SidebarContainer,
-  SidebarWrapper,
-  SidebarLogoContainer,
-  SidebarDocsHighlight,
-} from "./styled";
-import { IconButton } from "../button";
-import { useTheme } from "../../hooks/use-theme";
-import { Moon, Sun } from "../icon/glyphs";
+import { SidebarContainer, SidebarWrapper } from "./styled";
 import { SidebarProvider } from "../../context/sidebar";
+import { StaticItem } from "./StaticItem";
+import { Book, Stack, Notepad } from "../icon/glyphs";
+import { hexToRGBA } from "../../utils/color";
 
 interface SidebarProps {
   location: Location;
+  section?: string;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ location }) => {
-  const { isLight, switchTheme } = useTheme();
-  const theme = useEmotionTheme();
+export const Sidebar: React.FC<SidebarProps> = ({ location, section }) => {
+  const {
+    tokens: { mode },
+  } = useGlobalTheme({});
 
   const itemList = getItemList(location);
   const activeItem = getActiveItem(itemList.items, location);
 
   return (
     <SidebarProvider activeItem={activeItem} itemList={itemList.items}>
-      <SidebarContainer>
+      <SidebarContainer mode={mode}>
         <SidebarWrapper>
-          <SidebarLogoContainer>
-            <div>
-              <span css={{ fontSize: 21, fontWeight: 600 }}>Saruni</span>
-              <SidebarDocsHighlight>Docs</SidebarDocsHighlight>
-            </div>
-            <IconButton
-              ariaLabel="Toggle theme"
-              backgroundColor={theme.colors.surface}
-              color={theme.colors.text}
-              icon={isLight ? <Moon size={14} /> : <Sun size={14} />}
-              onClick={switchTheme}
+          <ul css={{ listStyle: "none", marginBottom: 32 }}>
+            <StaticItem
+              isActive={section === "docs"}
+              iconColor="#59C297"
+              icon={
+                <Book secondaryColor={hexToRGBA("#59C297", 0.5)} size={20} />
+              }
+              title="Docs"
             />
-          </SidebarLogoContainer>
+            <StaticItem
+              isActive={section === "guides"}
+              iconColor="#83B5DB"
+              icon={
+                <Notepad secondaryColor={hexToRGBA("#83B5DB", 0.5)} size={20} />
+              }
+              title="Guides"
+            />
+            <StaticItem
+              iconColor="#E08173"
+              icon={
+                <Stack secondaryColor={hexToRGBA("#E08173", 0.5)} size={20} />
+              }
+              title="Components"
+            />
+          </ul>
+
           <ul css={{ listStyle: "none" }}>
             {itemList.items.map((item) => {
               return <Item item={item} key={item.title} />;

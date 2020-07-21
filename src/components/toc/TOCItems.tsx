@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "gatsby";
-import { useTheme } from "emotion-theming";
+import { colors, useGlobalTheme, font } from "@saruni-ui/theme";
 
 import { isBelowDepthLimit } from "./utils";
 import { ITOCItem } from "../../types";
@@ -20,7 +20,9 @@ export const TOCItems: React.FC<TOCItemsProps> = ({
   minDepth,
   maxDepth,
 }) => {
-  const theme = useTheme();
+  const {
+    tokens: { mode },
+  } = useGlobalTheme({});
 
   return (
     <React.Fragment>
@@ -36,14 +38,17 @@ export const TOCItems: React.FC<TOCItemsProps> = ({
                 <Link
                   css={{
                     color: isActive
-                      ? theme.colors.brand
-                      : theme.colors.textSubtle,
+                      ? colors.interactive[mode]
+                      : colors.textSubdued[mode],
                     border: 0,
-                    fontSize: theme.fonts.size.small,
+                    display: "inline-flex",
+                    fontSize: font.size.body,
+                    fontWeight: isActive ? 500 : undefined,
+                    padding: "2px 0",
                     transition: `color 0.2s ease`,
                     textDecoration: "none",
                     "&:hover": {
-                      color: theme.colors.text,
+                      color: colors.text[mode],
                     },
                   }}
                   to={location.pathname + item.url}
@@ -54,7 +59,7 @@ export const TOCItems: React.FC<TOCItemsProps> = ({
               {item.items && isBelowDepthLimit(minDepth, maxDepth) && (
                 <ul
                   css={{
-                    color: theme.colors.textSuble,
+                    color: colors.text[mode],
                     listStyle: `none`,
                     marginLeft: 5,
                   }}

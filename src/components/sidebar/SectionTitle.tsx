@@ -23,10 +23,13 @@ export const Title: React.FC<TitleProps> = ({ item }) => {
       css={{
         fontSize: font.size.caption,
         fontWeight: 600,
+        letterSpacing: "0.2px",
         textTransform: "uppercase",
         marginBottom: 4,
-        marginTop: 16,
         paddingLeft: 12,
+        "&:not(:first-of-type)": {
+          marginTop: 16,
+        },
       }}
     >
       {item.title}

@@ -12,7 +12,7 @@
     "@emotion/styled": "^10.0.27",
     "@mdx-js/mdx": "^1.6.5",
     "@mdx-js/react": "^1.6.5",
-    "@saruni-ui/theme": "^0.0.8",
+    "@saruni-ui/theme": "^0.0.10",
     "emotion-theming": "^10.0.27",
     "facepaint": "^1.2.1",
     "gatsby": "^2.23.3",

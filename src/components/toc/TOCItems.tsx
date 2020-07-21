@@ -37,9 +37,12 @@ export const TOCItems: React.FC<TOCItemsProps> = ({
               {item.url && (
                 <Link
                   css={{
-                    color: isActive ? "pink" : colors.text[mode],
+                    color: isActive
+                      ? colors.interactive[mode]
+                      : colors.textSubdued[mode],
                     border: 0,
                     fontSize: font.size.body,
+                    fontWeight: isActive ? 500 : undefined,
                     transition: `color 0.2s ease`,
                     textDecoration: "none",
                     "&:hover": {

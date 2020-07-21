@@ -11,6 +11,7 @@ import { isExternal as isExternalURL } from "./src/utils/url";
 const sharedHeadingCss = {
   "& + *": { marginTop: 12 },
   "&:not(:first-of-type)": { marginTop: 12 },
+  fontWeight: 600,
 };
 
 /*
@@ -101,19 +102,28 @@ export function wrapPageElement({ element }) {
   return <MDXProvider components={components}>{element}</MDXProvider>;
 }
 
+const customTheme = (baseTokens, props) => {
+  return {
+    ...baseTokens,
+    fontFamily:
+      '"Inter", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif',
+    fontSize: 16,
+  };
+};
+
 export function wrapRootElement({ element }) {
   return (
     <ThemeProvider>
       <Global
         styles={css`
           @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
-          html,
-          body {
-            font-family: "Inter", sans-serif !important;
+          #___gatsby,
+          #gatsby-focus-wrapper {
+            height: 100%;
           }
         `}
       />
-      <Reset toke>{element}</Reset>
+      <Reset theme={customTheme}>{element}</Reset>
     </ThemeProvider>
   );
 }

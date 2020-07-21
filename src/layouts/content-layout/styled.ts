@@ -8,6 +8,7 @@ import {
   SIDEBAR_MIN_WIDTH,
   SIDEBAR_WIDTH,
   TOPBAR_HEIGHT,
+  CONTENT_PADDING_VERTICAL,
 } from "../../constants/layout";
 
 export const LayoutContainer = styled.div(({ mode }: { mode: ThemeModes }) => {
@@ -25,6 +26,7 @@ export const LayoutContainer = styled.div(({ mode }: { mode: ThemeModes }) => {
     ],
     height: "100%",
     paddingTop: TOPBAR_HEIGHT,
+    scrollMarginTop: TOPBAR_HEIGHT,
   });
 });
 
@@ -33,7 +35,7 @@ export const ContentContainer = styled.main(
     return mq({
       backgroundColor: colors.background[mode],
       display: "flex",
-      paddingTop: [16 + TOPBAR_HEIGHT, 48],
+      paddingTop: [16 + TOPBAR_HEIGHT, CONTENT_PADDING_VERTICAL],
       paddingLeft: [16, 32, 64],
       paddingBottom: [16, 32],
       paddingRight: [16, 32, 0],

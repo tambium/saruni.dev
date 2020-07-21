@@ -13,6 +13,7 @@ export const ASIDE_PADDING_LEFT = 50;
 
 // all device main content
 export const CONTENT_WIDTH = 1000;
+export const CONTENT_PADDING_VERTICAL = 40;
 
 /*
  * Breakpoint 1: Arbitrary introduction of sidebar,

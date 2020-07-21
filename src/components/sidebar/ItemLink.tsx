@@ -20,11 +20,17 @@ export const ItemLink: React.FC<ItemLinkProps> = ({ item }) => {
   return (
     <Link
       css={{
-        color: isActive ? "pink" : colors.text[mode],
+        color: isActive ? colors.interactive[mode] : colors.textSubdued[mode],
         display: "flex",
-        fontSize: font.size.caption,
+        fontSize: font.size.body,
+        fontWeight: isActive ? 500 : undefined,
         padding: "4px 16px 4px 12px",
         textDecoration: "none",
+        transition: "color 0.2s ease",
+        "&:hover": {
+          color: isActive ? undefined : colors.text[mode],
+          textDecoration: "none",
+        },
       }}
       to={item.link}
     >

@@ -7,13 +7,14 @@ import {
   mq,
   SIDEBAR_MIN_WIDTH,
   SIDEBAR_WIDTH,
-  SIDEBAR_LOGO_CONTAINER_HEIGHT,
   TOPBAR_HEIGHT,
+  CONTENT_PADDING_VERTICAL,
 } from "../../constants/layout";
 
 export const SidebarContainer = styled.div(({ mode }: { mode: ThemeModes }) => {
   return mq({
-    borderRight: `1px solid ${colors.surface[mode]}`,
+    backgroundColor: colors.surface[mode],
+    borderRight: `1px solid ${colors.borderSubdued[mode]}`,
     display: ["none", "flex"],
     alignItems: "flex-end",
     flexDirection: "column",
@@ -28,9 +29,10 @@ export const SidebarWrapper = styled.div((props) =>
     display: "flex",
     flexDirection: "column",
     height: [null, "100vh"],
-    position: "sticky",
-    top: TOPBAR_HEIGHT,
+    position: "fixed",
+    overflowY: "scroll",
     width: SIDEBAR_WIDTH,
+    paddingTop: CONTENT_PADDING_VERTICAL,
   })
 );
 

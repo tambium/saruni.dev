@@ -1928,10 +1928,10 @@
   dependencies:
     tslib "^1.11.2"
 
-"@saruni-ui/theme@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@saruni-ui/theme/-/theme-0.0.8.tgz#f61e25c24ee72c3981d3c674fe27f9cac37ebf17"
-  integrity sha512-i6pykEvCCSr8Bm4C/PUkaX1af9eC1xcmptt7WRHXx3l0tsQnJB5J4cN9PIdqu88CQZC/cNh5O25gwK3NwWpQEg==
+"@saruni-ui/theme@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@saruni-ui/theme/-/theme-0.0.10.tgz#e90713834204cf1b7d663340b0dc76d0a07020d9"
+  integrity sha512-5duaiUJLb3Tb8Aai8klGMehxdOL1aHxDlpHm2IP6gfzZQi73RwT+P4EUVRoOAnVnqIVKcsGYlKmv89cmdcO/Zg==
   dependencies:
     "@emotion/core" "^10.0.27"
 

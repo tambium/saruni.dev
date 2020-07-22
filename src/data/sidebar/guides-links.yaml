@@ -3,5 +3,7 @@
   items:
     - title: Deployment
       items:
-        - title: Cors
+        - title: CORS
           link: /guides/cors
+        - title: CORS with AWS Lambda
+          link: /guides/cors-aws-lambda

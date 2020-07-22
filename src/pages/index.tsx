@@ -6,6 +6,7 @@ import { oppositeMode } from "../utils/color/oppositeMode";
 import { Link } from "gatsby";
 import { Tambium } from "../components/icon/glyphs";
 import { mq } from "../constants/layout";
+import { SEO } from "../components/seo";
 
 interface HomeProps {}
 
@@ -37,6 +38,7 @@ const Home: React.FC<HomeProps> = ({}) => {
 
   return (
     <React.Fragment>
+      <SEO />
       <div>
         <div
           css={{
@@ -80,17 +82,23 @@ const Home: React.FC<HomeProps> = ({}) => {
                 marginBottom: 48,
               }}
             >
-              Saruni is web application framework that provides the foundational
-              tooling startups need to write and release apps. Modern workflows
-              provide a dreamy developer experience for faster iteration
-              thereafter.
+              Saruni is a web application framework that provides the
+              foundational tooling startups need to write and release apps.
+              Modern workflows provide a dreamy developer experience for faster
+              iteration thereafter.
             </div>
             <div css={{ alignItems: "center", display: "flex" }}>
               <Link
                 css={{
-                  backgroundColor: colors.background[oppositeMode(mode)],
+                  backgroundColor:
+                    mode === "light"
+                      ? colors.background[oppositeMode(mode)]
+                      : colors.surfaceNeutralSubdued[mode],
                   borderRadius: 50,
-                  color: colors.background[mode],
+                  color:
+                    mode === "light"
+                      ? colors.background[mode]
+                      : colors.text[mode],
                   display: "inline-flex",
                   padding: "6px 16px",
                   fontSize: font.size.subtitle,
@@ -117,8 +125,15 @@ const Home: React.FC<HomeProps> = ({}) => {
         </section>
       </div>
       <section css={{ paddingBottom: 96 }}>
-        <div css={{ margin: "0 auto", maxWidth: 792, width: "100%" }}>
-          <div css={{ padding: "0 16px" }}>
+        <div
+          css={{
+            margin: "0 auto",
+            maxWidth: 784,
+            padding: "0 16px",
+            width: "100%",
+          }}
+        >
+          <div css={{}}>
             <div
               css={mq({
                 display: "grid",
@@ -157,13 +172,17 @@ const Home: React.FC<HomeProps> = ({}) => {
           </div>
         </div>
       </section>
-      <footer css={{ padding: "0 16px" }}>
+      <footer
+        css={{
+          padding: "0 16px",
+          margin: "0 auto",
+          maxWidth: 752,
+          width: "100%",
+        }}
+      >
         <div
           css={{
-            margin: "0 auto",
             borderTop: `1px solid ${colors.borderSubdued[mode]}`,
-            maxWidth: 752,
-            width: "100%",
           }}
         >
           <div css={{ padding: "48px 0 64px" }}>

@@ -1,16 +1,14 @@
 module.exports = {
   siteMetadata: {
-    siteTitle: `Saruni Docs`,
-    defaultTitle: `Saruni Docs`,
-    siteTitleShort: `saruni-docs`,
-    siteDescription: `Saruni is a Javascript web framework for progressive teams.`,
+    siteTitle: `Saruni`,
+    siteDescription: `Saruni is a JavaScript web application framework that provides the foundational tooling startups need to write and release apps.`,
     siteUrl: `https://saruni.dev`,
     siteAuthor: `@tambium`,
-    siteImage: `/banner.png`,
+    siteIcon: `/site-image.png`,
+    siteImage: `/site-image.png`,
     siteLanguage: `en`,
-    themeColor: `#D44F3E`,
+    themeColor: `#B5B4FE`,
     basePath: `/`,
-    footer: `Enjoy Saruni!`,
   },
   plugins: [
     `gatsby-plugin-emotion`,

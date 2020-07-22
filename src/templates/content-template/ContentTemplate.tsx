@@ -3,6 +3,7 @@ import { MDXRenderer } from "gatsby-plugin-mdx";
 import { graphql } from "gatsby";
 
 import { ContentLayout } from "../../layouts/content-layout/ContentLayout";
+import { SEO } from "../../components/seo";
 
 interface ContentTemplateProps {}
 
@@ -25,14 +26,22 @@ const ContentTemplate: React.FC<ContentTemplateProps> = ({
   const { section } = pageContext;
 
   return (
-    <ContentLayout
-      disableTableOfContents={disableTableOfContents}
-      section={section}
-      tableOfContents={tableOfContents}
-      tableOfContentsDepth={tableOfContentsDepth}
-    >
-      <MDXRenderer>{body}</MDXRenderer>
-    </ContentLayout>
+    <React.Fragment>
+      <SEO
+        title={title}
+        description={description}
+        slug={slug}
+        imageUrl={image}
+      />
+      <ContentLayout
+        disableTableOfContents={disableTableOfContents}
+        section={section}
+        tableOfContents={tableOfContents}
+        tableOfContentsDepth={tableOfContentsDepth}
+      >
+        <MDXRenderer>{body}</MDXRenderer>
+      </ContentLayout>
+    </React.Fragment>
   );
 };
 

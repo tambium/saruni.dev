@@ -29,10 +29,12 @@
     "prism-react-renderer": "^1.1.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-helmet": "^6.1.0",
     "react-live": "^2.2.2"
   },
   "devDependencies": {
     "@types/facepaint": "^1.2.1",
+    "@types/react-helmet": "^6.0.0",
     "eslint-config-react-app": "^5.2.1"
   }
 }

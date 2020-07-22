@@ -6,7 +6,7 @@ title: "Cors"
 
 Everybody is gangsta as long as CORS is working. When it doesn't. Well. In that sense cors is a lot similar to toilet rolls.
 
-In this two part series will be looking into cors in general (this post) and cors with serverless and aws lambda [you can find it here](/guides/cors-sls). We try to debunk what the hack is going on.
+In this two part series will be looking into cors in general (this post) and cors with serverless and aws lambda [you can find it here](/guides/cors-aws-lambda). We try to debunk what the hack is going on.
 
 # what is cors?
 
@@ -403,7 +403,7 @@ Let's try to get one.
 
 The way to get a cookie is to reach the `/auth` endpoint.
 
-Hittin the auth endpoint gets us back the same cors error. Let's put the origin header there as well.
+Hitting the `/auth` endpoint gets us back the same CORS error. Let's put the origin header there as well.
 
 ```js
 sameOriginApp.post("/auth", (_, response) => {
@@ -415,14 +415,15 @@ sameOriginApp.post("/auth", (_, response) => {
 });
 ```
 
-![ssdf](./header_but_no_cookie.png)
-![ssdf](./no_cookie_cors_appl.png)
+![header there but no cookie](./header_but_no_cookie.png)
 
-Strange thing innit? No cors errors, the set-ccokie header is in the response, yet there is no cookie present in the applications tab.
+![no cookie](./no_cookie_cors_appl.png)
+
+Strange thing! No CORS errors, the `Set-Cookie` header is in the response, yet there is no cookie present in the applications tab.
 
 ## credentials
 
-We need to explicitly request credentials (like cookies) to be communicated by the fetch request. Hiow? by adding the credentials include field.
+We need to explicitly request credentials (like cookies) to be communicated by the fetch request. How? By adding the credentials `include` field.
 
 ```js
 const set_header = async () => {
@@ -435,16 +436,15 @@ const set_header = async () => {
     console.log(await result.json());
   } catch {}
 };
-
 ```
-<!-- inser wildcard -->
-![ssdf](./insert_*.png)
 
-After retrying we can see we kinda started a shitstorm we are about to see.
+![credentials route](./insert_*.png)
 
+Something is just not right. We received a new kind of CORS error: wildcards are not permitted while using credentials.
 
-First rule: when credentials are communicated between different domains we cant get wawy with the `"*"` in there in the `Access-Control-Allow-Origin` header. We need to be specific since with potential authentication there is much more security concers.
-Let us be. Reaplce * with localhost:3000
+First rule: when credentials are communicated between different domains (credentials set to `include`) we can't get away with the `"*"` in the `Access-Control-Allow-Origin` header. We need to be specific since with potential authentication there is much more security concerns.
+
+Let us be more specific. Replace `"*"` with `http://localhost:3000`.
 
 ```ts
 sameOriginApp.post("/auth", (_, response) => {
@@ -456,15 +456,13 @@ sameOriginApp.post("/auth", (_, response) => {
 });]
 ```
 
-<!-- insert true  -->
-![ssdf](./cred.png)
+![credentials to true](./cred.png)
 
+Everyone is happy now? Nope. turns out allowing credentials to move freely between domains we don't just need to request it by fetch (setting `credentials` to `true`) but we actually need to enable it on the server. (Remember: CORS is set up on the server. Fetch request things and the server may or may not comply) This needs to be done in a similar way we enabled all other CORS related setting: with headers.
 
-Everyone is happy now? Nope. turns out allowing credentials to move freely we don't just need to request it by the fetch requset(credentials true) but we actually need to enable it ont ehserver. (Remember: cors is set up on the server. Fetch request things and the server may or may not comply) This needs to be done in a similar way we enabled all other cors realted things: with headers.
+The header for that is called `Access-Control-Allow-Credentials`.
 
-The header for that is called Access-Control-Allow-Credentials.
-
-Lets set it to true
+Lets set it to `true`.
 
 ```ts
 sameOriginApp.post("/auth", (_, response) => {
@@ -479,13 +477,15 @@ sameOriginApp.post("/auth", (_, response) => {
 
 ![cookie is set with cors](./new_auth_cookie_with_cors.png)
 
-Boom! the cookie is there. Job 1 is done. Lets start using it.
+Boom! the cookie is there. First job is done. Lets start using it.
 
 ## hitting the protected route
 
 Unfortunately we hit an unathorized error despite having the cookie. The reason for thatannoying problem is fetch: we have not defined credentials include.
 
-![ssdf](./401_protected.png)
+Reminder: the `include` in the previous section was to **retrieve** the cookie from a different domain. We retrieved it. Now we need to **send it back** to the `/protected_route` endpoint. Again, different domain, so we need to set `credentials`: `include`.
+
+![no luck](./401_protected.png)
 
 ```js
 const protected_get = async () => {
@@ -500,10 +500,10 @@ const protected_get = async () => {
 };
 ```
 
-![ssdf](./protected_*.png)
+![after include](./protected_*.png)
 
 
-We are better now. We are at the same problem we had encountered with the auth route.
+We are better now. We are at the same problem we had encountered with the `/auth` route.
 
 That is the wildcard issue.
 
@@ -519,11 +519,11 @@ sameOriginApp.get("/protected_resource", (request, response) => {
 });
 ```
 
-The wildcard issue is gone now we have the credentials on the server
-
-
+The wildcard issue is gone now.
 
 ![ssdf](./include_protected.png)
+
+But now we are facing the missing `Access-Control-Allow-Credentials` on the `/protected_route`. By this time we are experts at setting CORS headers.
 
 ```ts
 sameOriginApp.get("/protected_resource", (request, response) => {
@@ -539,13 +539,8 @@ sameOriginApp.get("/protected_resource", (request, response) => {
 ```
 
 
-![ssdf](./success.png)
+![finally](./success.png)
 
-Whoooa finally we are here. THe protected reaourece is in our hands! Even cors could'nt get in our way.
+Whoooa, finally we are here. The `/protected_resource` is in our hands! Even CORS couldn't get in our way.
 
-
-Hopefully we demistifed what cors is, why it exists and how to tame it. In the following articel well see how to set up cors with aws lambda and the serverlesss framework.
-
-<!-- add link to the second part -->
-
-In the next part we will see how to apply this knowledge with AWS and the Serverless framework.
+Hopefully we demystified what CORS is, why it exists and how to tame it. In the [following article](/guides/cors-aws-lambda) we'll see how to set up CORS with AWS Lambda and the Serverless framework.

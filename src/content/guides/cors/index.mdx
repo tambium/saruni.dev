@@ -2,30 +2,29 @@
 title: "Cors"
 ---
 
-# intro 
+# CORS
 
-Everybody is gangsta as long as CORS is working. When it doesn't. Well. In that sense cors is a lot similar to toilet rolls.
+Building full-stack web applications means connecting a frontend (where users interact) with an API (where data is retrieved).
 
-In this two part series will be looking into cors in general (this post) and cors with serverless and aws lambda [you can find it here](/guides/cors-aws-lambda). We try to debunk what the hack is going on.
+Things may seem okay when developing those parts independently, but when brought together there may be errors relating to CORS. In this guide and [another](/guides/cors-aws-lambda), we’ll look at how to avoid common pitfalls—first learning about CORS generally, and then applied in the context of a Serverless environment on AWS Lambda as recommended for Saruni.
 
-# what is cors?
+## What is CORS?
 
-CORS (cross-origin-browser-request) is a safety feature in the browsers giving developers control over what resource can be shared/manipulated from other domains. CORS is configured on the server. Let's dissect this.
+CORS (Cross-Origin Resource Sharing) is a safety feature in browsers that gives developers control over which resources can be shared or manipulated from other domains. This is achieved by setting CORS policies on the server-side and tweaking fetch requests.
 
-CORS is for browsers and their AJAX (fetch) API. That means when making `cURL` requests or using node's http library (or some abstraction over it) everyone is happy. No CORS there.
+Since CORS is for browsers and the AJAX (Fetch) API, server-side processes like `cURL` requests or use of the Node.js HTTP library (or some abstraction over it) are unaffected.
 
-It must be configured on the server. The CORS policies must be set on the server. You need to tweak the fetch request, but if the server is not set up properly you are doomed to fail.
+## Why do we need CORS?
 
-# why we have that?
+CORS is all about security.
 
-Security. `Domain A` might want to access or even worse, modify a resource on `Domain B`. That might be fine if you want that on purpose. In a lot of cases that might not be a good idea. With CORS, we can control who can do what with the resources sitting in `Domain B`.
+Imagine a world where `DOMAIN_A` wants to access—or even modify—a resource on `DOMAIN_B`: for example, updating a user profile. If `DOMAIN_A` is a trusted client of `DOMAIN_B` that may be okay, but the opt-in nature of CORS prevents a scenario where an untrusted client is also able to update that resource.
 
 # how
 
 ![same domain scenario](./same_domain_sketch.png)
 
 Let's have a look at this picture. In a web app we can invoke fetch and request for a resource. Since both the web app and the resource sitting on the same domain (like `https://bestapp.com`) we have 0 problems.
-
 
 ![basic cors issue](./basic_cors_sketch.png)
 
@@ -180,27 +179,27 @@ In terms of CORS there are simple requests and not so simple request. Instead of
 
 One of the allowed methods:
 
-* GET
-* HEAD
-* POST
+- GET
+- HEAD
+- POST
 
 Apart from the headers automatically set by the user agent (for example, Connection, User-Agent, or the other headers defined in the Fetch spec as a “forbidden header name”), the only headers which are allowed to be manually set are those which the Fetch spec defines as a "CORS safe listed request-header", which are:
 
-* Accept
-* Accept-Language
-* Content-Language
-* Content-Type (but note the additional requirements below)
-* DPR
-* Downlink
-* Save-Data
-* Viewport-Width
-* Width
+- Accept
+- Accept-Language
+- Content-Language
+- Content-Type (but note the additional requirements below)
+- DPR
+- Downlink
+- Save-Data
+- Viewport-Width
+- Width
 
 The only allowed values for the Content-Type header are:
 
-* application/x-www-form-urlencoded
-* multipart/form-data
-* text/plain
+- application/x-www-form-urlencoded
+- multipart/form-data
+- text/plain
 
 No event listeners are registered on any XMLHttpRequestUpload object used in the request; these are accessed using the XMLHttpRequest.upload property.
 
@@ -212,8 +211,8 @@ Some requests don’t trigger a CORS preflight request. Those are called “simp
 
 Mainly that means a request is simple if:
 
-* it is either GET, POST or HEAD
-* does not have fancy header
+- it is either GET, POST or HEAD
+- does not have fancy header
 
 ## create a post resource
 
@@ -237,7 +236,7 @@ sameOriginApp.post("/resource", (_, response) => {
     .header("Access-Control-Allow-Origin", "*")
     .status(200)
     .send({ resource });
-})
+});
 ```
 
 ![post works by default](./simple_post.png)
@@ -280,8 +279,8 @@ Preflight requests gives information about the header and the method. Is Content
 
 In the preflight **request** we can see the browser sends two headers:
 
-* Access-Control-Request-Headers: content type
-* Access-Control-Request-Method: post
+- Access-Control-Request-Headers: content type
+- Access-Control-Request-Method: post
 
 ![browser asking what is possible](./browser_asking_what_possible.png)
 
@@ -296,7 +295,7 @@ sameOriginApp.options("/resource", (_, response) => {
   response.set("Access-Control-Allow-Headers", "Content-Type");
 
   response.sendStatus(200);
-})
+});
 ```
 
 This method just answers the preflight request. In the browser we can see that the response headers are set accordingly.
@@ -321,7 +320,7 @@ That is all about preflight requests. They are sent by the browser to get some i
 
 # credentials
 
-The third line of defense adds more complication on the top of what we learnt. 
+The third line of defense adds more complication on the top of what we learnt.
 
 Let's consider this scenario. We have the `/resource` resource. We want to have another one called `/protected_resource`. It will require a cookie called auth. Otherwise you can't access the resource.
 
@@ -361,7 +360,7 @@ sameOriginApp.post("/auth", (_, response) => {
 
 Clicking on the newly added `<button />` (you can check the frontend, but its just another fetch request) we should be able to reach out to the rest API.
 
-Here is our cookie. Now we should be able to retrieve our protected resource. 
+Here is our cookie. Now we should be able to retrieve our protected resource.
 
 ![protected route information](./secret_received.png)
 
@@ -502,7 +501,6 @@ const protected_get = async () => {
 
 ![after include](./protected_*.png)
 
-
 We are better now. We are at the same problem we had encountered with the `/auth` route.
 
 That is the wildcard issue.
@@ -537,7 +535,6 @@ sameOriginApp.get("/protected_resource", (request, response) => {
   response.json({ protected: "top secret" }).sendStatus(200);
 });
 ```
-
 
 ![finally](./success.png)
 

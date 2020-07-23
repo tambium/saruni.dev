@@ -1,5 +1,5 @@
 import React from "react";
-import { font } from "@saruni-ui/theme";
+import { font, colors, useGlobalTheme } from "@saruni-ui/theme";
 
 interface StaticItemProps {
   icon: React.ReactElement;
@@ -14,11 +14,16 @@ export const StaticItem: React.FC<StaticItemProps> = ({
   isActive,
   title,
 }) => {
+  const {
+    tokens: { mode },
+  } = useGlobalTheme({});
+
   return (
     <li css={{ display: "flex", padding: "4px 16px" }}>
       <div css={{ color: iconColor, marginRight: 12 }}>{icon}</div>
       <div
         css={{
+          color: colors.text[mode],
           fontSize: font.size.body,
           fontWeight: isActive ? 500 : undefined,
         }}

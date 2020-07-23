@@ -16,8 +16,6 @@ export const useActiveHash = (itemIds, rootMargin = undefined) => {
     );
 
     itemIds.forEach((id) => {
-      // console.log(document.getElementById(id));
-
       observer.observe(document.getElementById(id));
     });
 
@@ -26,7 +24,7 @@ export const useActiveHash = (itemIds, rootMargin = undefined) => {
         observer.unobserve(document.getElementById(id));
       });
     };
-  }, []);
+  }, [itemIds, rootMargin]);
 
   return activeHash;
 };

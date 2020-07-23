@@ -1,5 +1,6 @@
 import React from "react";
 import { useGlobalTheme } from "@saruni-ui/theme";
+import { Link } from "gatsby";
 
 import { Item } from "./Item";
 import { getItemList, getActiveItem } from "../../utils/sidebar";
@@ -27,29 +28,48 @@ export const Sidebar: React.FC<SidebarProps> = ({ location, section }) => {
       <SidebarContainer mode={mode}>
         <SidebarWrapper>
           <ul css={{ listStyle: "none", marginBottom: 32 }}>
-            <StaticItem
-              isActive={section === "docs"}
-              iconColor="#59C297"
-              icon={
-                <Book secondaryColor={hexToRGBA("#59C297", 0.5)} size={20} />
-              }
-              title="Docs"
-            />
-            <StaticItem
-              isActive={section === "guides"}
-              iconColor="#83B5DB"
-              icon={
-                <Notepad secondaryColor={hexToRGBA("#83B5DB", 0.5)} size={20} />
-              }
-              title="Guides"
-            />
-            <StaticItem
-              iconColor="#E08173"
-              icon={
-                <Stack secondaryColor={hexToRGBA("#E08173", 0.5)} size={20} />
-              }
-              title="Components"
-            />
+            <Link
+              css={{ "&:active": { textDecoration: "none" } }}
+              to="/docs/overview"
+            >
+              <StaticItem
+                isActive={section === "docs"}
+                iconColor="#59C297"
+                icon={
+                  <Book secondaryColor={hexToRGBA("#59C297", 0.5)} size={20} />
+                }
+                title="Docs"
+              />
+            </Link>
+            <Link
+              css={{ "&:active": { textDecoration: "none" } }}
+              to="/guides/cors"
+            >
+              <StaticItem
+                isActive={section === "guides"}
+                iconColor="#83B5DB"
+                icon={
+                  <Notepad
+                    secondaryColor={hexToRGBA("#83B5DB", 0.5)}
+                    size={20}
+                  />
+                }
+                title="Guides"
+              />
+            </Link>
+            <a
+              css={{ "&:active": { textDecoration: "none" } }}
+              href="https://5efcf81e64c94600226b7b2e-xhxwxlzoec.chromatic.com/"
+              target="_blank"
+            >
+              <StaticItem
+                iconColor="#E08173"
+                icon={
+                  <Stack secondaryColor={hexToRGBA("#E08173", 0.5)} size={20} />
+                }
+                title="Components"
+              />
+            </a>
           </ul>
 
           <ul css={{ listStyle: "none" }}>

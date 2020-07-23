@@ -50,8 +50,6 @@ export const SEO: React.FC<SEOProps> = ({
   const metaImage = `${siteUrl}${imageUrl || siteImage}`;
   const metaDescription = description || siteDescription;
 
-  console.log(metaTitle, metaDescription);
-
   return (
     <Helmet
       htmlAttributes={{

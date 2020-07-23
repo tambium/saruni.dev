@@ -103,7 +103,7 @@ const Home: React.FC<HomeProps> = ({}) => {
                   padding: "6px 16px",
                   fontSize: font.size.subtitle,
                   fontWeight: 500,
-                  marginRight: 16,
+                  marginRight: 24,
                   "&:active": {
                     textDecoration: "none",
                   },
@@ -112,14 +112,16 @@ const Home: React.FC<HomeProps> = ({}) => {
               >
                 Get started
               </Link>
-              <div
+              <a
+                href="https://github.com/tambium/saruni"
                 css={{
+                  color: colors.text[mode],
                   fontSize: font.size.subtitle,
                   fontWeight: 500,
                 }}
               >
                 GitHub
-              </div>
+              </a>
             </div>
           </div>
         </section>

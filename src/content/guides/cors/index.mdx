@@ -1,6 +1,8 @@
 ---
-title: "Cors"
+## title: "Cors"
 ---
+
+import { BasicCorsError, SameDomain } from "./images";
 
 # CORS
 
@@ -20,25 +22,26 @@ CORS is all about security.
 
 Imagine a world where `DOMAIN_A` wants to access—or even modify—a resource on `DOMAIN_B`: for example, updating a user profile. If `DOMAIN_A` is a trusted client of `DOMAIN_B` that may be okay, but the opt-in nature of CORS prevents a scenario where an untrusted client is also able to update that resource.
 
-# how
+# CORS in practice
 
-![same domain scenario](./same_domain_sketch.png)
+In the following example, a web app invokes a fetch request for a resource. Since the web app and the REST API serving the resource are on the same domain (`DOMAIN_A` or, say `https://example-app.com`) there are no problems with CORS.
 
-Let's have a look at this picture. In a web app we can invoke fetch and request for a resource. Since both the web app and the resource sitting on the same domain (like `https://bestapp.com`) we have 0 problems.
+<SameDomain />
 
-![basic cors issue](./basic_cors_sketch.png)
+In the next example we face a problem. Now, a second client sits on a different domain
+(`DOMAIN_B`). With no configuration, attempts to request a resource will return a CORS error of the form:
 
-On this picture however, a new guy emerged. It sits on a different domain, `Domain B`. This is a web app, just like the one sitting on `Domain A`. If it tries to access the same resource, we'll we get a classic CORS error.
+> Access to fetch at `https://DOMAIN_A/resource` from origin `https://DOMAIN_B` has been blocked by CORS policy: No `Access-Control-Allow-Origin` header is present on the requested resource.
 
-# first line of defense
+<BasicCorsError />
 
-## show me the code
+## First line of defence
 
-The picture we have seen above is the first line of defense in CORS. There are others we'll get into. Instead of talking or writing about them let's get into code and create our own `Domain A` and `Domain B`.
+The example above shows the first line of defence from CORS. To see it in practice and explore resolutions, let’s create our own `DOMAIN_A` and `DOMAIN_B`.
 
-All the code can be found in [this git repo](https://github.com/tambium/GUIDE_RESOURCE_cors-raw).
+All the code shared below can be found in [this Git repository](https://github.com/tambium/GUIDE_RESOURCE_cors-raw).
 
-## basic setup
+### Basic setup
 
 We will travel back in time and use just plain html, css and javascript for the web app. The server: [express](https://expressjs.com/).
 

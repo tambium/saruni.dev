@@ -4,18 +4,6 @@
     "**/.cache": true,
     "yarn.lock": true
   },
-  "spellright.language": [
-    "en"
-  ],
-  "spellright.documentTypes": [
-    "markdown",
-    "latex",
-    "plaintext",
-    "mdx"
-  ],
-  "spellright.parserByClass": {
-    "mdx": {
-      "parser": "markdown"
-    }
-  }
+  "cSpell.enabled": true,
+  "cSpell.enabledLanguageIds": ["mdx", "typescript"]
 }

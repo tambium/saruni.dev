@@ -8,7 +8,7 @@ import { BasicCorsError, SameDomain } from "./images";
 
 Building full-stack web applications means connecting a frontend (where users interact) with an API (where data is retrieved).
 
-Things may seem okay when developing those parts independently, but when brought together there may be errors relating to CORS. In this guide and [another](/guides/cors-aws-lambda), we’ll look at how to avoid common pitfalls—first learning about CORS generally, and then applied in the context of a Serverless environment on AWS Lambda as recommended for Saruni.
+Things may seem okay when developing those parts independently, but when brought together we may face errors relating to CORS. In this guide and [another](/guides/cors-aws-lambda), we’ll look at how to avoid common pitfalls—first learning about CORS generally, and then applied in the context of a Serverless environment on AWS Lambda as recommended for Saruni.
 
 ## What is CORS?
 
@@ -28,6 +28,8 @@ In the following example, a web app invokes a fetch request for a resource. Sinc
 
 <SameDomain />
 
+## First line of defence
+
 In the next example we face a problem. Now, a second client sits on a different domain
 (`DOMAIN_B`). With no configuration, attempts to request a resource will return a CORS error of the form:
 
@@ -35,60 +37,55 @@ In the next example we face a problem. Now, a second client sits on a different 
 
 <BasicCorsError />
 
-## First line of defence
+## Code sample
 
 The example above shows the first line of defence from CORS. To see it in practice and explore resolutions, let’s create our own `DOMAIN_A` and `DOMAIN_B`.
 
-All the code shared below can be found in [this Git repository](https://github.com/tambium/GUIDE_RESOURCE_cors-raw).
+The completed code shared below can be found in [this Git repository](https://github.com/tambium/GUIDE_RESOURCE_cors-raw).
 
 ### Basic setup
 
-We will travel back in time and use just plain html, css and javascript for the web app. The server: [express](https://expressjs.com/).
+We’ll use plain HTML and a sprinkling of JavaScript for the web apps and Node.js through [Express](https://expressjs.com/) for the server.
+
+We start by creating two servers: one serving on port `4000` and the other on port `3000`. Port `4000` is home to a REST API (serving a single resource) and one of the frontend web apps. Port `3000` serves a different frontend web app, with no REST API.
 
 ```ts
 import express from "express";
 
 const resource = {
-  field: "this is nested",
+  username: "Saruni",
 };
 
-const sameOriginApp = express();
+const DOMAIN_A = express();
 
-sameOriginApp.use("/static", express.static("public"));
+// Serves contents of `public` directory (HTML, JavaScript)
+// to `localhost:PORT/web-app`.
+DOMAIN_A.use("/web-app", express.static("public"));
 
-sameOriginApp.get("/resource", (_, response) => {
+DOMAIN_A.get("/resource", (_, response) => {
   response.status(200).send({ resource });
 });
 
-sameOriginApp.listen(4000, () => {
-  console.log("Same-origin app is listening on port 4000...");
+DOMAIN_A.listen(4000, () => {
+  console.log("DOMAIN_A is available on port 4000...");
 });
 
-const differentDomainApp = express();
+const DOMAIN_B = express();
 
-differentDomainApp.use("/static", express.static("public"));
+DOMAIN_B.use("/web-app", express.static("public"));
 
-differentDomainApp.listen(3000, async () => {
-  console.log("This server is running on port 3000");
+DOMAIN_B.listen(3000, async () => {
+  console.log("DOMAIN_B is available on port 3000...");
 });
 ```
 
-What happens in this code? We created two servers: one serving on port `4000` and one is on `3000`.
-
-The one that serves on port `4000` is the home of our rest API and a frontend. The other serves a different frontend only. No rest api there.
-
-Our rest api is not too sophisticated, neither it will be. We have one resource called the `/resource`. Not too creative.
-
-Let's have a look at the frontend.
+Our frontend displays an HTML `<button>` that reaches out to the server on port `4000`.
 
 ```html
 <html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="index.css" media="screen" />
-  </head>
   <body>
-    <div class="buttons">
-      <button onclick="get()">/resource get method</button>
+    <div>
+      <button onclick="get()">Fetch resource</button>
     </div>
     <script src="main.js"></script>
   </body>
@@ -104,32 +101,26 @@ const get = async () => {
 };
 ```
 
-The frontend just shows a `<button />` that reaches out to the server on port `4000`. (Rest API)
+After firing up our [basic setup](https://github.com/tambium/GUIDE_RESOURCE_cors-raw) with `yarn dev` we find our two web apps at `localhost:4000/web-app/` and `localhost:3000/web-app/`.
 
-Later more buttons will be added to the frontend but they will just call fetch with different values. Another reminder: check out the accompanying [git repo](https://github.com/tambium/GUIDE_RESOURCE_cors-raw) if you are curious.
+As expected, when we request the resource by clicking the button the client served on the same domain as the REST API retrieves the response from the server successfully.
 
-![initial setup](./initial_setup.png)
+The client served on a different domain to the REST API is blocked by CORS. This is the first line of defence from CORS in practice.
 
-After firing up the app this picture greats us. The two app side by side.
+![CORS: First Line of Defence](./images/cors-first-line-of-defence.png)
 
-We have one button in the screen that invokes the only resource with a `get` method.
+## Resolving access control
 
-As we expected the app that sits on the same domain as the rest API retrieves the response from the server.
+The error makes clear that the problem relates to a lack of `Access-Control-Allow-Origin` headers on the requested resource.
 
-The other is blocked by CORS. That is the first line of defense. CORS prevents other domains from accessing the resource. Period. The frontend on port `3000` is blocked from getting any data from the rest API on port `4000`.
+We can confirm this is the case in the Network tab of Developer Tools under the Response Headers.
 
-## add basic cors setup
+![CORS: Lacking response headers](./images/cors-without-headers.png)
 
-The error says that there is no `Access-Control-Allow-Origin` header present in the response.
-
-We can check this out on the networks tab.
-
-![networks tab without any cors](./no_header.png)
-
-And this is true. There is no header like this. To implement basic CORS setup on the server all we have to do is to add the `Access-Control-Allow-Origin` header to the response. How? Like this.
+To resolve this CORS error, we add the `Access-Control-Allow-Origin` header to the response on the server.
 
 ```js
-sameOriginApp.get("/resource", (_, response) => {
+DOMAIN_A.get("/resource", (_, response) => {
   response
     .header("Access-Control-Allow-Origin", "http://localhost:3000")
     .status(200)
@@ -137,44 +128,28 @@ sameOriginApp.get("/resource", (_, response) => {
 });
 ```
 
-As a reminder from few lines earlier. CORS is set up on the server. The server decides who can access what. It turns out enabling the basics of CORS is pretty simple. We just need to add a header that was mentioned in the error.
+When we check back on the web app instance that was facing issues with CORS before, the error is resolved. Our resource is served successfully after configuring the access control headers on the server.
 
-The value of the header will be the origin, where we would like to allow requests from. In our case this is `http://localhost:3000`.
+![CORS: Fetch successful](./images/cors-with-headers.png)
 
-Getting back to our app sitting on port 3000 and fetching the api one more time we see it succeeding.
+When we check the Network tab, we find the `Access-Control-Allow-Origin` header among the response headers.
 
-![fetch is working](./get_working_cors.png)
+![CORS: Correct headers](./images/cors-correct-headers.png)
 
-![header in the networks tab](./header_on_get.png)
+### Bonus: wildcard origin
 
-Having a look at the networks tab we see the `Access-Control-Allow-Origin` header is among the response headers.
+Despite allowing access to the resource from `http://localhost:3000`, requests from other domains would still receive CORS errors.
 
-## more on origin
-
-What happens with other domains? Good question. Although we have allowed request coming from `http://localhost: 3000` in our server, what happens when we want to reach it from another domain? For example, MDN (https://developer.mozilla.org/).
-
-![mdn is not happy with CORS](./mdn_get_not_working.png)
-
-This happens.
-
-It tells us that the origin that was specified on the header (`http://localhost: 3000`) is not the same origin as MDN.
-
-This makes sense as we specified `http://localhost: 3000`, not MDN (http://developer.mozilla.org)
-
-To make that pass we can change the value of our header.
+Should we wish to allow requests from every domain, we can use the wildcard selector on the server when defining our headers.
 
 ```js
-sameOriginApp.get("/resource", (_, response) => {
+DOMAIN_A.get("/resource", (_, response) => {
   response
     .header("Access-Control-Allow-Origin", "*")
     .status(200)
     .send({ resource });
 });
 ```
-
-This time the server allows request from **every** domain. Wildcard means the same as wildcard means elsewhere: allow every domain to access our resource.
-
-![mdn is happy now](./mdn_working.png)
 
 # second line of defense
 

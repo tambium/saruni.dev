@@ -20,7 +20,7 @@ Since CORS is for browsers and the AJAX (Fetch) API, server-side processes like 
 
 CORS is all about security.
 
-Imagine a world where `DOMAIN_A` wants to access—or even modify—a resource on `DOMAIN_B`: for example, updating a user profile. If `DOMAIN_A` is a trusted client of `DOMAIN_B` that may be okay, but the opt-in nature of CORS prevents a scenario where an untrusted client is also able to update that resource.
+Imagine a world where `DOMAIN_B` wants to access—or even modify—a resource on `DOMAIN_A`: for example, updating a user profile. If `DOMAIN_B` is a trusted client of `DOMAIN_A` that may be okay, but the opt-in nature of CORS prevents a scenario where an un-trusted client is also able to update that resource.
 
 # CORS in practice
 
@@ -37,7 +37,7 @@ In the next example we face a problem. Now, a second client sits on a different 
 
 <BasicCorsError />
 
-## Code sample
+### Code sample
 
 The example above shows the first line of defence from CORS. To see it in practice and explore resolutions, let’s create our own `DOMAIN_A` and `DOMAIN_B`.
 
@@ -53,7 +53,7 @@ We start by creating two servers: one serving on port `4000` and the other on po
 import express from "express";
 
 const resource = {
-  username: "Saruni",
+  username: "@saruni",
 };
 
 const DOMAIN_A = express();
@@ -84,9 +84,7 @@ Our frontend displays an HTML `<button>` that reaches out to the server on port 
 ```html
 <html>
   <body>
-    <div>
-      <button onclick="get()">Fetch resource</button>
-    </div>
+    <button onclick="get()">Fetch resource</button>
     <script src="main.js"></script>
   </body>
 </html>
@@ -109,7 +107,7 @@ The client served on a different domain to the REST API is blocked by CORS. This
 
 ![CORS: First Line of Defence](./images/cors-first-line-of-defence.png)
 
-## Resolving access control
+### Resolving access control error
 
 The error makes clear that the problem relates to a lack of `Access-Control-Allow-Origin` headers on the requested resource.
 
@@ -151,65 +149,41 @@ DOMAIN_A.get("/resource", (_, response) => {
 });
 ```
 
-# second line of defense
+## Second line of defence
 
-In terms of CORS there are simple requests and not so simple request. Instead of me trying to explain what singe requests are in the context of CORS, I will just copy it from MDN (find the full article [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS).
+A second kind of CORS error we might come across takes the following form:
 
-One of the allowed methods:
+> Access to fetch at `https://DOMAIN_A/resource` from origin `https://DOMAIN_B` has been blocked by CORS policy: Response to preflight request doesn’t pass access control check: No `Access-Control-Allow-Origin` header is present on the requested resource.
 
-- GET
-- HEAD
-- POST
+This error looks similar to the last but now makes reference to a preflight request. Preflight requests are triggered when a set of request conditions—best outlined in [this article](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Examples_of_access_control_scenarios), or more concretely in the [Fetch spec](https://fetch.spec.whatwg.org/)—are not met.
 
-Apart from the headers automatically set by the user agent (for example, Connection, User-Agent, or the other headers defined in the Fetch spec as a “forbidden header name”), the only headers which are allowed to be manually set are those which the Fetch spec defines as a "CORS safe listed request-header", which are:
+Generally speaking, we’ll trigger preflight requests if we use methods other than `GET`, `HEAD` or `POST` or if we use any method with a more sophisticated header.
 
-- Accept
-- Accept-Language
-- Content-Language
-- Content-Type (but note the additional requirements below)
-- DPR
-- Downlink
-- Save-Data
-- Viewport-Width
-- Width
+### Generating a preflight request
 
-The only allowed values for the Content-Type header are:
+We’ll add a second button to our web apps that invokes a new function.
 
-- application/x-www-form-urlencoded
-- multipart/form-data
-- text/plain
-
-No event listeners are registered on any XMLHttpRequestUpload object used in the request; these are accessed using the XMLHttpRequest.upload property.
-
-No ReadableStream object is used in the request.
-
-If you want the tl;dr
-
-Some requests don’t trigger a CORS preflight request. Those are called “simple requests”. The rest does trigger a preflight request (more on preflight requests just in a bit). They are complex.
-
-Mainly that means a request is simple if:
-
-- it is either GET, POST or HEAD
-- does not have fancy header
-
-## create a post resource
-
-Let's move carefully from the simple request to the not that simple. On the web apps I added a second button that invokes this function.
+```html
+<button onclick="post()">Update resource</button>
+```
 
 ```ts
 const post = async () => {
   const result = await fetch(apiEndpoint, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username: "@saruni-next" }),
   });
-
   console.log(await result.json());
 };
 ```
 
-In the server I added a new method for the the `/resource` resource.
+On the server we’ll add a new method for our resource.
 
 ```js
-sameOriginApp.post("/resource", (_, response) => {
+DOMAIN_A.post("/resource", (_, response) => {
   response
     .header("Access-Control-Allow-Origin", "*")
     .status(200)
@@ -217,35 +191,11 @@ sameOriginApp.post("/resource", (_, response) => {
 });
 ```
 
-![post works by default](./simple_post.png)
+We might expect our function to be successful on both domains since we included the access control header with a wildcard. However, to process JSON we set the `Content-Type` header to `application-json` which generates a preflight request.
 
-Nothing new here. POST in itself is a simple request, so with the `Access-Control-Allow-Origin` header we are good to go.
+![CORS: Preflight error](./images/cors-preflight-error.png)
 
-But with a POST request we usually want to do more then we would do with a GET request. Sending data and hopefully do some mutation in the backend.
-
-For that we need to do modification in the fetch request.
-
-```js
-const post = async () => {
-  const result = await fetch(apiEndpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ field: "change" }),
-  });
-
-  console.log(await result.json());
-};
-```
-
-To process json we need to set header `content-type` to `application/json`. Problem is, that pushes our request from being a simple to being a complex one.
-
-![behold: preflight](./post_preflight.png)
-
-The browser is no complaining about preflight request.
-
-## preflight request
+### Deep dive on preflight requests
 
 If our request is not a simple one (i.e. it is not GET, HEAD, POST and / or it has fancy headers) then the browser makes a preflight request to the server before the actual one.
 

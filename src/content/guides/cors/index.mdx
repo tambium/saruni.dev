@@ -8,7 +8,7 @@ import { BasicCorsError, SameDomain } from "./images";
 
 Building full-stack web applications means connecting a frontend (where users interact) with an API (where data is retrieved).
 
-Things may seem okay when developing those parts independently, but when brought together we may face errors relating to CORS. In this guide and [another](/guides/cors-aws-lambda), we’ll look at how to avoid common pitfalls—first learning about CORS generally, and then applied in the context of a Serverless environment on AWS Lambda as recommended for Saruni.
+Things may seem okay when developing those parts in isolation, but when brought together we may face errors relating to CORS. In this guide and [another](/guides/cors-aws-lambda), we’ll look at how to avoid common pitfalls—first learning about CORS generally, and then applied in the context of a Serverless environment on AWS Lambda as recommended for Saruni.
 
 ## What is CORS?
 
@@ -45,11 +45,11 @@ The completed code shared below can be found in [this Git repository](https://gi
 
 ### Basic setup
 
-We’ll use plain HTML and a sprinkling of JavaScript for the web apps and Node.js through [Express](https://expressjs.com/) for the server.
+We’ll use plain HTML and a sprinkling of JavaScript for the web apps and [Express](https://expressjs.com/) to serve up our domains.
 
-We start by creating two servers: one serving on port `4000` and the other on port `3000`. Port `4000` is home to a REST API (serving a single resource) and one of the frontend web apps. Port `3000` serves a different frontend web app, with no REST API.
+We start by creating two servers: one on port `4000` and the other on port `3000`. Port `4000` is home to a REST API (serving a single resource) and one of the frontend web apps. Port `3000` serves a different frontend web app, with no REST API.
 
-```ts
+```js
 import express from "express";
 
 const resource = {
@@ -91,10 +91,8 @@ Our frontend displays an HTML `<button>` that reaches out to the server on port 
 ```
 
 ```js
-const apiEndpoint = "http://localhost:4000/resource";
-
 const get = async () => {
-  const result = await fetch(apiEndpoint);
+  const result = await fetch("http://localhost:4000/resource");
   console.log(await result.json());
 };
 ```
@@ -111,7 +109,7 @@ The client served on a different domain to the REST API is blocked by CORS. This
 
 The error makes clear that the problem relates to a lack of `Access-Control-Allow-Origin` headers on the requested resource.
 
-We can confirm this is the case in the Network tab of Developer Tools under the Response Headers.
+We can confirm this is the case in the Network tab of our browser Developer Tools under the Response Headers.
 
 ![CORS: Lacking response headers](./images/cors-without-headers.png)
 
@@ -155,7 +153,7 @@ A second kind of CORS error we might come across takes the following form:
 
 > Access to fetch at `https://DOMAIN_A/resource` from origin `https://DOMAIN_B` has been blocked by CORS policy: Response to preflight request doesn’t pass access control check: No `Access-Control-Allow-Origin` header is present on the requested resource.
 
-This error looks similar to the last but now makes reference to a preflight request. Preflight requests are triggered when a set of request conditions—best outlined in [this article](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Examples_of_access_control_scenarios), or more concretely in the [Fetch spec](https://fetch.spec.whatwg.org/)—are not met.
+This error looks similar to the last but now makes reference to a preflight request. Preflight requests are triggered when a set of request conditions—best outlined in [this article](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Examples_of_access_control_scenarios), or more concretely in the [Fetch specification](https://fetch.spec.whatwg.org/)—are not met.
 
 Generally speaking, we’ll trigger preflight requests if we use methods other than `GET`, `HEAD` or `POST` or if we use any method with a more sophisticated header.
 
@@ -167,9 +165,9 @@ We’ll add a second button to our web apps that invokes a new function.
 <button onclick="post()">Update resource</button>
 ```
 
-```ts
+```js
 const post = async () => {
-  const result = await fetch(apiEndpoint, {
+  const result = await fetch("http://localhost:4000/resource", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -197,27 +195,22 @@ We might expect our function to be successful on both domains since we included 
 
 ### Deep dive on preflight requests
 
-If our request is not a simple one (i.e. it is not GET, HEAD, POST and / or it has fancy headers) then the browser makes a preflight request to the server before the actual one.
+We can think of preflight requests like calling the cinema to check if tickets are available before jumping in the car to make our way over.
 
-It is sort of calling the cinema if they have tickets before getting into the car, instead of just showing up there.
+The preflight request provides information about the header and method and asks whether they are suitable given the server configuration.
 
-![preflight is action](./preflight_sketch.png)
+As we see below, our preflight request asks whether a `POST` method with `content-type` headers is acceptable.
 
-Preflight requests gives information about the header and the method. Is Content-type allowed? Is DELETE HTTP verb fine?
+![CORS: Preflight request headers](./images/cors-preflight-request-headers.png)
 
-In the preflight **request** we can see the browser sends two headers:
+### Resolving preflight request error
 
-- Access-Control-Request-Headers: content type
-- Access-Control-Request-Method: post
+Much like the call to the cinema, our server needs to respond to the preflight request to resolve the error.
 
-![browser asking what is possible](./browser_asking_what_possible.png)
-
-That is asking: the method will be a POST with `content-type` headers. Good to go?
-
-To have an answer from the server we need to create an `OPTION` verb that will say: yes!
+We respond through the use of an `OPTIONS` verb.
 
 ```js
-sameOriginApp.options("/resource", (_, response) => {
+DOMAIN_A.options("/resource", (_, response) => {
   response.set("Access-Control-Allow-Origin", "*");
   response.set("Access-Control-Allow-Methods", "POST, OPTIONS");
   response.set("Access-Control-Allow-Headers", "Content-Type");
@@ -226,138 +219,69 @@ sameOriginApp.options("/resource", (_, response) => {
 });
 ```
 
-This method just answers the preflight request. In the browser we can see that the response headers are set accordingly.
+In the browser we see that the response headers are set accordingly and the error is resolved.
 
-![response headers are fine](./response_headers_set.png)
+![CORS: preflight success](./images/cors-preflight-response-headers.png)
 
-Note: the origin header is still present in the POST handler.
-
-One more step. Since we know the type is json we can parse the body and mutate our "db".
+Since we know our content type is JSON, we can parse the body and mutate our in-memory DB for completeness.
 
 ```js
-sameOriginApp.post("/resource", bodyParser.json(), (request, response) => {
+DOMAIN_A.post("/resource", bodyParser.json(), (request, response) => {
   response.set("Access-Control-Allow-Origin", "*");
-
-  resource.field = request.body.field;
-
+  resource.username = request.body.username;
+  response.status(200);
   response.send({ resource });
 });
 ```
 
-That is all about preflight requests. They are sent by the browser to get some information from the server before sending the real one.
+That’s all we need to know about preflight requests. They are sent by the browser to ask for information from the server before the actual request.
 
-# credentials
+# CORS with credentials
 
-The third line of defense adds more complication on the top of what we learnt.
-
-Let's consider this scenario. We have the `/resource` resource. We want to have another one called `/protected_resource`. It will require a cookie called auth. Otherwise you can't access the resource.
+Consider the following scenario where a new resource (`/protected_resource`) requires a cookie called `auth` for access.
 
 ```js
 import cookieParser from "cookie-parser";
 
-// to parse the cookies on th request object
-sameOriginApp.use(cookieParser());
+// Enable parsing of cookies on the request object.
+DOMAIN_A.use(cookieParser());
 
-// the route
-sameOriginApp.get("/protected_resource", (request, response) => {
-  if (!request.cookies.auth) {
-    return response.sendStatus(401);
-  }
-
-  response.json({ protected: "top secret" }).sendStatus(200);
-});
-```
-
-Calling the endpoint will give us a big `401` because we don't have a cookie.
-
-![no cookie no resource](./resource_401.png)
-
-## set an http cookie
-
-It could not have passed our authentication since we don't have any cookie. The way to do that is another route in our express API that will return a `Set-Cookie` header.
-
-```ts
-sameOriginApp.post("/auth", (_, response) => {
-  response
-    .cookie("auth", "authHeaderContent", { httpOnly: true })
-    .sendStatus(204);
-});
-```
-
-![cookies set](./cookie_set.png)
-
-Clicking on the newly added `<button />` (you can check the frontend, but its just another fetch request) we should be able to reach out to the rest API.
-
-Here is our cookie. Now we should be able to retrieve our protected resource.
-
-![protected route information](./secret_received.png)
-
-And here it is. With the help of the cookie we were able to reach to the API.
-
-## cors
-
-We made it work with the same domain app. Comes the harder part. CORS.
-
-Clear the cookie and see what is happening.
-
-![cors issues coming](./secret_protected_resource.png)
-
-The very first issue is the basics of cors. `/protected_resource` is a GET method without headers -> simple cors request.
-
-All we need is the `Allow-Control-Origin-Header`.
-
-```js
-sameOriginApp.get("/protected_resource", (request, response) => {
+DOMAIN_A.get("/protected_resource", (request, response) => {
   response.set("Access-Control-Allow-Origin", "*");
 
   if (!request.cookies.auth) {
     return response.sendStatus(401);
   }
 
-  response.json({ protected: "top secret" }).sendStatus(200);
+  response.json({ secret: "saruni-secret" }).sendStatus(200);
 });
 ```
 
-There is nothing new here. Just adding the header as we did in the beginning of this article.
+Even after accounting for the lines of defence we have seen before, calling the endpoint will return a `401 (Unauthorized)` error since no cookie has been provided.
 
-Now we removed CORS error for a `401`. But that is fine, we did not have any cookie.
+![CORS: 401 without cookie](./images/cors-no-cookie-401.png)
 
-![auth error](./cors_401.png)
+### Setting an auth cookie
 
-Let's try to get one.
-
-## auth
-
-The way to get a cookie is to reach the `/auth` endpoint.
-
-Hitting the `/auth` endpoint gets us back the same CORS error. Let's put the origin header there as well.
+To set a cookie, we add a new route to our Express API that returns a `Set-Cookie` header.
 
 ```js
-sameOriginApp.post("/auth", (_, response) => {
+DOMAIN_A.post("/auth", (_, response) => {
   response.set("Access-Control-Allow-Origin", "*");
 
   response
-    .cookie("auth", "authHeaderContent", { httpOnly: true })
+    .cookie("auth-cookie-name", "auth-cookie-value", { httpOnly: true })
     .sendStatus(204);
 });
 ```
 
-![header there but no cookie](./header_but_no_cookie.png)
-
-![no cookie](./no_cookie_cors_appl.png)
-
-Strange thing! No CORS errors, the `Set-Cookie` header is in the response, yet there is no cookie present in the applications tab.
-
-## credentials
-
-We need to explicitly request credentials (like cookies) to be communicated by the fetch request. How? By adding the credentials `include` field.
+A new `<button>` in our web apps calls a fetch request to set the cookie through this route.
 
 ```js
-const set_header = async () => {
+const setAuth = async () => {
   try {
-    const result = await fetch(setHeaderEndpoint, {
+    const result = await fetch("http://localhost:4000/auth", {
       method: "POST",
-      credentials: "include",
     });
 
     console.log(await result.json());
@@ -365,107 +289,67 @@ const set_header = async () => {
 };
 ```
 
-![credentials route](./insert_*.png)
+In the shared web app and API domain the cookie is set. However, in the separated (cross-origin) domain the `Set-Cookie` is found in the Response Headers but no cookie is set.
 
-Something is just not right. We received a new kind of CORS error: wildcards are not permitted while using credentials.
-
-First rule: when credentials are communicated between different domains (credentials set to `include`) we can't get away with the `"*"` in the `Access-Control-Allow-Origin` header. We need to be specific since with potential authentication there is much more security concerns.
-
-Let us be more specific. Replace `"*"` with `http://localhost:3000`.
-
-```ts
-sameOriginApp.post("/auth", (_, response) => {
-  response.set("Access-Control-Allow-Origin", "http://localhost:3000");
-
-  response
-    .cookie("auth", "authHeaderContent", { httpOnly: true })
-    .sendStatus(204);
-});]
-```
-
-![credentials to true](./cred.png)
-
-Everyone is happy now? Nope. turns out allowing credentials to move freely between domains we don't just need to request it by fetch (setting `credentials` to `true`) but we actually need to enable it on the server. (Remember: CORS is set up on the server. Fetch request things and the server may or may not comply) This needs to be done in a similar way we enabled all other CORS related setting: with headers.
-
-The header for that is called `Access-Control-Allow-Credentials`.
-
-Lets set it to `true`.
-
-```ts
-sameOriginApp.post("/auth", (_, response) => {
-  response.set("Access-Control-Allow-Origin", "http://localhost:3000");
-  response.set("Access-Control-Allow-Credentials", "true");
-
-  response
-    .cookie("auth", "authHeaderContent", { httpOnly: true })
-    .sendStatus(204);
-});
-```
-
-![cookie is set with cors](./new_auth_cookie_with_cors.png)
-
-Boom! the cookie is there. First job is done. Lets start using it.
-
-## hitting the protected route
-
-Unfortunately we hit an unathorized error despite having the cookie. The reason for thatannoying problem is fetch: we have not defined credentials include.
-
-Reminder: the `include` in the previous section was to **retrieve** the cookie from a different domain. We retrieved it. Now we need to **send it back** to the `/protected_route` endpoint. Again, different domain, so we need to set `credentials`: `include`.
-
-![no luck](./401_protected.png)
+To set the cookie in this domain, we need to explicitly request credentials be communicated by the fetch request through the addition of the `include` field.
 
 ```js
-const protected_get = async () => {
-  try {
-    const result = await fetch(protectedResourceEndpoint, {
-      method: "GET",
-      credentials: "include",
-    });
-
-    console.log(await result.json());
-  } catch {}
-};
-```
-
-![after include](./protected_*.png)
-
-We are better now. We are at the same problem we had encountered with the `/auth` route.
-
-That is the wildcard issue.
-
-```ts
-sameOriginApp.get("/protected_resource", (request, response) => {
-  response.set("Access-Control-Allow-Origin", "http://localhost:3000");
-
-  if (!request.cookies.auth) {
-    return response.sendStatus(401);
-  }
-
-  response.json({ protected: "top secret" }).sendStatus(200);
+// ...
+const result = await fetch("http://localhost:4000/auth", {
+  method: "POST",
+  credentials: "include",
 });
 ```
 
-The wildcard issue is gone now.
+![CORS: Set auth cookie](./images/cors-auth-cookie-set.png)
 
-![ssdf](./include_protected.png)
+The cookies are set successfully in both domains, but we receive a new CORS error in our separated web app.
 
-But now we are facing the missing `Access-Control-Allow-Credentials` on the `/protected_route`. By this time we are experts at setting CORS headers.
+> Access to fetch at `http://localhost:4000/auth` from origin `http://localhost:3000` has been blocked by CORS policy: The value of the `Access-Control-Allow-Origin` header in the response must not be the wildcard `*` when the request's credentials mode is `include`.
 
-```ts
-sameOriginApp.get("/protected_resource", (request, response) => {
+![CORS: Auth cookie error](./images/cors-auth-cookie-error.png)
+
+### Resolving credentials include error
+
+When credentials are communicated between different domains through `credentials: include` we need to be specific about the target domain in the `Access-Control-Allow-Origin` header rather than using wildcards because of the security implications.
+
+In our case that means replacing the wildcard `"*"` with `http://localhost:3000`.
+
+```js
+DOMAIN_A.post("/auth", (_, response) => {
+  response.set("Access-Control-Allow-Origin", "http://localhost:3000");
+
+  response
+    .cookie("auth-cookie-name", "auth-cookie-value", { httpOnly: true })
+    .sendStatus(204);
+});
+```
+
+With these changes we progress to a new CORS error.
+
+![CORS: Credentials header error](./images/cors-credentials-header-error.png)
+
+> Access to fetch at `http://localhost:4000/auth` from origin `http://localhost:3000` has been blocked by CORS policy: The value of the `Access-Control-Allow-Credentials` header in the response is `''` which must be `'true'` when the request's credentials mode is `'include'`.
+
+In order to allow credentials to move freely between domains we don’t just need to request it through our fetch method with `credentials: include`, we also need to enable it on the server. Remember, CORS is set up on the server. Our fetch methods may make requests but it’s the responsibility of the server to determine willingness to comply.
+
+This is achieved in a similar fashion to how we enabled other CORS related configuration: with headers. Specifically, setting `Access-Control-Allow-Credentials` to `true`.
+
+```js
+DOMAIN_A.post("/auth", (_, response) => {
+  response.set("Access-Control-Allow-Origin", "http://localhost:3000");
   response.set("Access-Control-Allow-Credentials", "true");
-  response.set("Access-Control-Allow-Origin", "http://localhost:3000");
 
-  if (!request.cookies.auth) {
-    return response.sendStatus(401);
-  }
-
-  response.json({ protected: "top secret" }).sendStatus(200);
+  response
+    .cookie("auth-cookie-name", "auth-cookie-value", { httpOnly: true })
+    .sendStatus(204);
 });
 ```
 
-![finally](./success.png)
+### Reaching the protected route
 
-Whoooa, finally we are here. The `/protected_resource` is in our hands! Even CORS couldn't get in our way.
+After configuring all auth-related fetch methods with `credentials: include`, switching wildcards to specific domains and adding the `Access-Control-Allow-Credentials` headers on auth-related server responses we’re all set.
 
-Hopefully we demystified what CORS is, why it exists and how to tame it. In the [following article](/guides/cors-aws-lambda) we'll see how to set up CORS with AWS Lambda and the Serverless framework.
+![CORS: Success with credentials](./images/cors-success-with-credentials.png)
+
+Our goal with this guide has been to demystify CORS by answering why it exists and how to tame it. In the [following guide](/guides/cors-aws-lambda), we’ll learn how to set up CORS with AWS Lambda and the Serverless framework.

@@ -2,21 +2,17 @@
 title: "CORS with AWS Lambda"
 ---
 
-# intro
+# CORS with AWS Lambda
 
-<!-- add link to the previous article where we discuss cors in raw form -->
+In [the last guide](/guides/cors) we introduced CORS and its remedies in the context of an API called from multiple domains.
 
-We went through CORS and its remedies in the [last](/guides/cors) article. We used express servers and some static sites to demonstrate the problem of multiple origin API.
+In this guide our focus shifts to CORS in a Serverless setting. Specifically, how [AWS Lambda](https://aws.amazon.com/lambda/) (the recommended deployment target for Saruni) handles CORS.
 
-Now it is time to get into deployment. How serverless and particularly AWS lambda handles CORS.
+The code for the backend of this project can be found [here](https://github.com/tambium/GUIDE_RESOURCE_cors-sls). Since we can’t `cURL` (CORS is browser specific) we need a frontend. A simple `create-react-app` instance modelling our frontend can be found [here](https://github.com/tambium/GUIDE_RESOURCE_cors-sls-frontend).
 
-The code for the backend side of this project can be found [here](https://github.com/tambium/GUIDE_RESOURCE_cors-sls).
+## Lambda function
 
-As we cannot `cURL` (CORS is browser specific) we need a frontend. I use a simple cra app that can be found [here](https://github.com/tambium/GUIDE_RESOURCE_cors-sls-frontend). All the screenshots from the browser is taken using this app.
-
-# the lambda function
-
-The code for the handler is a really simple one. It will return a json with the content: `{ "ok": true }`. As the focus is on sls, AWS lambda and CORS I would like to keep the lambda code as simple as it can be.
+The code for the handler is simple. It will return JSON with the content: `{ "ok": true }`.
 
 ```js
 exports.handler = async () => {
@@ -27,11 +23,11 @@ exports.handler = async () => {
 };
 ```
 
-# issue number one: non-complex (simple) requests
+## Handling simple requests
 
-Non complex CORS request are the `GET`, `HEAD` and `POST` verbs with some simple headers. You can read more about what a non-complex CORS request is and what considered to be a "simple header" [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Examples_of_access_control_scenarios). They are the requests that **do not** trigger a preflight request.
+We outlined the concept of simple requests in the last guide. To recap, these are requests that do not generate preflight requests. Usually that’s through use `GET`, `HEAD` or `POST` methods without sophisticated headers.
 
-To have any sort of CORS setup we must specify the `Access-Control-Allow-Origin` among the response headers.
+As before, we must specify `Access-Control-Allow-Origin` among the response headers.
 
 ```js
 exports.handler = async () => {
@@ -45,13 +41,13 @@ exports.handler = async () => {
 };
 ```
 
-This is more than enough to satisfy our browser. Our app sitting at `http://localhost:3000` (a different domain) is able to make a get request.
+This is enough to satisfy CORS constraints. Our web app on `http://localhost:3000` (a different domain) is able to make a `GET` request.
 
-![success 1](./success_1.png)
+![CORS AWS Lambda: Successful simple request](./images/cors-lambda-simple-request.png)
 
-# issue number two: complex request
+## Handling complex requests
 
-Complex requests are the ones that trigger a preflight request. We are going to create a post request. In itself this is not a problem. `POST` is simple by default. But if we add for example, `content-type: application/json`, that request will become a complex one.
+Complex requests are those that trigger a preflight request. We’ll use a `POST` request with a `content-type` of `application/json`, which qualifies.
 
 ```js
 fetch(
@@ -65,11 +61,11 @@ fetch(
 )
 ```
 
-The above fetch request is a complex request by CORS' standard. As such, it fails with our current setup.
+Without suitable configuration, we see the familiar CORS preflight error.
 
-![pre](./preflight.png)
+![CORS Lambda: Preflight error](./images/cors-lambda-preflight-error.png)
 
-So when we fire up that request we get an error. An error about the preflight request. That is expected since we did not do any preflight configuration. In sls, that is really easy.
+Resolving this error in a Serverless context is simple. All we do is add the `cors: true` option to our events array in the `serverless.yml` configuration file, which sets up the preflight request and creates an OPTION request on AWS.
 
 ```yml
 functions:
@@ -86,32 +82,27 @@ functions:
           cors: true
 ```
 
-All we need to do is to add `cors: true` to our events array in the yml file. That sets up the preflight request and creates OPTION request on aws. Everything is taken care for us.
+## Handling credentials
 
-# credentials
+If we want to send cookies and auth credentials across domains, Serverless has us covered.
 
-Now, if we want to send cookies and auth credentials across domains things will be a tiny bit more difficult but sls has us covered.
-
-To make fetch grab our cookies and send it to another domain all we need to do is set `credentials` to `include` in our fetch call.
+For fetch to grab our cookies and send them to another domain, all we need to do is set `credentials` to `include` in our fetch call.
 
 ```js
-fetch(
-  URL,
-  {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    credentials: "include",
-  }
-)
+fetch(URL, {
+  method: "POST",
+  headers: {
+    "content-type": "application/json",
+  },
+  credentials: "include",
+});
 ```
 
 Having made these changes our fetch fails again.
 
-![preflight credentials](./preflight_credentials.png)
+![CORS Lambda: Preflight credentials issue](./images/cors-lambda-preflight-credentials-issue.png)
 
-It first complains about the preflight request. In the [previous post](/guides/cors) we set the header `Access-Control-Allow-Credentials` to `true`. With sls we don't have to. We just need to tell sls to handle advanced CORS features and the preflight request will be modified accordingly.
+We receive an error about the preflight request. In the [previous guide](/guides/cors) we resolved this issue by setting the header `Access-Control-Allow-Credentials` to `true`. With Serverless, we don't have to. Instead, we tell Serverless to handle advanced CORS features and the preflight request will be modified accordingly.
 
 ```yml
 functions:
@@ -132,13 +123,13 @@ functions:
             origin: "*"
 ```
 
-In sls, CORS can be a boolean or an object. With this object based setup we have control over headers, origin and most importantly, credentials (this will attach `Access-Control-Allow-Credentials` to the preflight request).
+In Serverless, CORS options can be a boolean or an object. Using an object means we have control over headers, origin and most importantly, credentials (which will attach `Access-Control-Allow-Credentials` to the preflight request).
 
-If we deploy this, our error message changes to this:
+With these changes deployed, our error message changes:
 
-![credentials actual request](./credentials_actual_request.png)
+![CORS Lambda: Wildcard error](./images/cors-lambda-wildcard-error.png)
 
-This is a progress. Our error goes from the preflight request to the actual request. This happens because with include we cannot wildcard `origins` as a security precaution. We need to be specific about it and modify our lambda like this:
+Our error now relates to the actual request rather than the preflight request. This happens because we cannot wildcard `origins` as a security precaution. We need to be specific, so we modify our Lambda accordingly.
 
 ```js
 exports.handler = async () => {
@@ -152,9 +143,11 @@ exports.handler = async () => {
 };
 ```
 
-As a result we have a different error message. Again. `Access-Control-Allow-Credentials` is not set. We had this error before on the preflight request now we need to do that on the actual request.
+Our final error relates to `Access-Control-Allow-Credentials` header not being set. We dealt with this error on the preflight request and now we need to handle the actual request.
 
-![actual request](./include_actual.png)
+![CORS Lambda: Headers error on actual request](./images/cors-lambda-headers-error-actual-request.png)
+
+After making the changes we reach a success state where our fetch request can communicate cookies between domains.
 
 ```js
 exports.handler = async () => {
@@ -163,25 +156,23 @@ exports.handler = async () => {
     body: JSON.stringify({ ok: true }),
     headers: {
       "Access-Control-Allow-Origin": "http://localhost:3000",
-      "Access-Control-Allow-Credentials": true
+      "Access-Control-Allow-Credentials": true,
     },
   };
 };
 ```
 
-If we make those changes we finally have a success state. Our fetch request can communicate cookies between domains.
+### Extension: middy middleware
 
-# extra bit - middy
+Just as Express has middleware convenience functions—among them being one dedicated to setting appropriate CORS headers—AWS lambda has middleware packages too: including [middy](https://github.com/middyjs/middy). We’ll use middy to refactor our function.
 
-Just as express has middlewares and among them one that is dedicated to setting the appropriate CORS headers AWS lambda has one: [middy](https://github.com/middyjs/middy). Let's use middy and quickly refactor our function.
-
-We need to add two dependencies:
+We start by adding two dependencies.
 
 ```sh
 yarn add @middy/core @middy/http-cors
 ```
 
-After these are installed we can refactor our lambda.
+With these packages installed, we can refactor our Lambda.
 
 ```js
 const middy = require("@middy/core");
@@ -200,14 +191,14 @@ exports.handler = middy(async () => {
 );
 ```
 
-So middy works like this: the function `middy` takes a lambda function.
+The function `middy` takes a Lambda function.
 
-Middy is a higher order function that returns a chainable function. We can attach middlewares to it with the help of `.use()`. In the above case we add the CORS middleware. Notice we got rid of the CORS headers in the raw lambda. We only return the status code and body whereas in the previous steps we handled the CORS headers manually.
+Middy is a higher order function that returns a chainable function. We can attach middlewares to it with the help of `.use()`. In the code above we added CORS middleware. Notice we got rid of the CORS headers in the raw Lambda. We only return the status code and body where previously we had to handle the CORS headers manually.
 
-CORS is coming to the middleware. We just need to set the origin part and the credentials and the middleware will generate the appropriate headers for us.
+CORS is resolved by the middleware. We just set the origin and the credentials and the middleware will generate the appropriate headers for us.
 
-The thing that it generates the headers is only half the picture. It is certainly handy that we don't need to deal with it. But the main advantage is that our lambda is **decoupled** from CORS totally. It is only concerned with the "business logic" whereas the CORS middleware only cares about, well the CORS stuff.
+Generation of headers is only half the picture. The main advantage is that our Lambda is decoupled from CORS totally. It is only concerned with the business logic, whilst the CORS middleware focuses on&hellip; well, CORS.
 
-# verdict
+## Conclusion
 
-In this series we went through a lot. We talked about what cors is and built some servers and frontends by ourselves to understand CORS and the core. Also checked out how Serverless and AWS Lambda is dealing with CORS related issues. We must be vigilant though. CORS can strike when it's least expected.
+Over the course of two guides we walked through what CORS is, built servers and web apps to understand CORS in action. We also checked out how Serverless and AWS Lambda handles CORS related issues. We hope this was helpful. Good luck!

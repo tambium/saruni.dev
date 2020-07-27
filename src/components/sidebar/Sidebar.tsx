@@ -43,7 +43,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ location, section }) => {
             </Link>
             <Link
               css={{ "&:active": { textDecoration: "none" } }}
-              to="/guides/cors"
+              to="/guides/postgresql"
             >
               <StaticItem
                 isActive={section === "guides"}

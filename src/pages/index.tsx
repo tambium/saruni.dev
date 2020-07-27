@@ -7,6 +7,7 @@ import { Link } from "gatsby";
 import { Tambium } from "../components/icon/glyphs";
 import { mq } from "../constants/layout";
 import { SEO } from "../components/seo";
+import { useTheme } from "../hooks/use-theme";
 
 interface HomeProps {
   location: Location;
@@ -37,6 +38,7 @@ const Home: React.FC<HomeProps> = ({ location }) => {
   const {
     tokens: { mode },
   } = useGlobalTheme({});
+  const { isLight } = useTheme();
 
   return (
     <React.Fragment>
@@ -92,15 +94,11 @@ const Home: React.FC<HomeProps> = ({ location }) => {
             <div css={{ alignItems: "center", display: "flex" }}>
               <Link
                 css={{
-                  backgroundColor:
-                    mode === "light"
-                      ? colors.background[oppositeMode(mode)]
-                      : colors.surfaceNeutralSubdued[mode],
+                  backgroundColor: isLight
+                    ? colors.background[oppositeMode(mode)]
+                    : colors.surfaceNeutralSubdued[mode],
                   borderRadius: 50,
-                  color:
-                    mode === "light"
-                      ? colors.background[mode]
-                      : colors.text[mode],
+                  color: isLight ? colors.background[mode] : colors.text[mode],
                   display: "inline-flex",
                   padding: "6px 16px",
                   fontSize: font.size.subtitle,
@@ -190,8 +188,20 @@ const Home: React.FC<HomeProps> = ({ location }) => {
           }}
         >
           <div css={{ padding: "48px 0 64px" }}>
-            <div css={{ marginBottom: 16 }}>
-              <Tambium size={48} />
+            <div
+              css={{
+                color: isLight
+                  ? colors.background[oppositeMode(mode)]
+                  : colors.surfaceNeutralSubdued[mode],
+                marginBottom: 16,
+              }}
+            >
+              <Tambium
+                secondaryColor={
+                  isLight ? colors.background[mode] : colors.text[mode]
+                }
+                size={48}
+              />
             </div>
             <div css={{ fontSize: font.size.body }}>
               © Tambium {new Date().getFullYear()}

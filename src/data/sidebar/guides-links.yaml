@@ -1,6 +1,10 @@
 - title: Guides
   key: guides
   items:
+    - title: Database
+      items:
+        - title: PostgreSQL
+          link: /guides/postgresql
     - title: Deployment
       items:
         - title: CORS

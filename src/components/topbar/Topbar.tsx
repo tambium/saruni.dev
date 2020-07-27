@@ -95,7 +95,7 @@ export const Topbar: React.FC<TopbarProps> = ({
               fontWeight: 500,
               marginRight: 16,
             }}
-            to="/guides/cors"
+            to="/guides/postgresql"
           >
             Guides
           </Link>

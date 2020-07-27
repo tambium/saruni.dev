@@ -88,11 +88,12 @@ export const components = ({ mode }: { mode: ThemeModes }) => ({
   p: (props) => <p css={{ lineHeight: 1.5, paddingBottom: 16 }} {...props} />,
   pre: (props) => <pre css={{ marginBottom: 24 }} {...props} />,
   strong: (props) => <strong css={{ fontWeight: 600 }} {...props} />,
-  li: (props) => <li css={{ padding: "4px 0" }} {...props} />,
+  li: (props) => <li css={{ paddingTop: 4 }} {...props} />,
   ul: (props) => (
     <ul
       css={{
         marginLeft: 24,
+        paddingBottom: 16,
       }}
       {...props}
     />

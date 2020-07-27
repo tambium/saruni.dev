@@ -35,6 +35,7 @@ const ContentTemplate: React.FC<ContentTemplateProps> = ({
       />
       <ContentLayout
         disableTableOfContents={disableTableOfContents}
+        location={location}
         section={section}
         tableOfContents={tableOfContents}
         tableOfContentsDepth={tableOfContentsDepth}

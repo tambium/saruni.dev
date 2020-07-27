@@ -19,6 +19,7 @@ interface ContentLayoutProps {
   children: React.ReactNode;
   disableTableOfContents: boolean;
   isTOCDisabled?: boolean;
+  location: Location;
   section?: string;
   tableOfContents: {
     items: ITOCItem[];
@@ -29,6 +30,7 @@ interface ContentLayoutProps {
 export const ContentLayout: React.FC<ContentLayoutProps> = ({
   children,
   disableTableOfContents,
+  location,
   tableOfContents,
   tableOfContentsDepth,
   section,
@@ -44,9 +46,13 @@ export const ContentLayout: React.FC<ContentLayoutProps> = ({
 
   return (
     <React.Fragment>
-      <Topbar isContentLayout maxWidth={CONTENT_WIDTH + SIDEBAR_WIDTH} />
+      <Topbar
+        isContentLayout
+        location={location}
+        maxWidth={CONTENT_WIDTH + SIDEBAR_WIDTH}
+      />
       <LayoutContainer mode={mode}>
-        <Sidebar location={window.location} section={section} />
+        <Sidebar location={location} section={section} />
         <ContentContainer mode={mode}>
           <MDXProvider components={components({ mode })}>
             <ContentWrapper>{children}</ContentWrapper>
@@ -54,7 +60,7 @@ export const ContentLayout: React.FC<ContentLayoutProps> = ({
           <AsideContainer>
             {!isTOCDisabled && (
               <TOC
-                location={window.location}
+                location={location}
                 tableOfContents={tableOfContents}
                 tableOfContentsDepth={tableOfContentsDepth}
               />

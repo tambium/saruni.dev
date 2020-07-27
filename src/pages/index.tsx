@@ -8,7 +8,9 @@ import { Tambium } from "../components/icon/glyphs";
 import { mq } from "../constants/layout";
 import { SEO } from "../components/seo";
 
-interface HomeProps {}
+interface HomeProps {
+  location: Location;
+}
 
 const FEATURES = [
   {
@@ -31,7 +33,7 @@ const FEATURES = [
   },
 ];
 
-const Home: React.FC<HomeProps> = ({}) => {
+const Home: React.FC<HomeProps> = ({ location }) => {
   const {
     tokens: { mode },
   } = useGlobalTheme({});
@@ -47,7 +49,7 @@ const Home: React.FC<HomeProps> = ({}) => {
             width: "100%",
           }}
         >
-          <Topbar maxWidth={752} />
+          <Topbar location={location} maxWidth={752} />
         </div>
         <section
           css={{

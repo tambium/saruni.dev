@@ -1,6 +1,9 @@
 import { ThemeModes } from "@saruni-ui/theme";
+import { isBrowser } from "../../../utils/global";
 
 const getPreference = (): MediaQueryList => {
+  if (!isBrowser) return null;
+
   return (
     (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)")) ||
     null

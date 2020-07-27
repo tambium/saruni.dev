@@ -1,4 +1,5 @@
 import React from "react";
-import { ThemeContext } from "../../context/theme";
+import { ThemeContext, ThemeContextProps } from "../../context/theme";
 
-export const useTheme = () => React.useContext(ThemeContext);
+export const useTheme = () =>
+  React.useContext<Partial<ThemeContextProps>>(ThemeContext);

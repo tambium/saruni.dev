@@ -11,17 +11,20 @@ import { MobileSelect } from "./MobileSelect";
 
 interface TopbarProps {
   isContentLayout?: boolean;
+  location: Location;
   maxWidth: number;
   section?: string;
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
   isContentLayout = false,
+  location,
   maxWidth,
 }) => {
   const {
     tokens: { mode },
   } = useGlobalTheme({});
+
   const { isLight, switchMode } = useTheme();
 
   return (
@@ -59,7 +62,7 @@ export const Topbar: React.FC<TopbarProps> = ({
         >
           <Branding />
         </div>
-        {isContentLayout && (
+        {isContentLayout && location && (
           <div
             css={mq({
               display: ["inline-flex", "none"],
@@ -67,7 +70,7 @@ export const Topbar: React.FC<TopbarProps> = ({
               position: "relative",
             })}
           >
-            <MobileSelect />
+            <MobileSelect location={location} />
           </div>
         )}
         <div

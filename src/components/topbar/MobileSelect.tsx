@@ -11,14 +11,17 @@ import {
 import { ChevronDown } from "../icon/glyphs";
 import { getItemList, getActiveItem } from "../../utils/sidebar";
 
-interface MobileSelectProps {}
+interface MobileSelectProps {
+  location: Location;
+}
 
-export const MobileSelect: React.FC<MobileSelectProps> = ({}) => {
+export const MobileSelect: React.FC<MobileSelectProps> = ({ location }) => {
   const {
     tokens: { mode },
   } = useGlobalTheme({});
-  const itemList = getItemList(window.location);
-  const activeItem = getActiveItem(itemList.items, window.location);
+
+  const itemList = getItemList(location);
+  const activeItem = getActiveItem(itemList.items, location);
 
   const { pathname } = useLocation();
 

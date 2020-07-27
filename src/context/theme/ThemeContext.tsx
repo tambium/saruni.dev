@@ -6,7 +6,13 @@ import {
 } from "@saruni-ui/theme";
 import { getSystemMode, onSystemModeChange } from "./utils";
 
-export const ThemeContext = React.createContext(null);
+export type ThemeContextProps = {
+  isLight: boolean;
+  mode: ThemeModes;
+  switchMode: () => void;
+};
+
+export const ThemeContext = React.createContext({});
 
 interface ThemeProviderProps {
   children: React.ReactChild;

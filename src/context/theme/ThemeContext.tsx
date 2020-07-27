@@ -36,8 +36,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     return onSystemModeChange(setMode);
   }, [initialized, setInitialized, setMode]);
 
-  if (!initialized) return null;
-
   return (
     <GlobalThemeProvider theme={() => ({ mode })}>
       <ThemeContext.Provider

@@ -1,4 +1,3 @@
-
 There are a few challanges when we want to combine technologies like AWS Lambda, Prisma, Apollo GraphQL and Serverless. That is a great stack, effective, easy to set up, suitable for starting out things, but it has some things to look out for.
 
 First, let's create a simple repo and build our way slowly to our desired goal and techs.
@@ -28,7 +27,6 @@ Having said that let's have a look at the `package.json` and see what the depend
     "babel-loader": "^8.1.0",
     "copy-webpack-plugin": "^6.0.2",
     "webpack": "^4.43.0",
-    "webpack-node-externals": "^1.7.2"
   }
 }
 ```
@@ -60,10 +58,9 @@ exports.handler = async () => {
 };
 ```
 
-
 ## Serverless.yml
 
-The core of our workflow. Lets got through what is happening here.
+This `yml` is the core of our workflow. Let's got through what is happening here.
 
 ```yml
 service: prisma
@@ -96,11 +93,11 @@ functions:
 
 We provide some basic data, like host provider, stage and memory size. The only bit I attached is the `LambdaRole`. It is coming from an external `yml`.
 
-In the functions section there is only one function: the graophql that has two method get and post as graphql requires them.
+In the functions section there is only one function: the graphql that has two methods: get and post.
 
-If everything is set up, issuing sls deploy takes care of everythign and soon you can have the code on aws.
+If everything is set up, issuing sls deploy takes care of everything and soon you can have the code on AWS.
 
-After you can run curl and see this
+After you can run curl or visit the browser to see if everything went well.
 
 ## LambdaRole.yml
 
@@ -129,10 +126,9 @@ Properties:
 
 That role provides permission for our Lambda so it can write to the CloudWatch logs.
 
+## Add webpack
 
-## add webpack
-
-We use webpack for two thing. First to embed babel, so we can write ES6+ code. Second, to bundle our app, so we can get rid of (most) node dependencies.
+We use Webpack for two thing. First to embed babel, so we can write ES6+ code. Second, to bundle our app, so we can get rid of (most) node dependencies.
 
 Let's move to ES6 and refactor our handler.
 
@@ -150,7 +146,6 @@ Since AWS can't run this syntax we need to use babel to transpile it. We can cre
 ### Serverless-webpack and webpack config
 
 We use Serverless and the serverless-webpack plugin. It helps to integrate with webpack. Let's see how.
-
 
 ```js
 const slsw = require("serverless-webpack");
@@ -200,9 +195,9 @@ The target, mode and resolve parts are self explanatory, they are part of most w
 
 So how does Serverless knows about this config file?
 
-### serverless.yml
+### Serverless.yml and webpack
 
-The serverless yml needs some modifcation to pick up these changes and fully integrate with webpack. Serverless-webpack plugin just does that. Serverless-webpack is also responsible for bundling. So when we will use `sls deploy` serverless won't just upload our file to AWS but runs webpack before that. What needs to be changed in our `yml` file?
+The `serverless.yml` needs some modifcation to pick up these changes and fully integrate with webpack. Serverless-webpack plugin just does that. Serverless-webpack is also responsible for bundling. So when we will use `sls deploy` serverless won't just upload our file to AWS but runs webpack before that. What needs to be changed in our `yml` file?
 
 ```yml
 service: prisma
@@ -242,13 +237,13 @@ functions:
 
 We specify the serverless-webpack as a plugin. That is how Serverless knows to use Serverless-webpack. We also tell where the config file is.
 
-After we are set we can deploy with  sls deploy --function graphql.
+After we are set we can deploy with `sls deploy --function graphql`.
 
 If everything has worked we should still be able to invoke the functions but know webpack took care of the bundle process
 
-### apollo
+## Apollo
 
-After the webpack setup we can move to apollo. Apollo is pretty easy to set up I almost copied it from their docs. Just some basic typedef, basic resolvers and a handler.
+After the webpack setup is done we can move to Apollo. Apollo is pretty easy to set up. I almost copied all the code it from their docs. Just some basic typedef, basic resolvers and a handler.
 
 ```js
 import { ApolloServer, gql } from "apollo-server-lambda";
@@ -285,9 +280,9 @@ export const handler = server.createHandler();
 
 The tricky part is the playground. On a local environment we could reach the playground on `/graphql`. On AWS we have stages in API Gateway. So by default every function is prefixed with the stage. That means our graphql url endpoint changes to `/dev/graphql`.
 
-It is still working, visiting the endpoint that the Serverless framework creates will load the graphql playground.
+It is still working, visiting the endpoint that the Serverless framework creates will load the graphql playground. We can move forward to the last piece of our tech stack.
 
-### prisma
+## Prisma
 
 Adding Prisma as a library to communicate to our db will make our setup more complicated. Why? It is because of the nature of Prisma.
 
@@ -317,9 +312,11 @@ const resolvers = {
 };
 ```
 
-We import PrismaClient from @prisma/client and then we can then instantiate a new instance. That instance will have all the methods to interact with the databasa. The only problem is that PrismaClient is generated `on the fly`. It is in node_modules, but not fetched from npm. Prisma generates it based on our database schema when we call prisma generate. It will write it to node modules. It is a very clever way to customize code whilst hidyng the implementation details.
+We import `PrismaClient` from `@prisma/client` and then we can then instantiate a new instance. That instance will have all the methods to interact with the database. The only problem is that `PrismaClient` is generated **on the fly**. It is in `node_modules`, but not fetched from npm. Prisma generates it based on our database schema when we call `prisma generate`. It will write it to `node_modules`. It is a very clever way to customize code whilst hidyng the implementation details.
 
-It would not be a problem under normal conditions. We run prisma generate locally bundle things, and upload. We have the prisma client generated. Problem is, serverless webpack does not use the node_modules we have **locally**. It creates its own working space. That means we won't have the prisma client when we use webpack.
+It would not be a problem under normal conditions. We run `prisma generate` locally bundle things, and upload. We have the prisma client generated. Problem is, serverless webpack does not use the `node_modules` we have **locally**. It creates **its own** working space. That means we won't have the prisma client when we use webpack.
+
+Fortunately, there is a way to solve this.
 
 With serverless webpack we can run scripts before uploading our bundle to AWS.
 
@@ -332,8 +329,7 @@ custom:
         - prisma generate
 ```
 
-With that little bit of modification serverless webpack will create its own generated prisma client in its own place. Before running that command we need a prisma database schema.
-
+With that little bit of modification serverless webpack will create its own generated prisma client in its own place. Before running that command we need a prisma database schema however.
 
 ```js
 datasource db {
@@ -351,21 +347,23 @@ model User {
 }
 ```
 
-Here we set up datasource to be a postgres instance and ask prisma to use the DATABASE_URL entry in aour .env file as an address to out db. We will not create a db on AWS so this code will not work at all. This is just not the aim of this article. But we need to provide a valid url in our .env, otherwise the prisma generate command will fail.
+The prisma.shema file is where we can specify settings so prisma knows what client it should generate.
 
-The next thin is in the binary targetes. Under the hood Prisma is using rust binary to communicate with the db. So the typescript layer is just the top layer that will communicate with rust and rust will communicate with the db.
+Here we set up datasource to be a `postgres` instance and ask Prisma to use the `DATABASE_URL` entry in our `.env` file as an address to our db. We will not create a db on AWS so this code will not work at all. This is just not the aim of this article. But we need to provide a valid url in our `.env`, otherwise the `prisma generate` command will fail.
 
-But different operating systems might need different rust binaries. Because of that we need to specify the type of binary that will work on the linux based VMs that are used to run Lambda functions. That bninary is called `rhel-openssl-1.0.x`.
+The next thing is in the binary targets. Under the hood Prisma is using rust binary to communicate with the db. So the typescript layer is just the top layer that will communicate with rust and rust will communicate with the db.
 
-The last is to have at least one db model. We have a model called User thaa has only an id.
+But different operating systems might need different rust binaries. Because of that we need to specify the type of binary that will work on the linux based VMs that are used to run Lambda functions. That binary is called `rhel-openssl-1.0.x`.
+
+The last is to have at least one db model. We have a model called User that has only an id.
 
 We are set, everything should work right?
 
 ## Copy the .env and db shema to the local playground of webpack
 
-No. The `prisma generate` command will be run in webpack's own temporary file structure. But in there there is no .env file or schema.prisma. Without these files we can't generate our presonalised client.
+No. The `prisma generate` command will be run in webpack's **own temporary** file structure. But in there there is no `.env` file or `schema.prisma`. Without these files we can't generate our presonalised client.
 
-Fortunately webpack has a solution for that. We can copy file to our target directory with the help of a plugin called `CopyWebpackPlugin`.
+Fortunately, webpack has a solution for that. We can copy file to our target directory with the help of a plugin called `CopyWebpackPlugin`.
 
 ```js
 plugins: [
@@ -378,11 +376,11 @@ plugins: [
 ],
 ```
 
-Adding the plugins section to our webpack.config.js and describing the locations of the two files will copy these files. That means the `prisma generate` can run successfully.
+Adding the plugins section to our `webpack.config.js` and describing the locations of the two files will copy these files. That means the `prisma generate` can run successfully.
 
 ## Modifying the bundle
 
-There is another issues. Remember webpack bundles our files together. That means it creates one big file with all our source and all our dependencies. But we need to provide @prisma/client as it is because that is where our generated client and the rust binary lives. Without uploading the rust binary our lambda function will fail when it needs to communicate with databases.
+There is another issues. Remember webpack bundles our files together. That means it creates one big file with all our source and all our dependencies. But we need to provide `@prisma/client` because that is where our generated client and the rust binary lives. Without uploading the rust binary our Lambda function will fail when it needs to communicate with databases.
 
 How to solve that problem? We need to modify our `serverless.yml` and our webpack config. Let's see how.
 
@@ -398,7 +396,7 @@ custom:
         - prisma generate
 ```
 
-The includeModules object in the webpack config can take a forceInclude array. There we can specify all the node modules we ant to **include** in our bundle no matter what. The other half of the picture is in the webpack config. What we **include** in the yml file must be **excluded** in the webpack config.
+The `includeModules` object in the `yml` can take a `forceInclude` array. There we can specify all the node_modules we ant to **include** in our bundle no matter what. The other half of the picture is in the webpack config. What we **include** in the `yml` file must be **excluded** in the webpack config.
 
 In the webpack cinfig.
 
@@ -406,13 +404,13 @@ In the webpack cinfig.
 externals: ["@prisma/client"]
 ```
 
-The externals field in the webpack config just does that. We tell webpack **not** to include it in the bundle. It will be provided as a node dependency.
+The `externals` field in the `webpack.config.js` just does that. We tell webpack **not** to include it in the bundle. It will be provided as a node dependency.
 
 That is it. We have a generated client with the rust binary uploaded to AWS. All written using modern JS or rather TS. Altough there is one more thing where we can do better.
 
 ## optimisign for bundle size
 
-Our bundle size is quite big. In aws we have a limit of 250mb when we upload our function through s3 and a 50mb limit when we do directly. It is generally a good thing to keep our lambdas tiny.
+Our bundle size is quite big. In AWS we have a limit of 250 mb when we upload our function through s3 and a 50mb limit when we do directly. We did not exceed that limit, yet it is generally a good thing to keep our Lambdas as tiny as possible.
 
 One of the big thing in our bundle is `@prisma/cli`. We don't need that in our Lambda.`@prisma/cli` deals with compile / build time matters whereas our Lambda should only be concerned about runtime dependencies. We can leave that out. The way to do that:
 
@@ -431,3 +429,7 @@ custom:
 ```
 
 Just as we used forceInclude to make sure something will be uploaded to AWS we can use forceExclude to make sure that something will be left out.
+
+# sum
+
+We created a setup with AWS, Serverless, Prisma and Apollo. The most important bit was Prisma. Setting Prisma up, not with just GraphQL, but in any Lambda can be somewhat challenging. But with some good webpack config we can make it realtively easy.

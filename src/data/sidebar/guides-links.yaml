@@ -11,3 +11,5 @@
           link: /guides/cors
         - title: CORS with AWS Lambda
           link: /guides/cors-aws-lambda
+        - title: Create Lambda with Prisma and Apollo
+          link: /guides/sls-prisma

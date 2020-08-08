@@ -11,3 +11,5 @@
           link: /guides/cors
         - title: CORS with AWS Lambda
           link: /guides/cors-aws-lambda
+        - title: Bastion host
+          link: /guides/bastion-server

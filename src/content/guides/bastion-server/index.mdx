@@ -178,86 +178,80 @@ We can connect to the EC2 instance sitting on AWS but still we have no idea how 
 
 ![problem](./images/goal.png)
 
-Let's have a look at this picture again. We can get into the ec2 instance. We are still in a publec subnet. We want to get into the private one that hosts the database. According to this pic, the bastion host communicataes to the rds with security groups.
+Let's have a look at this picture again. We can get into the EC2 instance. We are still in a public subnet. We want to get into the private one that hosts the database. According to this picture, the bastion host communicataes to the RDS with security groups.
 
 In other words, the db will allow connections from a specific security group.
 
-Security inbound (ingres) rules can allow traffic from an ip ar from another securtity group. In this sense, security group identifies the resource.
+Security inbound (ingres) rules can allow traffic from an ip or from another security group. In this sense, security group identifies the resource.
 
-## security groups
+## Create security groups
 
-THe first step therefore is to create a security group with no inbound rules.
+The first step therefore is to create a security group with no inbound rules.
 
-<!-- sc -->
-
-![problem](create_id_sc.png)
-
+![create id sg](./images/create_id_sc.png)
 
 The next step is to create a security group that will be attached to the db. In that secuiryt group there is an inbound rule.
 
-We allow connection on port 5432 (postgres) from instances that has the identity security group.
+We allow connection on port 5432 (postgres) from instances that has the identity security group (the sevurity group that created above).
 
-![problem](create_db_sc.png)
+![create db db](./images/create_db_sc.png)
 
-## attach the secuiryt groups
+## Attach the secrurity groups to db and VM
 
-The identity sc needs to be attached to our bastion host (ec2 server). We already have one called ssh that is responsibel for the ssh connection. In the action bar we can change the securiy groups.
+The identity sg needs to be attached to our bastion host (EC2 server). We already have one called SSH that is responsible for the SSH connection. In the action bar we can change the security groups.
 
+![attach sg](./images/attach_new_sc_to_ec2.png)
 
-![problem](attach_new_sc_to_ec2.png)
+We simply select to add another one so we will have two sg attached to our VM.
 
-We simply select to add another one so we will have two sc attached to ec2.
+In RDS we just need to modify our db instance.
 
-In rds we just need to modify our db instance.
+![attach sg](./images/attach_sc_to_db.png)
 
-![problem](attach_sc_to_db.png)
+# Connect with DBWeaver
 
-# connect with dbweave
+We already know that SSH works, we tried it. Know we need to use SSH to connect to the a database.
 
-We already know ssh work, we tried it. Know we need to use ssh to connect to a database.
+Next step is to fire up DBWeaver and try to connect to our db.
 
-Next step is to fire up dbweaver and try to connect to our db.
+![db rds](./images/dbw_rds.png)
 
+We gave these credentails that we gave to AWS during te db creation process. The endpoint can be found in the db dashboard.
 
-![problem](dbw_rds.png)
+Now comes the SSH part.
 
-We gave these credentails to aws during te db creation. The endpoint can be found in the db dashboard.
+![db ssh](./images/dbw_ssh.png)
 
-Now comes the ssh part.
-
-![problem](dbw_ssh.png)
-
-The host ip is the public ip of our ec2 instance. User in a case of an amazon AMI instance is ec2-user. Select public key as an authentication method. Then select the key file from your hard drive.
+The host ip is the public ip of our EC2 instance. User in case of an amazon AMI instance is `ec2-user`. Select public key as an authentication method. Then select the key file from your hard drive.
 
 If everything is set up correctly then we should see the follwing window after clicking on test connection.
 
+![db conn](./images/dbw_conn.png)
 
-![problem](dbw_conn.png)
-
-# psql with ssh tunnel
+# PSQL with SSH tunnel
 
 We don't always want to connect to the database with a graphical interface.
 
 We might want to do a migration and for that we need an open connection. With SSH tunnel we can do that.
 
-In this case im just using psql to connect to the db with the help of an ssh tunnel
+In this case I'm just using `psql` to connect to the db with the help of an SSH tunnel.
 
-We can create a tunnel with the ssh command with the -L prefix
+We can create a tunnel with the SSH command with the -L prefix.
 
 ```bash
 ssh -L 2222:database-1.c2avit44uwcq.eu-west-1.rds.amazonaws.com:5432 -i bastion.pem ec2-user@3.248.195.32
 ```
 
-The above command means that localhost:2222 should point to database-1.c2avit44uwcq.eu-west-1.rds.amazonaws.com:5432.
+The above command means that `localhost:2222` should point to `database-1.c2avit44uwcq.eu-west-1.rds.amazonaws.com:5432`. That binds the remote port and host to `localhost` on port `2222`.
 
-To estabslish the connection use bastion.pem private key and ssh into the machene that can be found at 3.248.195.32 with the user ec2-user.
+To estabslish the connection use bastion.pem private key and SSH into the machine that can be found at 3.248.195.32 with the user `ec2-user`. (IP will be different in your case).
 
-Before initiateing this command psql fails of course.
+Before running the SSH tunnel command, psql fails of course. It fails because there is nothing at `localhost:2222`
 
-![problem](psql_disconn.png)
+![problem](./images/psql_disconn.png)
 
-But after hitting enter psql connect to our rds instance that has no public ip.
+But after getting into the VM with SSH psql connects to our RDS instance that has no public ip.
 
-![problem](psql_success.png)
+![problem](./images/psql_success.png)
 
-That is how we can use a db locally with the help of a bastion server.
+That is how we can use a db locally with the help of a bastion host.

@@ -6,6 +6,7 @@ import {
   SIDEBAR_MIN_WIDTH,
   SIDEBAR_WIDTH,
   CONTENT_PADDING_VERTICAL,
+  TOPBAR_HEIGHT,
 } from "../../constants/layout";
 
 export const SidebarContainer = styled.div(({ mode }: { mode: ThemeModes }) => {
@@ -25,11 +26,12 @@ export const SidebarWrapper = styled.div((props) =>
   mq({
     display: "flex",
     flexDirection: "column",
-    height: [null, "100vh"],
+    height: [null, `calc(100vh - ${TOPBAR_HEIGHT}px)`],
     position: "fixed",
     overflowY: "scroll",
     width: SIDEBAR_WIDTH,
     paddingTop: CONTENT_PADDING_VERTICAL,
+    paddingBottom: CONTENT_PADDING_VERTICAL,
   })
 );
 

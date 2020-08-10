@@ -4,7 +4,7 @@ title: "Overview"
 
 # Overview
 
-Saruni is a web application framework that provides the foundational tooling startups need to write and release apps. Our goal is that small development teams feel comfortable writing and deploying world-class applications without breaking a sweat. Saruni offers sensible defaults for common challenges but gives developers full control.
+Saruni is a web application framework that provides the foundational tooling startups need to write and release apps. Our goal is for small development teams to feel comfortable writing and deploying world-class applications without breaking a sweat. Saruni offers sensible defaults for common challenges but gives developers full control.
 
 ## Motivation
 
@@ -14,6 +14,13 @@ There were elements of that project that we loved, like GraphQL for modular data
 
 Saruni adopts the parts we liked and leans on more recent developments in the world of JavaScript and cloud computing to replace the others. We hope you’ll find that Saruni has all you need to build fantastic applications more easily, and that the resources we have put together here can lend a helping hand if and when you need them.
 
+..........
+
+1. existing project (hlp) -- limitations of dual-stack (PHP, JS -- Server-based)
+2. we found lots of material that covered zero-to-written (but Saruni is faster), but not much on zero-to-deployed (important that it is production-ready)
+
+..........
+
 ## Stack
 
 - [React](https://reactjs.org/)
@@ -22,8 +29,8 @@ Saruni adopts the parts we liked and leans on more recent developments in the wo
 - [Prisma](https://www.prisma.io/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Serverless](https://www.serverless.com/)
-- [AWS](https://aws.amazon.com/) (Recommended)
-- [TypeScript](https://www.typescriptlang.org/) (Optional)
+- [TypeScript](https://www.typescriptlang.org/)
+- [AWS](https://aws.amazon.com/)
 
 ## Packages
 
@@ -35,3 +42,7 @@ Saruni adopts the parts we liked and leans on more recent developments in the wo
 - Offline support
 - Payments
 - Validation
+
+## Limitations
+
+Migrations, including Prisma not pushing migration engine (yet!)

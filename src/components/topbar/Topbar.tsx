@@ -85,7 +85,7 @@ export const Topbar: React.FC<TopbarProps> = ({
               fontWeight: 500,
               marginRight: 16,
             }}
-            to="/docs/overview"
+            to="/docs/getting-started/overview"
           >
             Docs
           </Link>

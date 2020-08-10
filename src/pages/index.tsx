@@ -108,7 +108,7 @@ const Home: React.FC<HomeProps> = ({ location }) => {
                     textDecoration: "none",
                   },
                 }}
-                to="/docs/overview"
+                to="/docs/getting-started/overview"
               >
                 Get started
               </Link>

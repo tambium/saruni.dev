@@ -1,0 +1,47 @@
+import { DeploymentArchitecture } from "./images";
+
+# Deployment
+
+The deployment architecture for Saruni has been designed with security in mind. Specifically, we avoid the temptation to toggle on public accessibility for AWS relational database service (RDS) instances and lean on other services to securely handle cases where access is required.
+
+In this document, we’ll provide an overview of the architecture that Saruni scaffolds through use of [Serverless resources](https://www.serverless.com/framework/docs/providers/aws/guide/resources/).
+
+<DeploymentArchitecture />
+
+## Resources
+
+BastionConnection
+
+BastionInstance
+
+BastionRoute
+
+BastionRouteTable
+
+BastionSSH
+
+DBSSH
+
+InternetGateway
+
+LambdaSecurityGroup
+
+PostgreSQLRDSInstance
+
+PrivateSubnetA
+
+PrivateSubnetB
+
+PrivateSubnetC
+
+PublicSubnet
+
+PublicSubnetAssociation
+
+RDSSubnetGroup
+
+SecurityGroup
+
+VPC
+
+VPCGatewayAttachment

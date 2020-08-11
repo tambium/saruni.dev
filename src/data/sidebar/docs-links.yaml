@@ -4,20 +4,52 @@
     - title: Getting started
       items:
         - title: Overview
-          link: /docs/overview
+          link: /docs/getting-started/overview
         - title: Installation
-          link: /docs/installation
+          link: /docs/getting-started/installation
+        - title: Directory structure
+          link: /docs/getting-started/directory-structure
+        - title: Deployment
+          link: /docs/getting-started/deployment
+    - title: API Reference
+      items:
+        - title: CLI
+          link: /docs/api-reference/cli
+        - title: Services
+          link: /docs/api-reference/services
+    - title: Backend
+      items:
+        - title: Prisma
+          link: /docs/backend/prisma
+        - title: GraphQL
+          link: /docs/backend/graphql
+        - title: Authentication
+          link: /docs/backend/authentication
+        - title: Serverless functions
+          link: /docs/backend/serverless-functions
+        - title: Environment variables
+          link: /docs/backend/environment-variables
     - title: Database
       items:
         - title: Migrations
-          link: /docs/migrations
-    - title: Markdown tests
+          link: /docs/database/migrations
+        - title: Seeding
+          link: /docs/database/seeding
+    - title: Frontend
       items:
-        - title: Code
-          link: /docs/code
-        - title: Text
-          link: /docs/text
-    - title: Authentication
-      link: /docs/authentication
-    - title: CLI
-      link: /docs/cli
+        - title: Routing
+          link: /docs/frontend/routing
+        - title: GraphQL
+          link: /docs/frontend/graphql
+        - title: Authentication
+          link: /docs/frontend/authentication
+        - title: Saruni UI
+          link: /docs/frontend/saruni-ui
+        - title: Environment variables
+          link: /docs/frontend/environment-variables
+    - title: Testing
+      items:
+        - title: Frontend
+          link: /docs/testing/frontend-testing
+        - title: Backend
+          link: /docs/testing/backend-testing

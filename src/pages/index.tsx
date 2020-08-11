@@ -108,7 +108,7 @@ const Home: React.FC<HomeProps> = ({ location }) => {
                     textDecoration: "none",
                   },
                 }}
-                to="/docs/overview"
+                to="/docs/getting-started/overview"
               >
                 Get started
               </Link>
@@ -207,7 +207,24 @@ const Home: React.FC<HomeProps> = ({ location }) => {
               © Tambium {new Date().getFullYear()}
             </div>
             <div css={{ fontSize: font.size.body, marginTop: 4 }}>
-              Written by Endre Vegh and Dominic Chapman
+              Written by{" "}
+              <a
+                href="https://github.com/r281GQ"
+                css={{
+                  color: colors.text[mode],
+                }}
+              >
+                Endre Vegh
+              </a>{" "}
+              and{" "}
+              <a
+                href="https://github.com/dominicchapman"
+                css={{
+                  color: colors.text[mode],
+                }}
+              >
+                Dominic Chapman
+              </a>
             </div>
           </div>
         </div>

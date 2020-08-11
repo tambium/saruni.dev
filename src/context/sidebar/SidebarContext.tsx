@@ -20,7 +20,7 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({
   const getItemState = React.useCallback(
     (item) => {
       return {
-        isActive: item.title === activeItem.title,
+        isActive: item.link === activeItem.link,
       };
     },
     [activeItem]

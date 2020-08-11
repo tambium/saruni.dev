@@ -1,0 +1,73 @@
+# CLI
+
+This reference documents every command available in the Saruni command-line interface. The CLI helps you develop, test and deploy your application right from the terminal.
+
+Saruni commands start with `yarn saruni` but `yarn sr` is available as an alias for convenience.
+
+## Development
+
+The `dev` command launches development servers that boot up local instances of Serverless functions, our Prisma client and the Next.js project powering the frontend.
+
+```bash
+yarn saruni dev
+```
+
+## Database
+
+The `database` (or `db`) commands handle common actions related to our datastore.
+
+### Initialize
+
+The `db init` command creates a Prisma project by creating a schema file.
+
+```bash
+yarn saruni db init
+```
+
+### Seed
+
+The `db seed` command creates entities defined in `api/src/db/seed` within our datastore.
+
+```bash
+yarn saruni db seed
+```
+
+### Migrate
+
+The `db migrate` commands create and apply migration scripts to our datastore.
+
+#### Save
+
+The `db migrate save` command saves a new migration to the `api/prisma/migrations` directory and updates the `_Migration` table of the datastore.
+
+```bash
+yarn saruni db migrate save
+```
+
+#### Up
+
+the `db migrate up` command executes migrations that have not been run against our datastore.
+
+```bash
+yarn saruni migrate up
+```
+
+## Generate
+
+The `gen` commands are helpers that take the work out of common web development workflows.
+
+### GraphQL
+
+The `gen graphql` (or `gen gql`) command generates code from our GraphQL schema and operations based on the documents found in `web/graphql`. For example, if we added a `getUser` query in our web package, we can expect `useGetUser()` hooks to be available as an import from the `web/generated` directory.
+
+```bash
+yarn saruni gen graphql
+```
+
+### Emails
+
+The `gen emails` command compiles email templates found in the `static/emails` directory to backwards compatible JavaScript, whilst maintaining types.
+
+```bash
+yarn saruni gen emails
+```

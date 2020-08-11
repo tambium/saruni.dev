@@ -1,0 +1,25 @@
+import { DeploymentArchitecture } from "./images";
+
+# Deployment
+
+The deployment architecture for Saruni has been designed with security in mind. Specifically, we avoid the temptation to allow public accessibility for AWS relational database service (RDS) instances and lean on other services to securely handle cases where access is required.
+
+In this document, we’ll provide an overview of the architecture that Saruni scaffolds through use of [Serverless resources](https://www.serverless.com/framework/docs/providers/aws/guide/resources/).
+
+<DeploymentArchitecture />
+
+## Resources
+
+Resources are defined through a [Serverless](https://www.serverless.com/framework/docs/providers/aws/guide/serverless.yml/) `serverless.yml` file, which contains references to a number of `[resource].yml` files. This approach provides sensible defaults but allows the architecture of Saruni applications to be extended.
+
+By default, we start by provisioning an isolated section of the AWS Cloud through use of a virtual private cloud (VPC). We can then launch a PostgreSQL datastore inside the VPC, so long as we also create an RDS subnet group with distinct subnet IDs (Private Subnet A, B and C in the base configuration).
+
+## Resource communication
+
+Serverless functions like the Lambda powering our GraphQL API require read and write access to the datastore. We place these kinds of resources inside the VPC and copy the security group of the RDS instance to be applied in the function’s VPC configuration.
+
+We use a bastion host in scenarios where we need SSH access to the datastore—made possible by exposing the port. Where we need two-way communication from outside to inside the VPC we have a NAT instance.
+
+Generally, unless a function requires read and write access to the database, serverless functions and their communication with other AWS services like SES or SNS can happen outside the VPC and communicate through the NAT instance to those functions like GraphQL that are inside.
+
+## Creating resources

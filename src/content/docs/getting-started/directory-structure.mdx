@@ -1,0 +1,55 @@
+# Directory Structure
+
+The Saruni application structure has been designed to support applications large and small and is a requirement to take advantage of `saruni` commands in your workflow.
+
+```bash
+.
+├── package.json
+├── packages
+│   ├── admin
+│   ├── api
+│   │   ├── prisma
+│   │   ├── src
+│   │   │   ├── db
+│   │   │   ├── functions
+│   │   │   └── graphql
+│   │   │       ├── resolvers
+│   │   │       └── typeDefs
+│   │   └── tests
+│   ├── shared
+│   ├── static
+│   │   └── emails
+│   └── web
+│       ├── generated
+│       ├── src
+│       │   ├── components
+│       │   ├── graphql
+│       │   ├── hooks
+│       │   ├── layouts
+│       │   ├── pages
+│       │   └── views
+│       └── tests
+└── saruni.json
+```
+
+## Packages directory
+
+Saruni utilizes the [Workspaces feature](https://classic.yarnpkg.com/en/docs/workspaces/) of `yarn` to make dependency management simpler. That means any workspace outlined in the `workspace` field of the root `package.json` (`api`, `web`, etc.) will have its dependencies hoisted to the root level on install.
+
+### API directory
+
+The `api` directory is home to the business logic of our application. It includes the `prisma` directory where representations of database tables will be created through [models](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema/data-model). The directory is also home to a `functions` directory where we can define any number of serverless functions to handle tasks like authentication and image upload. We also find the `graphql` directory here, where we write query markup to interact with our database.
+
+### Web directory
+
+The `web` directory contains the interface layer for our application. Routes are created through exports in the `pages` directory and will often share layouts, which can be defined in the directory of the same name. We create encapsulated UI elements in the `components` directory and export repeated uses of those elements from the `views` directory. For example, we could create a generic `Dropdown` element and export a multi-use `UserDropdown` implementation of that element to avoid polluting the `components` directory.
+
+The `graphql` subdirectory is where we define GraphQL queries and mutations in `.graphql` files, from which we can auto-generate hooks through Saruni CLI. These hooks are output to the `generated` subdirectory, whilst all other reusable stateful logic we write ourselves can be added to the dedicated `hooks` directory.
+
+### Shared directory
+
+The `shared` directory may be used to store logic that is helpful to both our business logic and interface layers. For example, validation logic for user creation could be written with a `yup` schema and used in both a client form and the mutation that form calls to avoid a mismatch across our stack.
+
+### Static directory
+
+The `static` directory is where you may define content that will be often compiled down to plain text or simple HTML markup. Email content, legalese and support documents are good examples. This content might be changed frequently by those without engineering experience, so abstracting the contents away from application logic is often helpful.

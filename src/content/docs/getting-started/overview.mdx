@@ -1,0 +1,40 @@
+---
+title: "Overview"
+---
+
+# Overview
+
+Saruni is a web application framework that provides the foundational tooling startups need to write and release apps. Our goal is for small development teams to feel comfortable writing and deploying world-class applications without breaking a sweat. Saruni offers sensible defaults for common challenges but aims to give developers full control.
+
+## Motivation
+
+We wrote Saruni after building web and native applications for a large online community.
+
+There were elements of that project that we loved, like GraphQL for modular data fetching; the ACID guarantees and ease of querying a traditional relational database, and the portability of React. But we noticed limitations, too: our backend logic was written in PHP which added technical overhead, and our server-based infrastructure added complexity when scaling.
+
+Saruni adopts the parts we liked and leans on more recent developments in the world of JavaScript and cloud computing to replace the others. We hope you’ll find that Saruni has all you need to build fantastic applications more easily, and that the resources we have put together here can lend a helping hand if and when you need them.
+
+## Stack
+
+- [React](https://reactjs.org/)
+- [Next.js](https://nextjs.org/)
+- [GraphQL](https://graphql.org/)
+- [Prisma](https://www.prisma.io/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Serverless](https://www.serverless.com/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [AWS](https://aws.amazon.com/)
+
+## Packages
+
+Saruni ships with code to handle common challenges in web applications, which we call packages. Out of the box you’ll have access to production-ready code for authentication and forms.
+
+In the future, we have plans to write packages to handle analytics, localization and payments.
+
+## Limitations
+
+Often when building web applications, we’ve stumbled across great resources that cover some part of the development-to-deployment process. Our goal with Saruni was to produce a framework that could enable JavaScript developers to get from zero to production-ready deployment.
+
+In our experience, the framework today should get you far (and faster!). But there are limitations. Specifically, the engine powering migrations in Saruni is still [considered experimental](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-cli/command-reference#migrations-experimental) so you may wish to choose an alternative means of performing migrations.
+
+We’re also yet to deploy a Saruni application at significant scale. That’s important, because although [the database we recommend](https://aws.amazon.com/rds/aurora/) for production instances of your application _should_ prevent a common problem in applications accessing their datastore through a serverless function (exceeding concurrent connection limit) we have no proof of that.

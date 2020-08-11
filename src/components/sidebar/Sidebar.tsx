@@ -30,7 +30,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ location, section }) => {
           <ul css={{ listStyle: "none", marginBottom: 32 }}>
             <Link
               css={{ "&:active": { textDecoration: "none" } }}
-              to="/docs/overview"
+              to="/docs/getting-started/overview"
             >
               <StaticItem
                 isActive={section === "docs"}
@@ -59,7 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ location, section }) => {
             </Link>
             <a
               css={{ "&:active": { textDecoration: "none" } }}
-              href="https://5efcf81e64c94600226b7b2e-xhxwxlzoec.chromatic.com/"
+              href="https://master--5efcf81e64c94600226b7b2e.chromatic.com"
               target="_blank"
             >
               <StaticItem

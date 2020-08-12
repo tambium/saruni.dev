@@ -1,1 +1,58 @@
 # Prisma
+
+[Prisma](https://www.prisma.io/) is an open-source toolkit for database workflows, consisting of three major components: Prisma Client, Prisma Migrate and Prisma Studio—the first of which is production ready, with the latter two flagged as experimental at time of writing.
+
+Prisma Client is a query builder. It is used in Saruni applications to send database queries that read and write data from our database.
+
+Prisma Migrate is a tool for migrating database schemas. It is used in Saruni applications when we need to create, update or remove tables in our database.
+
+Prisma Studio is a graphical user interface that allows us to view and edit data in a database. This is not yet used in Saruni workflows and we recommend [TablePlus](https://tableplus.com/) as a drop-in replacement for the time being.
+
+## Prisma schema
+
+Central to usage of Prisma in Saruni applications is the `api/prisma/schema.prisma` file. This is a declarative representation of database schemas that would traditionally be written imperatively with SQL.
+
+Rather than telling our database to execute a certain operation like creating a table, the Prisma schema _describes_ the structure of the database schema. This description can generate a Prisma Client, which can then be used to send database queries.
+
+In the following example, we describe the structure of a `User` table.
+
+```prisma
+model User {
+  id        Int       @default(autoincrement()) @id
+  username  String    @unique
+}
+```
+
+## Prisma workflow
+
+1. Update `prisma.schema`
+2. Run `yarn saruni db migrate save`
+3. Run `yarn saruni db migrate up`
+4. Run `yarn saruni db generate`
+5. Use Prisma Client in our application
+
+We start by updating a model in our `prisma.schema` to reflect a desired change. For example, we might add an `email` field to our `User` model.
+
+```prisma.schema
+model User {
+  id        Int       @default(autoincrement()) @id
+  username  String    @unique
+  email     String    @unique
+}
+```
+
+Running the `db migrate save` command adds a new timestamped directory in `api/prisma/migrations` detailing the changes made to the schema and a snapshot after the migration is applied.
+
+The `db migrate up` command takes take of applying the migration, so the changes made to our schema are reflected in the database.
+
+When the `saruni db generate` command is run we can expect an update to the Prisma Client that is written directly to the `node_modules` directory for use in our application.
+
+```ts
+import { PrismaClient } from "@prisma/client";
+
+export const db = new PrismaClient();
+
+const createUser = async (_parent, args) => {
+  await db.user.create({ data: { ...args.input } });
+};
+```

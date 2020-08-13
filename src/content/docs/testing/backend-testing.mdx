@@ -62,7 +62,7 @@ But in case of other lambdas the network layer becomes more interesting. Not to 
 
 ## Resolver with db access
 
-In our `schema.prisma` file I created a model called Message.
+In our `schema.prisma` file we created a model called Message.
 
 ```js
 model Message {
@@ -247,9 +247,140 @@ In the second test we assume it is only the "ola" that will be returned, if we s
 
 `executagraoqhl` takes a second arguemnt. There you can define variables just as we did and graphql will make our query.
 
-## context
+## Context
 
 Our last piece on testing will be context. Graphql contract comes with the context idea which is where we can attach any arbitrary data to our resolver.
 
 As I mentioned earlier, we don't test the network layer with this approach. Much of the content attached to the data comes from the network layer. Headers, cookies, aws identifiers and so on. So it is crucial to mock the context in some cases.
 
+One of this case is the authentication, as we set it up. Our jwt based authentication is a higher order function that reads the headers object on the context.
+
+```js
+const withAuthentication = (context) => {
+  context.headers["Authorizarion"] // assumes the headers are attached
+}
+```
+
+Since there is no network layer in our tests we need to take matters into our own hands.
+
+Just to see our test actually working, let's wrap out hellos query in `withAuthentication`.
+
+```ts
+import { db } from "./../../../db";
+import { withAuthentication } from "@saruni/auth";
+
+export const Query = {
+  hello: () => {
+    return "Hello, Saruni!";
+  },
+  hellos: withAuthentication(async (_root, args) => {
+    let prismaArguments = {};
+
+    if (args.input && args.input.take) {
+      prismaArguments.take = args.input.take;
+    }
+
+    return (await db.message.findMany(prismaArguments)).map((message) => {
+      return message.message;
+    });
+  }),
+};
+```
+
+Running the tests will fail with Authentication Error. Expected.
+
+We provide a `createAccessToken` in the `@saruni/auth` package function to generate jwt tokens using the secret provided in the `.env` files.
+
+### Setting the context
+
+There are two ways to set the context. One is on the `executeGraphql` function. The second argument to that function can take a variables arugment as we have seen already and optionally a context.
+
+```ts
+test("Should return the ['ola'] when take 1 is provided", async () => {
+  const result = await ctx.executeGraphql(
+    `
+    query Hellos ($input: HellosInput) {
+      hellos (input: $input)
+    }`,
+    {
+      variables: { input: { take: 1 } },
+      context: {
+        headers: {
+          Authorization: createAccessToken({}),
+        },
+      },
+    }
+  );
+
+  expect(result.data.hellos).toEqual(expect.arrayContaining(["ola"]));
+});
+```
+
+That solution works fine and makes the test pass. There is another issue here. Context can be the same across many request. Just like we have the same auth headers. So it might make sense to actually put the context into the testContext and not set it up on every graphql request.
+
+We can do that by:
+
+```ts
+const ctx = createApiTestContext(db);
+
+beforeAll(async () => {
+  ctx.setGraphQLContext({
+    headers: {
+      Authorization: createAccessToken({}),
+    },
+  });
+});
+```
+
+The `setGraphQLContext` sets the context, so every `executeGraphql` function will be using it by default. Unless that is overwritten by their own context. That always takes a priority.
+
+So in this case:
+
+```ts
+import { createApiTestContext } from "@saruni/test";
+import { createAccessToken } from "@saruni/auth";
+
+import { db } from "../src/db";
+
+describe("Hellos test", () => {
+  const ctx = createApiTestContext(db);
+
+  beforeAll(async () => {
+    ctx.setGraphQLContext({
+      headers: {
+        headerWithSet: "one"
+      },
+    });
+  });
+
+  test("Should return the ['ola'] when take 1 is provided", async () => {
+    const result = await ctx.executeGraphql(
+      `
+      query Hellos ($input: HellosInput) {
+        hellos (input: $input)
+      }`,
+      {
+        variables: { input: { take: 1 } },
+        context: {
+          headerWithGraphql: "two"
+        }
+      }
+    );
+
+    expect(result.data.hellos).toEqual(expect.arrayContaining(["ola"]));
+  });
+});
+```
+
+This case the content of the context will be:
+
+```ts
+{
+  headerWithGraphql: "two",
+  headerWithSet: "one"
+}
+```
+
+# Sum
+
+That is basics of testing. The possibilites are endless we were just focusing on providing the tools to create quick integration tests that resembles actual usage. 

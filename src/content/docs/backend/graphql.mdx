@@ -2,7 +2,7 @@
 
 GraphQL is a query language for APIs. Saruni utilizes spec-compliant GraphQL servers from [Apollo](https://www.apollographql.com/) to build production-ready, self-documenting GraphQL APIs.
 
-Apollo is deployed to an AWS Lambda function as a stand-alone GraphQL server in production, but (invisibly) uses the popular [Express](https://expressjs.com/) Node.js application framework to power local development.
+Apollo is deployed to an AWS Lambda function as a stand-alone GraphQL server in production, but uses the popular [Express](https://expressjs.com/) Node.js application framework as a drop-in replacement behind the scenes to power local development.
 
 ## Schema
 
@@ -29,7 +29,7 @@ export const typeDefs = gql`
 
 Having defined the _structure_ of our data, we use resolvers to tell our Apollo Server how to fetch (with queries) or modify (with mutations) data associated with a particular type.
 
-Resolvers are stored in the `api/src/graphql/resolvers` directory and use of the typed Prisma Client we generated often makes for simple functions.
+Resolvers are stored in the `api/src/graphql/resolvers` directory and use of the typed Prisma Client [we generate](/docs/backend/prisma) often makes for simple functions.
 
 ```ts
 import { PrismaClient } from "@prisma/client";

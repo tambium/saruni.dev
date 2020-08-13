@@ -58,7 +58,7 @@ The `gen` commands are helpers that take the work out of common web development 
 
 ### GraphQL
 
-The `gen graphql` (or `gen gql`) command generates code from our GraphQL schema and operations based on the documents found in `web/graphql`. For example, if we added a `getUser` query in our web package, we can expect `useGetUser()` hooks to be available as an import from the `web/generated` directory.
+The `gen graphql` (or `gen gql`) command generates code from our GraphQL schema and operations based on the documents found in `web/src/graphql`. For example, if we added a `getUser` query in our web package, we can expect `useGetUser()` hooks to be available as an import from the `web/generated` directory.
 
 ```bash
 yarn saruni gen graphql

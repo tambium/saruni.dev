@@ -14,7 +14,7 @@ export const DeploymentArchitecture: React.FC<DeploymentArchitectureProps> = ({}
     <SVG
       secondaryColor={colors.surface[mode]}
       image={() => (
-        <svg width={700} height={511} viewBox="0 0 700 511" fill="none">
+        <svg width={700} viewBox="0 0 700 511" fill="none">
           <rect
             x={0.5}
             y={0.5}

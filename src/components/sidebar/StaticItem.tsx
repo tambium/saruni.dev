@@ -23,9 +23,15 @@ export const StaticItem: React.FC<StaticItemProps> = ({
       <div css={{ color: iconColor, marginRight: 12 }}>{icon}</div>
       <div
         css={{
-          color: colors.text[mode],
+          color: isActive ? colors.text[mode] : colors.textSubdued[mode],
           fontSize: font.size.body,
           fontWeight: isActive ? 500 : undefined,
+          transition: "color 0.2s ease",
+          textDecoration: "none",
+          "&:hover": {
+            color: isActive ? undefined : colors.text[mode],
+            textDecoration: "none",
+          },
         }}
       >
         {title}

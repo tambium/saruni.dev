@@ -1,0 +1,56 @@
+# Routing
+
+Routes are the pages that users see in our web applications. That might include a home route at `our-application.com`, a signup route at `our-application.com/signup` and a series of routes only available once authenticated.
+
+Saruni utilizes the popular [Next.js](https://nextjs.org/) React framework for building the client-side of web applications and follows their convention of route generation through exports in the `pages` directory. When the development server is launched we can find routes at `localhost:3000`.
+
+## Creating a route
+
+Saruni applications ship with a single route in `web/src/pages/index.tsx`. The `index[.jsx,.tsx]` file in the pages directory renders contents to the root domain.
+
+When the time comes to create a new route, we add a file or folder with the name of the route we’d like to render in the pages directory and make sure to use a default export.
+
+```bash
+.
+└── pages
+    ├── index.tsx
+    └── signup.tsx
+```
+
+```tsx
+import React from "react";
+
+// Rendered to localhost:3000/signup when development server is running.
+const Signup: React.FC = () => {
+  return <div>Signup to Saruni here.</div>;
+};
+
+export default Signup;
+```
+
+## Private routes
+
+It is common for applications to block certain routes to end-users until they are authenticated. Saruni ships with a `privateRoute` higher-order component to handle redirection gracefully. An example of usage will be added here soon.
+
+## Advanced features
+
+### App component
+
+Under the hood, Next.js renders an `App` component to initialize pages. In certain scenarios we may want to [extend this component](https://nextjs.org/docs/advanced-features/custom-app), which is possible through the `_app.tsx` file that ships with Saruni installs in the `web/src/pages` directory.
+
+By way of example, we apply a global CSS reset to all routes by wrapping the `App` component with the `Reset` component from the `@saruni-ui/theme` package.
+
+```tsx
+import React from "react";
+import { Reset } from "@saruni-ui/theme";
+
+const App = ({ Component, pageProps }) => {
+  return (
+    <Reset>
+      <Component {...pageProps} />
+    </Reset>
+  );
+};
+
+export default App;
+```

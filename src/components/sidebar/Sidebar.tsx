@@ -29,7 +29,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ location, section }) => {
         <SidebarWrapper>
           <ul css={{ listStyle: "none", marginBottom: 32 }}>
             <Link
-              css={{ "&:active": { textDecoration: "none" } }}
+              css={{ "&:active, &:hover": { textDecoration: "none" } }}
               to="/docs/getting-started/overview"
             >
               <StaticItem
@@ -42,7 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ location, section }) => {
               />
             </Link>
             <Link
-              css={{ "&:active": { textDecoration: "none" } }}
+              css={{ "&:active, &:hover": { textDecoration: "none" } }}
               to="/guides/postgresql"
             >
               <StaticItem
@@ -58,7 +58,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ location, section }) => {
               />
             </Link>
             <a
-              css={{ "&:active": { textDecoration: "none" } }}
+              css={{ "&:active, &:hover": { textDecoration: "none" } }}
               href="https://master--5efcf81e64c94600226b7b2e.chromatic.com"
               target="_blank"
             >

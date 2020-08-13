@@ -1,0 +1,255 @@
+# Backend
+
+Our approach to testing is to focus on the most important things first. Focus on integration testing that covers most of the code and also resembles how the code is used in production. Let's see it in action.
+
+This is the test we provide in every Saruni instance.
+
+```ts
+import { createApiTestContext } from "@saruni/test";
+
+import { db } from "../src/db";
+
+describe("Hello test", () => {
+  const ctx = createApiTestContext(db);
+
+  test("Should return the 'Hello, Saruni!'", async () => {
+    const result = await ctx.executeGraphql(`
+      {
+        hello
+      }`);
+
+    expect(result.data.hello).toBe("Hello, Saruni!");
+  });
+});
+```
+
+We need to pass our `db` instance into the `createApiTestContext` that will return our context object. On that context object we get back our `db` and two more functions: `executeGraphql` and `setContext`.
+
+Let's get into `executeGraphql`.
+
+## ExecuteGraphql
+
+This function is just a wrapper around the `graphql` function provided by the js implementaion of graphql. It does stitch our schema together and abstract away some of the repetative code.
+
+We can pass graphql documents into the function and itt will run the appropriate resolver for us. Considering our resolver looks like this:
+
+```ts
+export const Query = {
+  hello: () => {
+    return "Hello, Saruni!";
+  },
+};
+```
+
+We can expect this test to pass:
+
+```ts
+test("Should return the 'Hello, Saruni!'", async () => {
+  const result = await ctx.executeGraphql(`
+    {
+      hello
+    }`);
+
+  expect(result.data.hello).toBe("Hello, Saruni!");
+});
+```
+
+## What is missing?
+
+Before going further into more testing it is worth mentioning what is not being tested. We test the db layer, the graphql layer but not the network layer with this approach. That part we need to mimick. This is certanly a tradeoff. In the case of graphql this might not be a problem since our lambda handler function is provided by apollo. We don't want to test apollo. They did that already.
+
+But in case of other lambdas the network layer becomes more interesting. Not to mention that invoking a lambda can be triggered by other events, not just http requests. We can use sns, sqs, s3 events, cron jobs and so on. With time hopefully we can provide solutions for that.
+
+## Resolver with db access
+
+In our `schema.prisma` file I created a model called Message.
+
+```js
+model Message {
+  id      Int    @default(autoincrement()) @id
+  message String
+}
+```
+
+Let's create another resolver next to our hello one.
+
+```ts
+export const Query = {
+  hello: () => {
+    return "Hello, Saruni!";
+  },
+  hellos: async () => {
+    return (await db.message.findMany({})).map((message) => {
+      return message.message;
+    });
+  },
+};
+```
+
+This will return an array of string, that is represented like this in our typeDefs:
+
+```js
+type Query {
+  hello: String!
+  hellos: [String]!
+}
+```
+
+Now, there are a few problems. First, we need to wipe the db on every call to `yarn sr test`. Second we have no messages in the db. So this test will fail:
+
+```ts
+import { createApiTestContext } from "@saruni/test";
+
+import { db } from "../src/db";
+
+describe("Hellos test", () => {
+  const ctx = createApiTestContext(db);
+
+  test("Should return the ['ola', 'hy']", async () => {
+    const result = await ctx.executeGraphql(`
+      {
+        hellos
+      }`);
+
+    expect(result.data.hellos).toEqual(expect.arrayContaining(["ola", "hy"]));
+  });
+});
+```
+
+The first issue is covered by Saruni. Every time you start testing it will drop the test database schema and apply all your migrations.
+
+> Tip: If you just a made a migration don't forget to save it with `yarn sr db migrate save`. The test command only **applies** already made migrations. It does not save them.
+
+So it drops the db schema and then migrates your db. But we still have the issue of putting predefined data.
+
+Seeding is covered in a global level in Saruni and its scope is not limited to testing environment.
+
+We can choose that way. In that case we need to modify our `api/db/seed.ts` file.
+
+```ts
+import { db } from ".";
+
+export const seed = async () => {
+  try {
+    await db.message.create({ data: { message: "ola" } });
+    await db.message.create({ data: { message: "hy" } });
+  } catch (e) {
+    console.log(JSON.stringify(e));
+  } finally {
+    await db.$disconnect();
+  }
+};
+```
+
+> Tip: make sure you await for the db transactions as they are promised based.
+
+If we think taking care of seeding is better in our test suite we can do that there as well.
+
+```ts
+import { createApiTestContext } from "@saruni/test";
+
+import { db } from "../src/db";
+
+describe("Hellos test", () => {
+  const ctx = createApiTestContext(db);
+
+  beforeAll(async () => {
+    await ctx.db.message.create({ data: { message: "ola" } });
+    await ctx.db.message.create({ data: { message: "hy" } });
+  });
+
+  test("Should return the ['ola', 'hy']", async () => {
+    const result = await ctx.executeGraphql(`
+      {
+        hellos
+      }`);
+
+    expect(result.data.hellos).toEqual(expect.arrayContaining(["ola", "hy"]));
+  });
+});
+```
+
+This achieves the same thing. The only difference that this approach only applies to this test suite while the global seeding is to every test suite.
+
+> Tip: Using the db as direct import and `ctx.db` achieves the same thing. Altough in later relases we might intercept db (just as we do with `executGraphl` and `graphql`). It is adviced to use db from the context object.
+
+## variables
+
+Life is not always that easy. Our queries and mutation might need variables. Let's modify our hellos query to use some optional arguments.
+
+```js
+// in resolvers
+export const Query = {
+  hello: () => {
+    return "Hello, Saruni!";
+  },
+  hellos: async (_root, args) => {
+    let prismaArguments = {};
+
+    if (args.input && args.input.take) {
+      prismaArguments.take = args.input.take;
+    }
+
+    return (await db.message.findMany(prismaArguments)).map((message) => {
+      return message.message;
+    });
+  },
+};
+
+// in typdefs
+input HellosInput {
+  take: Int!
+}
+
+type Query {
+  hello: String!
+  hellos(input: HellosInput): [String]!
+}
+
+```
+
+That little modification should allow us to use optinal take arguemnt. When we do, we ask prisma to only return a the first x element.
+
+Let's test this out.
+
+```ts
+import { createApiTestContext } from "@saruni/test";
+
+import { db } from "../src/db";
+
+describe("Hellos test", () => {
+  const ctx = createApiTestContext(db);
+
+  test("Should return the ['ola', 'hy']", async () => {
+    const result = await ctx.executeGraphql(`
+      {
+        hellos
+      }`);
+
+    expect(result.data.hellos).toEqual(expect.arrayContaining(["ola", "hy"]));
+  });
+
+  test("Should return the ['ola'] when take 1 is provided", async () => {
+    const result = await ctx.executeGraphql(
+      `
+      query Hellos ($input: HellosInput) {
+        hellos (input: $input)
+      }`,
+      { variables: { input: { take: 1 } } }
+    );
+
+    expect(result.data.hellos).toEqual(expect.arrayContaining(["ola"]));
+  });
+});
+```
+
+In the second test we assume it is only the "ola" that will be returned, if we specify take 1.
+
+`executagraoqhl` takes a second arguemnt. There you can define variables just as we did and graphql will make our query.
+
+## context
+
+Our last piece on testing will be context. Graphql contract comes with the context idea which is where we can attach any arbitrary data to our resolver.
+
+As I mentioned earlier, we don't test the network layer with this approach. Much of the content attached to the data comes from the network layer. Headers, cookies, aws identifiers and so on. So it is crucial to mock the context in some cases.
+

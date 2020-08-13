@@ -1,6 +1,180 @@
 # Frontend
 
+## Our approach
+
 Testing the UI is really hard. It is no easy task. A lot of things are going on and can be overwhelming. That is why we had [Kent C. Dodds](https://kentcdodds.com/) advice in mind when we started thinking about testing.
 
 We advise to create test per pages. Pages are routes in Next.js. They are a compact logical unit. Then we can try to interact with our code as who would enjoy our products. By clicking, typing filling forms, navigating, waiting for data.
 
+We use `@testing-library/react` and `testing-library/user-event` to simulate the behaviur our users might perform.
+
+The other big part of the equation is data. Data is problematic because of two things. It makes the UI asynchronous. Also we need to mock it.
+
+The library `msw` solves that part in an ingenoius way: mock the network layer not Apollo. So no more writing mock queries. One more step closer to real usage.
+
+## Code
+
+```tsx
+import React from "react";
+import { jwtClient } from "@saruni/auth";
+import { createWebTestContext } from "@saruni/test";
+import { generateApiProvider } from "@saruni/web";
+import { render } from "@testing-library/react";
+import { graphql } from "msw";
+
+import Home from "../src/pages/index";
+
+const ApolloProvider = generateApiProvider({ apolloClient: jwtClient });
+
+describe("<Home />", () => {
+  createWebTestContext([
+    graphql.query("Hello", (_req, res, ctx) => {
+      return res(ctx.data({ hello: "Hello, Saruni!" }));
+    }),
+  ]);
+
+  test(`Should render "Hello, Saruni!"`, async () => {
+    const { findByText } = render(
+      <ApolloProvider>
+        <Home />
+      </ApolloProvider>
+    );
+
+    const message = await findByText(/Hello, Saruni!/gi);
+
+    expect(message).toBeInTheDocument();
+  });
+});
+```
+
+That file tests the `index.tsx` in the pages directory. `ApolloProvider` is generated in the same way as it is in the app. When we render it in our test we don't have to do anything else.
+
+So where does the magic happen? In the `createWebTestContext` function. It takes an array of handlers and returns an `msw` server.
+
+That server is responsible for intercepting network request and returing dummy ones. As you can see we intercept the `Hello` query and return some data that we can check against.
+
+```js
+query Hello {
+  hello
+}
+```
+
+> Tip: Our query looks like this. We need to intercept named queries, in this case Hello not hello.
+
+Let's see how we would test our [chat app](chat.saruni-samples.com).
+
+## Chat app
+
+```tsx
+import React from "react";
+import { jwtClient } from "@saruni/auth";
+import { createWebTestContext } from "@saruni/test";
+import { generateApiProvider } from "@saruni/web";
+import { render, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { graphql } from "msw";
+import { useRouter } from "next/router";
+
+import Home from "../src/pages/index";
+
+const ApolloProvider = generateApiProvider({ apolloClient: jwtClient });
+
+describe("<Home />", () => {
+  test(`Should render login element with placeholder "Username"`, async () => {
+    const { findByPlaceholderText } = render(
+      <ApolloProvider>
+        <Home />
+      </ApolloProvider>
+    );
+
+    const input = await findByPlaceholderText(/Username/gi);
+
+    expect(input).toBeInTheDocument();
+  });
+});
+```
+
+This is roughly the same as in the Hello example so far. Since there is a form on the main page with the placeholder as Username we can search for that. We check that the input is in the document. Good. Next time we see how test form submission.
+
+### Form submission
+
+```tsx
+import React from "react";
+import { jwtClient } from "@saruni/auth";
+import { createWebTestContext } from "@saruni/test";
+import { generateApiProvider } from "@saruni/web";
+import { render, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { graphql } from "msw";
+import { useRouter } from "next/router";
+
+import Home from "../src/pages/index";
+
+const ApolloProvider = generateApiProvider({ apolloClient: jwtClient });
+
+jest.mock("next/router", () => {
+  const push = jest.fn();
+
+  const useRouter = jest.fn().mockImplementation(() => {
+    return {
+      push,
+    };
+  });
+
+  return {
+    useRouter,
+  };
+});
+
+describe("<Home />", () => {
+  createWebTestContext([
+    graphql.mutation("CreateUser", (_req, res, ctx) => {
+      return res(ctx.data({ createUser: { token: "token" } }));
+    }),
+  ]);
+
+  test(`Should render login element with placeholder "Username"`, async () => {
+    const { findByPlaceholderText } = render(
+      <ApolloProvider>
+        <Home />
+      </ApolloProvider>
+    );
+
+    const input = await findByPlaceholderText(/Username/gi);
+
+    expect(input).toBeInTheDocument();
+  });
+
+  test(`Should redirect to "/room" on successful signup`, async () => {
+    const { findByPlaceholderText, findByText } = render(
+      <ApolloProvider>
+        <Home />
+      </ApolloProvider>
+    );
+
+    const input = await findByPlaceholderText(/Username/gi);
+
+    const button = await findByText(/Create Account/gi);
+
+    userEvent.type(input, "Pinocchio");
+
+    userEvent.click(button);
+
+    await waitFor(() => {
+      const router = useRouter();
+
+      return expect(router.push).toHaveBeenCalledTimes(1);
+    });
+  });
+});
+```
+
+This time we check if can sign up successfully. To make that happen we need the `input` and `button`. Check how `userEvent` helps us out by providing functions like `type` and `click`. We give a name and then click ok.
+
+This is the time when the UI's async nature comes in. The `waitFor` command waits till the `expect` statement eveluates to true.
+
+But that is no ordinary `expect` statement. First, clickin on signup fire a mutation called `CreateUser`. We cover that in the `createWebTestContext`.
+
+The next is the routing. JSDom is not fully compliant with routing. The easiest way is to mock the routing pacakge. `jest.Mock` at the beginning of our test file just does that. It returs a mocked push function that can be spied upon, so we can check if that had been called. If we expect some route transition it will be called.
+
+That is an example that demonstrates UI, routing , mocking data fethcing and async UI update making a comprehensive guide.

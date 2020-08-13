@@ -1,1 +1,58 @@
 # Authentication
+
+When building web applications we’ll often want to protect resources through some kind of authentication mechanism. All strategies can be broken down as follows:
+
+1. **Identify**: ask users who they are, often through a public username or email address.
+2. **Authenticate**: ask users to prove their identity, often through a private password.
+3. **Authorize**: determine which resources can be accessed, often through a token.
+
+Saruni ships with an authentication package to get up and running with these flows more quickly. The package opts for a [JSON web token](https://jwt.io/introduction/) approach to authorization by default—an open, industry-standard method for representing claims securely between two parties.
+
+## In practice
+
+Users usually identify themselves by creating a new account or signing in to an existing account with a username or email address.
+
+When users wish to prove an existing identity, the frontend client should call [a mutation](http://localhost:8000/docs/backend/graphql) that passes along the identity with some proof—usually a password—as an input. The backend should check if the user exists in the database, decrypt and verify the password and return an access token if successful.
+
+```ts
+import { createAccessToken } from "@saruni/auth";
+
+// Instance of generated Prisma Client.
+import { db } from "../../../db";
+
+export const Mutation = {
+  login: async (_root, args) => {
+    const user = await db.user.findOne({
+      where: { email: args.input.email },
+    });
+
+    // In practice, we’d perform decryption here.
+    if (user.password !== args.input.password) {
+      throw new Error("");
+    }
+
+    return createAccessToken({ userId: user.id });
+  },
+};
+```
+
+The `createAccessToken` function from the `@saruni/auth` package takes a payload and (optionally) signing options as parameters and uses the `ACCESS_TOKEN_SECRET` defined in the `.env` file at the root of Saruni projects to create a JSON web token. The frontend is responsible for storing that token as a cookie and sending it through headers on all requests. Learn more about that process [here](/docs/frontend/authentication).
+
+When it comes to accessing or updating resources, Saruni ships with a convenient `withAuthentication` function that respects our chosen authentication strategy and determines authorization validity.
+
+```ts
+import { withAuthentication } from "@saruni/auth";
+
+import { db } from "../../../db";
+
+export const Mutation = {
+  updateUser: withAuthentication(async (_root, args, ctx) => {
+    return await db.user.update({
+      where: { id: ctx.payload.userId },
+      data: { ...args.input },
+    });
+  }),
+};
+```
+
+Behind the scenes the function parses the request headers, checks the validity of the JSON web token and executes the function passed only if successful—throwing with an authentication error otherwise.

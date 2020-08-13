@@ -1,1 +1,97 @@
 # Seeding
+
+There is certain data that needs to be fed to our database before it can be used. That is just a little script that creates entities in our database. In saruni you can find that file in `packages/api/db/seed.ts`.
+
+```ts
+import { db } from ".";
+
+export const seed = async () => {
+  try {
+    /**
+     *  Seeding logic.
+     */
+  } catch (e) {
+    console.log(JSON.stringify(e));
+  } finally {
+    await db.disconnect();
+  }
+};
+```
+
+Most of the time we want to put constants in their. Like if we have predefined tags.
+
+```ts
+import { db } from ".";
+
+export const seed = async () => {
+  try {
+    await db.tag.create({ data: { name: 'react' } })
+    await db.tag.create({ data: { name: 'aws' } })
+    await db.tag.create({ data: { name: 'prisma' } })
+  } catch (e) {
+    console.log(JSON.stringify(e));
+  } finally {
+    await db.disconnect();
+  }
+};
+```
+
+This will create the three entities in their (assuming you already done the required migrations). With the help of our `CLI` you can run `yarn sr db seed` to run this script.
+
+A few things worth mentioning.
+
+When you do production, we did not automate this thing. Please use the seed command after you applied your migrations with the bastion host. Later we might automate this process.
+
+The content of this script should result in the same database structure no matter how many times you run it. This way the above script is completely wrong. If I run it 10 times, it will create 10 times 3 tags.
+
+```ts
+import { db } from ".";
+
+const difference = <T>(arr1: T[], arr2: T[]): T[] => {
+  return arr1
+    .filter((item) => !arr2.includes(item))
+    .concat(arr2.filter((item) => !arr1.includes(item)));
+};
+
+const handleTags = async () => {
+  // we want these tags to be in the db all the time
+  const tags = [
+    "react",
+    "aws",
+    "prisma"
+  ];
+
+  // tags currently in the db
+  const tagsFromDb = await db.tag.findMany();
+
+  // what is missing from the db
+  const missingFunctions = difference(
+    tags,
+    tagsFromDb.map((x) => x.name)
+  );
+
+  // create the missing tags in the db
+  const promises = missingTags.map(async (element) => {
+    return await db.tag.create({
+      data: {
+        name: element,
+      },
+    });
+  });
+
+  // wait for everything
+  await Promise.all(promises);
+};
+
+export const seed = async () => {
+  try {
+    await handleTags();
+  } catch (e) {
+    console.log(JSON.stringify(e));
+  } finally {
+    await db.disconnect();
+  }
+};
+```
+
+This snippet however can be run 1 time or 3453 times. It will always leave the db in the exact same state.

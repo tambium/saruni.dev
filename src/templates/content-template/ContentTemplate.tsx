@@ -2,28 +2,12 @@ import React from "react";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { graphql } from "gatsby";
 
-import { ContentLayout } from "../../layouts/content-layout/ContentLayout";
 import { SEO } from "../../components/seo";
 
-interface ContentTemplateProps {}
-
-const ContentTemplate: React.FC<ContentTemplateProps> = ({
-  data: { mdx },
-  location,
-  pageContext,
-}) => {
-  const { prev, next, githubEditUrl } = pageContext;
-
-  const {
-    title,
-    description,
-    image,
-    disableTableOfContents,
-    tableOfContentsDepth,
-  } = mdx.frontmatter;
-  const { headings, body, tableOfContents } = mdx;
+const ContentTemplate: React.FC = ({ data: { mdx } }) => {
+  const { title, description, image } = mdx.frontmatter;
+  const { body } = mdx;
   const { slug } = mdx.fields;
-  const { section } = pageContext;
 
   return (
     <React.Fragment>
@@ -33,15 +17,7 @@ const ContentTemplate: React.FC<ContentTemplateProps> = ({
         slug={slug}
         imageUrl={image}
       />
-      <ContentLayout
-        disableTableOfContents={disableTableOfContents}
-        location={location}
-        section={section}
-        tableOfContents={tableOfContents}
-        tableOfContentsDepth={tableOfContentsDepth}
-      >
-        <MDXRenderer>{body}</MDXRenderer>
-      </ContentLayout>
+      <MDXRenderer>{body}</MDXRenderer>
     </React.Fragment>
   );
 };
@@ -49,7 +25,7 @@ const ContentTemplate: React.FC<ContentTemplateProps> = ({
 export default ContentTemplate;
 
 export const query = graphql`
-  query($slug: String!) {
+  query ContentTemplateQuery($slug: String!) {
     mdx(fields: { slug: { eq: $slug } }) {
       id
       excerpt(pruneLength: 160)
@@ -60,15 +36,8 @@ export const query = graphql`
         title
         description
         image
-        disableTableOfContents
-        tableOfContentsDepth
       }
       body
-      headings {
-        depth
-        value
-      }
-      tableOfContents
     }
   }
 `;

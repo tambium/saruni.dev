@@ -31,13 +31,13 @@ model User {
 4. Run `yarn saruni db generate`
 5. Use Prisma Client in our application
 
-We start by updating a model in our `prisma.schema` to reflect a desired change. For example, we might add an `email` field to our `User` model.
+We start by updating a model in our `prisma.schema` to reflect a desired change. For example, we might add a `createdAt` field to our `User` model.
 
 ```prisma.schema
 model User {
-  id        Int       @default(autoincrement()) @id
-  username  String    @unique
-  email     String    @unique
+  id        Int      @default(autoincrement()) @id
+  username  String   @unique
+  createdAt DateTime @default(now())
 }
 ```
 
@@ -50,7 +50,7 @@ When the `saruni db generate` command is run we can expect an update to the Pris
 ```ts
 import { PrismaClient } from "@prisma/client";
 
-export const db = new PrismaClient();
+const db = new PrismaClient();
 
 const createUser = async (_parent, args) => {
   await db.user.create({ data: { ...args.input } });

@@ -1,1 +1,163 @@
 # Environment Variables
+
+Our environment variables are split between two files: `.env` and `saruni.json`. Both can be found in the project root folder.
+
+Everything we would be unhappy committing to git should go to the `.env` file. At this point we put the database url's here.
+
+Every secret we use for deployment is stored in AWS' Systems Managers.
+
+<!-- add link to the deployment guide -->
+
+# saruni.json
+
+Everything else goes to `saruni.json`. That file acts a configuration file for the project. It mostly contains values that are important in the deployment process. In our deployment guide we touch most of them.
+
+<!-- switch this to a prefilled example -->
+
+```json
+{
+  "projectName": "",
+  "serverless": {
+    "prod": {
+      "region": "eu-west-1",
+      "domainName": "",
+      "domainUrl": "",
+      "hostedZoneId": "",
+      "certificateArn": "",
+      "bastionKeyName": "bastion-key",
+      "dbInstance": "db.t2.micro",
+      "frontendDomain": "",
+      "frontendUrl": "",
+      "frontendCloudfrontUrl": "",
+      "awsProfile": "",
+      "frontendS3Bucket": ""
+    },
+    "dev": {
+      "region": "eu-west-1",
+      "domainName": "",
+      "domainUrl": "",
+      "hostedZoneId": "",
+      "certificateArn": "",
+      "bastionKeyName": "bastion-key",
+      "dbInstance": "db.t2.micro",
+      "frontendDomain": "",
+      "frontendUrl": "",
+      "frontendCloudfrontUrl": "",
+      "awsProfile": "",
+      "frontendS3Bucket": ""
+    }
+  },
+  "devServerPort": {
+    "web": "3000",
+    "api": "4000"
+  }
+}
+```
+
+## projectName
+
+This the name of the project. Currently it is only used to namespace our secrets AWS' Systems Managers so those values won't collide with other project's secret.
+
+## serverless
+
+This part is spit into two. They represent our two fundamental stages: dev and prod. Let's go through them one-by-one and see when they differ between the two stages.
+
+## region
+
+AWS region. What you specify here will be used as the target region to deploy all our infrastructure.
+
+## domainName
+
+The name of the domain of the API. So if we see `https://api.somemaindomain.com` then this value should be `api.somemaindomain.com`.
+
+In a production environment we need to put a custom domain here. For example, if we own a domain in Route53 (AWS' registrar) with the name of `somedomain.com` we can put a subdomain of `api.somedomain.com` here. You must own the domain however.
+
+This setting in prod environment will be used to set up cookie domains and custom domain for your api since the defualt domain we receive when we deploy our code is randomly generated domain.
+
+In development we can leave this value empty in the beginning. Saruni does not create custom domains for dev environment and even auth cookies are set to third party cookies.
+
+## domainUrl
+
+Very similar to domainName. It must be prefixed with the http or https word. This setting is used to set up the API endpoints in the frontend so that is a mandatory setting.
+
+## hostedZoneId
+
+This is (similarly to domainName) only needs to be set in production environment. It is responsible for creating route redirection from your custom domain to your Serverless functions.
+
+## certificateArn
+
+After you created an SSL certificate for your domain, you must provide its ARN (amazon resource id) Saruni can use that certificate to set up https connections with your custom domain.
+
+As it is concerned about custom domains, this is only needed for production.
+
+## bastionKeyName
+
+These names will be prefixed with the stage. So if you leave the this as it is then on your production environment you will have a prod-bastion-key entry.
+
+Name is important as your bastion host will be associated with the name of you choice.
+
+## dbInstance
+
+The instance and size of the db that will be created for the current stage.
+
+## frontendDomain
+
+This is the alias to your frontend in production. We use Cloudfront (a CDN service backed by AWS) and it provides a domain by default. But just as with the API, in production we want to create a custom domain.
+
+## frontendUrl
+
+This is where we can reach the web. In production it should be a custom domain prefixed by https. Like if the previous setting was somedomain.com then this should be `https://somedomain.com`.
+
+In dev stage we can grab the url of the `Cloudfront` domain and prefix with https. This setup is used to create appropriate CORS settings.
+
+## frontendCloudfrontUrl
+
+This setup is only for dev stage. If we decide to add a custom domain to our dev stage we can still add CloudFront url to our CORS setup.
+
+## awsProfile
+
+This is a very crucial setup. In you `.aws/credentials` file you must set up at least two profiles that Saruni can use modify resources on your behalf. The name of the profiles must be set up here.
+
+## frontendS3Bucket
+
+The name of the S3 bucket that holds our Next.js project. We use it to sync our local files with the given bucket.
+
+## distId
+
+The id of the CloudFront distribution. We need it to invalidate on deployment.
+
+## devServerPort - web
+
+Port of the next.js dev server.
+
+## devServerPort - api
+
+Port of the api dev server.
+
+# .env
+
+<!-- add example .env here -->
+
+## accessTokenSecret
+
+The secret to generate acccess tokens.
+
+## refreshTokenSecret
+
+The secret to generate refresh tokens.
+
+## DATABASE_URL
+
+The url to the database that is used locally with the dev server.
+
+## DATABASE_URL_TEST
+
+The url to the database that is used with tests.
+
+## DATABASE_URL_DEV
+
+To modify our db (seeding, migration) on cloud environment we use a bastion host. For those commands we set up the database url here.
+
+## DATABASE_URL_PROD
+
+Same as with the DATABASE_URL_DEV but for prod environment.

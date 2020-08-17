@@ -1,14 +1,12 @@
----
-title: create a nat instance in aws
----
-
 # NAT instance
 
-If we have a resource sitting inside a [VPC](https://aws.amazon.com/vpc/) and a private [subnet](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html), sooner or later we encounter the problem of connecting to the outside world.
+If we have a resource sitting inside a [VPC](https://aws.amazon.com/vpc/) and a [private subnet](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html), sooner or later we encounter the problem of connecting to the outside world.
 
-In the case of this article, that resource will be a [lambda](https://aws.amazon.com/lambda/) function. We try use a Fetch request with a lambda that has a VPC.
+In this guide, we’ll demonstrate the problem and the solution using a [Lambda](https://aws.amazon.com/lambda/) function as our resource, which we’ll try to connect to with a Fetch request.
 
-To demonstrate the problem I create a lambda function that will use fetch to consume a rest API.
+We start by creating a Lambda function that’ll use Fetch itself to consume a REST API—specifically, the [JSONPlaceholder](https://jsonplaceholder.typicode.com/) API often used for testing.
+
+# Practical example
 
 ```js
 const fetch = require("node-fetch");
@@ -36,293 +34,250 @@ exports.handler = async () => {
 };
 ```
 
-The code itself is really simple. All it does it reaches out to the [jsonplaceholder](https://jsonplaceholder.typicode.com/) api and returns the response.
+## Lambda and REST API
 
+Since this guide uses a simple example we can skip use of Serverless and manually build the infrastructure for our Lambda. First, we create the function itself.
 
+### Creating the Lambda function
 
-# Create lambda and rest API
+From the AWS dashboard, we create a new function in the Lambda service. We add a name and the first step is complete.
 
-Without sls, we are building manually the infrastructure around this lambda. The first thing is to create the function itself.
+![Creating Lambda function in AWS dashboard](./images/create_lambda.png)
 
-## Create the the function
-
-Let's give some name to our lambda function on the create function page. That will create the lambda for us.
-
-![create lambda](./images/create_lambda.png)
-
-Let's head back to our local machine. Create a script that bundles everything together to a `zip` file.
+Back on our local machine we create a script in our `package.json` that bundles our function to a `zip` file, ensuring to clear old artifacts as part of the process.
 
 ```json
 {
-  "name": "nat_lambda_test",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
+  // ...
   "scripts": {
     "bundle": "rm -rf bundle.zip && zip -r bundle.zip ."
-  },
-  "dependencies": {
-    "node-fetch": "^2.6.0"
   }
 }
 ```
 
-We prefixed that command with `rm rf bundle.zip` just to make sure we clear old files. Then we zip everything recursively to the `bundle.zip`. This way typing `yarn bundle` command will create the up to date `zip` file from our project folder.
+### Uploading our Lambda function
 
-## Upload
+When we select our newly created Lambda in the AWS dashboard we’ll be presented with the text editor view. From here, we can upload the `zip` file we just created.
 
-We have the text editor and dashboard page in AWS when we select our newly created lambda. After issuing `yarn bundle` we can upload the `zip` file to our AWS.
+![Uploading our bundle to AWS](./images/upload_bundle.png)
 
-![upload bundle](./images/upload_bundle.png)
-
-After it has finished, we can see the code.
+Once the upload is complete, we see our code.
 
 ![lambda uploaded](./images/lambda_uploaded.png)
 
-Our lambda is sitting in the cloud but nothing really can call it. Lets create an http event for it.
+Our Lambda is now sitting in the cloud but nothing can call it. To fix that, we create an HTTP event.
 
-## API Gateway
+### Creating an HTTP event
 
-First we need to go to the [API Gateway](https://aws.amazon.com/api-gateway/) section and select Rest API (**not** the private, inside vpc section).
+We head to the [API Gateway](https://aws.amazon.com/api-gateway/) service in AWS and choose the (non-private) REST API type.
 
-![new api](./images/create_api_gateway.png)
+![Creating an HTTP event](./images/create_api_gateway.png)
 
-I gave it the name `nat_test_api`. After pressing create API we find ourselves in the API dashboard.
+We choose a suitable name (`nat_test_api`) and press Create API to land in the API dashboard.
 
-![create resource](./images/create_resource.png)
+![Creating a resource](./images/create_resource.png)
 
-This is a Rest API, so resources are url endpoints. We need to create one, so hitting that will invoke our lambda function.
+Since this is a REST API, our resources are URL endpoints. We create a new one that’ll invoke our Lambda function.
 
-![create method](./images/create_method.png)
+![Creating a method](./images/create_method.png)
 
-Rest API operates with http verbs. The basic is `get`, mostly used to retreive a resource. This is what we need now.
+REST APIs operate with HTTP verbs. The basic is `get`, mostly used to retrieve a resource. This is what we’ll use and in the API Gateway service, creating the method is as simple as clicking on action and selecting `get`.
 
-Creating a method is just clicking on action and selecting get.
+Once created, we can assign our Lambda to our `get` verb so hitting the endpoint will call our function.
 
-![rest api](./images/assign_lambda_to_method.png)
+![REST API](./images/assign_lambda_to_method.png)
 
-The last thing is to assign our lambda to the get verb so hitting that endpoint will call the function. Now we have the lambda integrated to a rest endpoint. But what is the url to invoke? We can go the the stages part and there we see the invoke url
+We have our Lambda integrated with our REST endpoint, but the next question is which URL to invoke? We can find the invocation URL in the stages tab of the dashboard.
 
-![deploy](./images/deploy.png)
+![Deployed](./images/deploy.png)
 
-Great. Everything is ready. So if I `cURL` with the following command I expect to see some results.
+We can test our endpoint using `cURL`. For reference, the general structure of REST APIs created with API Gateway are as follows:
 
-In my case it is:
+`https://REST_API_ID.execute-api.REGION.amazonaws.com/STAGE/FUNCTION_NAME`
+
+![cURL](./images/curl.png)
+
+Success! Our Lambda is deployed and reachable through our REST API.
+
+## Resources inside a VPC
+
+There are times when we need to put our functions inside a VPC. That might happen because another resource (like a database or cache) sits inside the VPC, so one of the ways to have access to them is to put the Lambda there as well.
+
+So far, our Lambda is sat on AWS outside a VPC and is more than happy to communicate with the outside world.
+
+![Lambda without VPC](./images/lambda_wo_vpc.png)
+
+When we use Lambdas inside a VPC things change. We can no longer connect to the internet since our function sits inside a private subnet. Outgoing requests cannot escape a private subnet (a subnet that has no [Internet Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html)) by default.
+
+![Lambda with VPC](./images/lambda_w_vpc.png)
+
+### Creating a VPC
+
+To illustrate the problem, we create a VPC from the VPC service.
+
+![Creating a VPC on AWS](./images/create_vpc.png)
+
+We can then create three private subnets mapping to three availability zones.
+
+![Creating private subnets](./images/create_subnet.png)
+
+### Creating a role
+
+Our Lambda must be able to use AWS resources, but Lambda functions are not launched with the required privileges by default. To add them, we assign a new role.
+
+A [role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) is part of the AWS security paradigm and defines what the holder can do. Roles can be attached to users (console, cli or real humans) or resources—in our case, a Lambda.
+
+By default, Lambdas are launched with a role that allows for access to the [Cloudwatch](https://aws.amazon.com/cloudwatch/) logging service. From the IAM service, we can create a new `AWSLambdaVPCAccessExecutionRole` role that will allow use of AWS resources.
+
+![Creating role: use case](./images/create_role_1.png)
+
+![Creating role: review](./images/create_role_2.png)
+
+### Assigning role to our function
+
+In the dashboard of our Lambda we select the permissions tab and assign the role we created.
+
+![Assigning role to Lambda](./images/assign_role.png)
+
+So far we have created our VPC and subnets and created a role so our Lambda can access resources inside a VPC. Next up we need to place our Lambda inside the VPC.
+
+### Moving Lambda to our VPC
+
+Back in the main dashboard view for our Lambda, we can scroll down and find the VPC section. There we can add our newly created VPC with the three private subnets and the default security group that ships with our VPC.
+
+![Moving Lambda to VPC](./images/add_a_vpc.png)
+
+After saving our configuration, we can try to `cURL` our endpoint but we’ll find errors, since the outgoing fetch request cannot reach the internet.
+
+![cURL failed](./images/curl_failed.png)
+
+# Our (cheaper) solution
+
+AWS has dedicated solution to the problem of allowing outgoing traffic from a VPC called a [NAT Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html), but it is quite expensive. Since one objective of utilizing Serverless infrastructure is cost savings we were interested in other solutions.
+
+## Nat instance
+
+A NAT instance is an EC2 instance designed to do [NAT mapping](https://en.wikipedia.org/wiki/Network_address_translation).
+
+We still have our Lambda sitting in a private subnet, but now we introduce a new element: a public subnet. A public subnet is a subnet with an Internet Gateway, which means it can receive incoming traffic and—with a little configuration—can allow outgoing traffic.
+
+![NAT instance sketch](./images/nat_instance_sketch.png)
+
+We have a NAT instance that will do address translation between private and public addresses, but what is that translation exactly?
+
+Our Lambda wants to reach out to the JSONPlaceholder API. All traffic will be forwarded to the NAT instance since the Lambda itself is in a private subnet and has no direct internet connection. The NAT instance recognizes that it has received traffic from the Lambda and that the function would like to call the JSONPlaceholder API. It then sends the request on behalf of the Lambda. When the the request comes back, the NAT instance remembers it came from our function and forwards the result back to it.
+
+Security groups determine which requests are allowed out, and from where. By default, the NAT instance will not allow incoming traffic from any resource, so we’ll need to configure it to allow traffic to and from the Lambda.
+
+In our case, we’ll attach a security group to the NAT instance that allows all traffic from the Lambda function. The Lambda is identified by another security group.
+
+## Creating a public subnet
+
+First we create our public subnet, which is just a subnet with an Internet Gateway.
+
+![Create public subnet](./images/create_public_subnet.png)
+
+## Creating an Internet Gateway
+
+Creating an Internet Gateway is simple: just a few clicks through the Create Internet Gateway form found in the Internet Gateway section of the VPC service.
+
+Once created, we select our new gateway and choose Attach from the Actions dropdown before connecting the VPC where our subnets reside.
+
+![Creating an Internet Gateway](./images/create_ig.png)
+
+## Pointing to the Internet Gateway
+
+The last step is to head to the route table of the public subnet and add a line that intercepts all traffic (`0.0.0.0/0`), routing it to our Internet Gateway. That means if there is no other route that would catch it, just forward it to the Internet Gateway.
+
+![Public route](./images/public_route.png)
+
+## NAT instance in practice
+
+The rest of the guide draws inspiration from [this post](https://www.theguild.nl/cost-saving-with-nat-instances/), so a huge thanks to [Luk Van Den Borne](https://www.theguild.nl/authors/luk-van-den-borne/).
+
+The NAT instance is just an EC2 machine. It will have a single job: do port mapping on behalf of another resource. In this case, our Lambda function.
+
+### Creating a NAT instance
+
+Since NAT instances are EC2 virtual machines, we head to the EC2 service in AWS to get started. We go through the instance creation process with the default settings applied and ensure we save the private key, which we’ll use to SSH into our machine.
+
+![Creating an EC2 VM](./images/create_nat_instance.png)
+
+### Enabling port forwarding
+
+Our virtual machine is not set up to do forwarding and mapping by default. We enable it ourselves by connecting to the machine, which we can do from our terminal by running the following command:
 
 ```sh
-curl https://68r9yb32h1.execute-api.eu-west-1.amazonaws.com/dev/nat_test_lambda
+ssh -i PRIVATE_KEY_NAME.pem ec2-user@EC2_PUBLIC_ADDRESS
 ```
 
-But don't try to invoke it. Yours is different. The general structure of the Rest API endpoint is:
+Alternatively, we can connect to the machine from the AWS dashboard by selecting the VM and clicking connect.
 
-`https://{restAPIId}.execute-api.{region}.amazonaws.com/{stage}/{functionName}`
-
-![curl](./images/curl.png)
-
-Amazing. Our lambda just got deployed and reachable through the Rest API. So what is the problem?
-
-# Resources inside a vpc
-
-There are times when we need to put our functions inside a VPC. That might happen because another resource (like a database or cache) sits inside the VPC, so one of the ways to have access to them is to put the lambda there as well.
-
-![lambda without vpc](./images/lambda_wo_vpc.png)
-
-This is what happened so far. Lambda sits in AWS and is more than happy to Fetch and just generally communicate with the outside world.
-
-When we use lambdas inside a VPC this is how it changes.
-
-![lambda with vpc](./images/lambda_w_vpc.png)
-
-When we put a lambda inside a VPC it can no more connect to the internet. It sits inside a private subnet. On outgoing request cannot escape a private subnet (a subnet that has no [Internet Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html)) by default.
-
-## Create a vpc
-
-To see the problem we must first create a VPC with some private subnets.
-
-In the VPC section we can create a new VPC.
-
-![create a vpc](./images/create_vpc.png)
-
-As a next step, we can create 3 private subnets mapping to the three regions.
-
-![create private subnet](./images/create_subnet.png)
-
-## Create a role
-
-One more step we need. Our lambda must be able to use AWS resources. That is the whole point why we would put a lambda inside a VPC. But lambda functions do not have the privilage to do that by default. To do that we must assign a new role to it.
-
-A [role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) is part of AWS security paradigm. A role defines what the holder of the role can do. Roles can be attached to users (console/cli or real humans) or resources. So in this case we attach a role to our lambda so it can do what the role allows it to do.
-
-By default lambda comes with a role that allows it to assess [Cloudwatch](https://aws.amazon.com/cloudwatch/), a logging service. In the VPC section we can create a new role by selecting `AWSLambdaVPCAccessExecutionRole`. That will allow whoever holds this role to use aws resources.
-
-![create role select a use case](./images/create_role_1.png)
-
-![create role review](./images/create_role_2.png)
-
-## Assign role to the function
-
-The last thing is to assign this role to our lambda.
-
-![assign role](./images/assign_role.png)
-
-In the dashboard of our lambda we can choose the permissions tab and in there the existing role option.
-
-So far we have created our VPC and subnets. Also we created a role so our lambda can access resources inside a VPC. But how to place our lambda inside VPC? It is still not part of it.
-
-## Putting the lambda inside the VPC
-
-![add vpc](./images/add_a_vpc.png)
-
-After pressing save we can go back the first page of the dashboard where the inline code editor is and scroll down until we see the VPC section. There we can add our newly created VPC with the three private subnets and the defult security group that comes with our VPC.
-
-Clicking on save we can head to the terminal and try `cURL` on our endpoint.
-
-![curl again, failed](./images/curl_failed.png)
-
-As we can see it errors, since the outgoing fetch request can't get into the internet.
-
-# A (cheap) solution
-
-AWS has dedicated solution to this problem (allowing outgoing traffic from a VPC) called [NAT Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html). Although it is quite expensive. The whole point of the serverless infrastructue (apart from abstracting away the nitty gritty and provding scaling) is the price point. Having a NAT Gateway kinda defeats that purpose. That is not say the dedicated NAT Gateway is not much better. Of course they are. When it comes to scaling, we need to choose them.
-
-We can create a cheaper solution however until that point.
-
-## Nat Instance.
-
-NAT Instance is simply an EC2 instance designed to do [NAT mapping](https://en.wikipedia.org/wiki/Network_address_translation). How does this solution looks like?
-
-![nat instance sketch](./images/nat_instance_sketch.png)
-
-We still have our lambda sitting in a private subnet. But now we introduce a new element: a public subnet. A public subnet is a subnet with an Internet Gateway. So it can receive incoming traffic and with a bit of a help it can allow outgoing traffic from the subnet itself.
-
-We have a NAT Instance that will do the address translation between private and public addressess. What is that translation exactly? The lambda wants to reach out to the jsonplaceholder API. All the traffic will be forwared to the NAT instance. Remember. Lambda is in a private subnet. It has no direct internet connection. The NAT instance sees that it received traffic from the lambda. The lambda would like to go go to the jsonplaceholder API. It send the request on behalf of the lambda. When the the request comes back, the NAT instance is smart enough to remember: it was coming from the lambda so it needs to forward the result back to it.
-
-The security groups tell from where and what request can go out. By default the NAT instance will not allow incoming traffic from any resource. We need to tell it to allow traffic from and to the lambda.
-
-In this case we attach a security group to the NAT instance that allow all traffic from the lambda function. The lambda is identifed by an other security group. So in our case the secuirty group serves an identification porpuse.
-
-## Public subnet
-
-The very first thing is to create a public subnet. That is just a subnet with an Internet Gateway.
-
-![create public subnet](./images/create_public_subnet.png)
-
-## Internet gateway
-
-Private and public subnets are the same. Except public subnets have an Internet Gateway attached to them. That allows traffic flowing through them.
-
-Creating an Internet Gateway is really easy. Just a few click in the vpc/internet gateway/create internet gateway section.
-
-After the gateway has been created we need to select it, and in the action dropdown we need to select attach. There we need to select the vpc where our subnets reside.
-
-![create ig](./images/create_ig.png)
-
-If everything went well this should be the picture we should be looking at. 
-
-## Create a route that point to the internet gateway
-
-![public route](./images/public_route.png)
-
-Last step is to go the the route table of the public subnet and add a line that intercepts every traffic (`0.0.0.0/0`) and routes it to our Internet Gateway. That means if there is no other route that woul catch it, just forward it to the Internet Gateway.
-
-## What is a nat instance?
-
-The rest of the post draws inspiration from [this post](https://www.theguild.nl/cost-saving-with-nat-instances/), so a huge thanks to [Luk Van Den Borne](https://www.theguild.nl/authors/luk-van-den-borne/).
-
-The nat instance is just an ec2 machine. It will have only one responsibility: do port mapping **on behalf of another** resource. In this case, on behalf of our lambda.
-
-## Create a nat instance
-
-![create ec2 vm](./images/create_nat_instance.png)
-
-Since the NAT instance is an EC2 virtual machine we need to head to the EC2 section. Go through the steps with settings everything to default. Before finishing however, don't forget to save a private key.
-
-We will use that key to ssh into our machine. In the next step we see why we have to.
-
-## enable port fort forwarding
-
-The virtual machine is not set up to do forwarding and mapping by default. We need enable it ourselves by getting into the machine. We can do it from our terminal by running the following command:
-
-```sh
-ssh -i name_of_your_private_key.pem ec2-user@public_address_of_your_ec2_vm
-```
-
-Or from AWS by selecting the virtual machine on the dashboard and clicking connect.
-
-We need to run the following two commands.
+We run the following two commands to configure the VM:
 
 ```sh
 sudo sysctl -w net.ipv4.ip_forward=1
 sudo /sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 ```
 
-![modify vm](./images/modify_instance.png)
+![Modifying VM](./images/modify_instance.png)
 
-After these, the VM is set up.
+### Disabling destination check
 
-## Disable destination check
+AWS blocks requests in EC2 VMs that do not come from the instance unless we disable source checks. However, this EC2 instance is a middleman between the internet and the Lambda, so its purpose is to let traffic flow through it.
 
-![change dest](./images/change_dest.png)
+![Disabling destination check](./images/change_dest.png)
 
-In the next step we need to disable source check. AWS blocks requests in EC2 VMs that does not come from the instance. This EC2 instance however, is only a middleman, between the internet and the lambda. Its sole purpose is to be a middleman and let the traffic flow through it.
+### Private subnet route table
 
-## Change route table of the private subnet
+The last step here is to put the NAT instance as the target in the private subnet’s route table, which allows traffic (like an HTTP request) from a resource in a private subnet (like our Lambda) to be routed to the NAT instance.
 
-The last step here is to put the NAT instance as the target in the private route's route table. That allows the traffic (like an http request) from a resource in a private subnet (like our lambda) to be routed to the NAT instance.
+We head to the VPC service, navigate to our private subnet and find the route table that is associated with it. There we add a new route row that should map the `0.0.0.0/0` CIDR block to the ID of the EC2 instance as the target.
 
-![private route](./images/private_route_mod.png)
+![Private route](./images/private_route_mod.png)
 
-Go to the vpc section, go to your private subnet and see the route table that is associated with it. There you add a new row / route that should map `0.0.0.0/0` cidr block to the id of the EC2 instance as the target.
+### Configuring firewall settings
 
-## Security group
+Our set-up is largely complete. To recap, here’s what we’ve done so far:
 
-Everything is set up, but we need to modify our security / firewall settings. 
+- Created our VPC
+- Created a public subnet with Internet Gateway
+- Put our Lambda inside the private subnet
+- Attached suitable execution role to Lambda
+- Created an EC2 VM
+- Enabled port forwarding
+- Disabled destination check
+- Modified route table of our private subnet so all traffic goes to the NAT instance
+- Modified route table of our public subnet so all traffic goes to the Internet Gateway
 
-![nat instance sketch](./images/nat_instance_sketch.png)
+![Nat instance sketch](./images/nat_instance_sketch.png)
 
-Let's have a look at this picture again and make a checklist of what we have done so far:
+The problem is that although we modified the route table of the private subnet, AWS does not allow traffic automatically into EC2 instance. We need to explicitly allow traffic from the Lambda function to reach the VM.
 
-* have the vpc created ✅
-* create public subnet with IG ✅
-* put the lambda inside the private subnet ✅
-* attach role to lambda so it can do many things with other resource (such as ec2 instances) ✅
-* create an EC2 VM ✅
-* enable port forwarding and disbale destination check ✅
-* modify route table of the private subnet, so every traffic goes to the nat instance ✅
-* modify route table of the public subnet, so every traffic goes to the internet gateway ✅
+First, we create a security group that we can attach to the Lambda function. This allows the NAT instance to identify where to accept requests from. It does not need any rules—its job is to have a reference to the resource it gets attached to.
 
-Seems we done everything so what is the problem?
+![Identity security group](./images/sc_lam_id.png)
 
-The problem is that altough we modified the route table of the private subnet AWS does not allow traffic automatically into the EC2 instance. We need to explicitly allow traffic from the lambda function to reach the VM.
+We then create another security group that will be used by the NAT instance. It simply has an inbound rule to allow all traffic on all ports from the security group created above. For that, we select the security group ID that we created in the previous step.
 
-## Modify firewall settings
+![NAT security group](./images/create_sc_nat.png)
 
-![identity security group](./images/sc_lam_id.png)
+This is what the two green circle in our sketch represent. We allowed traffic into the NAT VM from our Lambda.
 
-The first thing is to create a security group that we can attach to the lambda function. That will identify in the eye of the nat intance where to accept requests from. It does not need any rules. Its job is to have a reference to the resource where it gets attached to.
+### Attaching security groups
 
-![nat security group](./images/create_sc_nat.png)
+Our security groups are created but not yet attached to the resources. For that, we head back to the EC2 service and add the newly created security group to our VM.
 
-We then create another security group that will be used by the NAT instance. It just simply has an inbound rule to allow all traffic on all ports from the above created security group (the one that identifies the lambda). So in the source, select the security group id that you just created in the previous step.
+![NAT security group](./images/change_nat_i_sc.png)
 
-That is what the two green circle represents in our sketch. We just allowed traffic into the NAT vm from our lambda.
+We then do the same for our Lambda function, attaching our new security group here too.
 
-## Attach sc to resources
+![Lambda security group](./images/change_l_sc.png)
 
-Our security groups are alive but not attached to the resources.
+## Conclusion
 
-![change nat sc](./images/change_nat_i_sc.png)
+After following the steps outlined in this guide, our Lambda function should be able to connect with the internet, but fair warning: it can take some time for the changes to come into effect. We can confirm our configuration with `cURL` once again.
 
-We need to go back to our EC2 dashboard and add the newly created sg to our VM.
+![Confirm configuration with cURL](./images/curl_good_again.png)
 
-![change lambda sc](./images/change_l_sc.png)
-
-Then do the same with the lambda function. We should attach our new sg here as well.
-
-# We are ready
-
-If we did everything right our lambda should be able to go the internet again. It takes some time until the changes will come to in effect, so be patient. But after a few minutes our `cURL` will start to work again.
-
-![sdfs](./images/curl_good_again.png)
-
-Woala. Great. [Next time](/guides/nat-with-sls) we create an SLS template to automate much of what we did here.
+In the [next guide](/guides/nat-with-sls) we’ll create a Serverless template to automate the process covered here.

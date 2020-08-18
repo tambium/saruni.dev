@@ -41,7 +41,9 @@ export const MobileSelect: React.FC<MobileSelectProps> = ({ location }) => {
           if (Array.isArray(item.items)) {
             const subitems = item.items.map((item) => {
               return (
-                <option key={item.link} label={item.title} value={item.link} />
+                <option key={item.link} label={item.title} value={item.link}>
+                  {item.title}
+                </option>
               );
             });
             return (
@@ -50,7 +52,11 @@ export const MobileSelect: React.FC<MobileSelectProps> = ({ location }) => {
               </optgroup>
             );
           }
-          return <option key={idx} label={item.title} value={item.link} />;
+          return (
+            <option key={idx} label={item.title} value={item.link}>
+              {item.title}
+            </option>
+          );
         })}
       </TopbarSelect>
     </React.Fragment>

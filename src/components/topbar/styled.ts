@@ -26,6 +26,7 @@ export const TopbarSelect = styled.select`
   color: hsla(0, 0%, 100%, 0);
   font-size: 13px;
   font-weight: 500;
+  max-width: 100%;
   padding: 16px;
   position: absolute;
   top: 0;

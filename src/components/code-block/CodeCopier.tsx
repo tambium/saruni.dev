@@ -7,12 +7,19 @@ interface CodeCopierProps {
 }
 
 export const CodeCopier: React.FC<CodeCopierProps> = ({ codeString }) => {
+  const [isCopied, setCopied] = React.useState(false);
+
   return (
     <div
       css={{ cursor: "pointer", display: "flex" }}
-      onClick={() => copyToClipboard(codeString)}
+      onClick={async () => {
+        await copyToClipboard(codeString);
+        setCopied(true);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        setCopied(false);
+      }}
     >
-      <Copy size={14} />
+      {isCopied ? <span>Copied</span> : <Copy size={14} />}
     </div>
   );
 };

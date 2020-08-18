@@ -1,0 +1,40 @@
+# Services
+
+In the event that [services offered by Saruni](http://localhost:8000/docs/api-reference/services) do not fit the needs of our web application, we can create our own services and deploy them as functions to AWS Lambda.
+
+The syntax for creating any service is always the same and we store services in the `api/src/services` directory.
+
+```ts
+export const handler = async (event, context) => {
+  console.log("EVENT: \n" + JSON.stringify(event, null, 2));
+  return context.logStreamName;
+};
+```
+
+## Deployment
+
+To deploy custom services to AWS Lambda, we write a `serverless.yml` file for each service.
+
+```yml
+service: service-name
+
+provider:
+  name: aws
+  region: eu-west-1
+  stage: dev
+  runtime: nodejs12.x
+  apiGateway: ...
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  webpack: ...
+
+functions:
+  functionName:
+    handler: fileName.handler
+    events:
+      - http:
+          path: /filePath
+          method: put
+          cors: true
+```

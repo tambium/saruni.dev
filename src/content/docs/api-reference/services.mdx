@@ -1,3 +1,25 @@
 # Services
 
-Auth, Image Upload, [Email] and GraphQL
+Services are independent logical units that are concerned about a single task, and may be composed of one or multiple functions deployed to AWS Lambda. Each service has a single `serverless.yml` file to separate the unit within the AWS infrastructure, but services we deploy may well depend on one another.
+
+Out of the box, Saruni ships with a set of pre-configured services to handle common tasks in web applications. These include a service that takes care of authentication and a service that is responsible for creating the core GraphQL API. These services will be outlined in more detail below, but in the event that they do not fit the needs of developers using Saruni feel free to read [the documentation](/docs/backend/services) on creating custom services.
+
+---
+
+## Auth
+
+The Auth service that ships with Saruni is composed of two serverless functions.
+
+The first function is `refreshToken`, which accepts a signed refresh token as a cookie and returns an access token if the parsed cookie is valid.
+
+The second function is `cookieManager`, which reads headers sent with requests and searches for the authorization header. If the header contains a valid access token then the function will return a cookie with a refresh token.
+
+## GraphQL
+
+The GraphQL service is composed of a single serverless function.
+
+The function is responsible for creating an Apollo Server that accepts queries and mutations and essential to the development of Saruni applications.
+
+## Coming soon
+
+We are in the late stages of developing services that will handle image uploads (including image manipulation pre-upload) and the sending of emails through the AWS SES service.

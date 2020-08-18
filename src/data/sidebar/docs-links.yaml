@@ -27,8 +27,8 @@
           link: /docs/backend/graphql
         - title: Authentication
           link: /docs/backend/authentication
-        - title: Serverless functions
-          link: /docs/backend/serverless-functions
+        - title: Services
+          link: /docs/backend/services
     - title: Database
       items:
         - title: Migrations

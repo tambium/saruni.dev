@@ -17,6 +17,8 @@
           link: /docs/api-reference/cli
         - title: Services
           link: /docs/api-reference/services
+        - title: Environment variables
+          link: /docs/api-reference/environment-variables
     - title: Backend
       items:
         - title: Prisma
@@ -27,8 +29,6 @@
           link: /docs/backend/authentication
         - title: Services
           link: /docs/backend/services
-        - title: Environment variables
-          link: /docs/backend/environment-variables
     - title: Database
       items:
         - title: Migrations
@@ -45,8 +45,6 @@
           link: /docs/frontend/authentication
         - title: Saruni UI
           link: /docs/frontend/saruni-ui
-        - title: Environment variables
-          link: /docs/frontend/environment-variables
     - title: Testing
       items:
         - title: Frontend

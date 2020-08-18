@@ -1,0 +1,85 @@
+# Environment variables
+
+Environment variables are split between two files in the root of Saruni projects: `.env` and `saruni.json`.
+
+The `.env` file is where we store environment variables that we would be uncomfortable committing to a shared Git repository. The contents of the `.env` file will be consumed during local or test development and is included in the `.gitignore` by default.
+
+The `saruni.json` file is used for non-private Serverless-related configuration, with the AWS Systems Manager service used in cases where the configuration should remain private.
+
+## .env file
+
+- `accessTokenSecret` is the secret used to generate access tokens.
+
+- `refreshTokenSecret` is the secret used to generate refresh tokens.
+
+- `DATABASE_URL` is the connection URL for the database that is used locally with the development server.
+
+- `DATABASE_URL_TEST` is the connection URL for the database that is used for tests.
+
+- `DATABASE_URL_DEV` is the connection URL used when we modify our database (through seeding or migration) in our cloud environment through a bastion host.
+
+- `DATABASE_URL_PROD` performs the same function as `DATABASE_URL_DEV`, but in the production environment.
+
+## saruni.json file
+
+A sample, abbreviated `saruni.json` follows for reference on structure.
+
+```json
+{
+  "projectName": "",
+  "serverless": {
+    "prod": {
+      "region": "eu-west-1",
+      "domainName": "",
+      "domainUrl": "",
+      "hostedZoneId": "",
+      "certificateArn": "",
+      "bastionKeyName": "bastion-key",
+      "dbInstance": "db.t2.micro",
+      "frontendDomain": "",
+      "frontendUrl": "",
+      "frontendCloudfrontUrl": "",
+      "awsProfile": "",
+      "frontendS3Bucket": ""
+    },
+    "dev": ...,
+  "devServerPort": {
+    "web": "3000",
+    "api": "4000"
+  }
+}
+```
+
+- `projectName` is the name of our project. It is used to namespace secrets in AWS Systems Managers so values do not collide with the secrets of other projects.
+
+- `serverless` configuration are split into the two key stages: `prod` (production) and `dev` (development).
+
+- `region` specifies the target region for the infrastructure we deploy on AWS.
+
+- `domainName` is the name of our API. For example, an API we expect to find at `https://api.example.com` would have a value `api.example.com`. In production, this will be used to configure the cookie domains and custom domain for our API since the default domain we receive when we deploy our code is randomly generated. In development we can leave this value empty. Saruni does not create custom domains for `dev` environments and even auth cookies are set to third party cookies.
+
+- `domainUrl` is similar to `domainName` but must be prefixed with `http` or `https`. This setting is used to set up the API endpoints in the frontend.
+
+- `hostedZoneId` only needs to be set for production. It is responsible for creating route redirection from our custom domain to our Serverless functions.
+
+- `certificateArn` is used to set up `https` connections with our custom domain. First we create an SSL certificate for our domain and then we provide its ARN (Amazon Resource ID) so that Saruni can use that certificate. Since the concern here is custom domains, this only needs to be set for production.
+
+- `bastionKeyName` helps point to `SSH` key used to access the bastion host. This name will be prefixed with the stage, so we can expect a `{stage}-{key-name}` entry.
+
+- `dbInstance` determines the instance and size of the database that will be created for the associated stage.
+
+- `frontendDomain` is the alias to our frontend in production. We use Cloudfront (a CDN service backed by AWS) which provides a domain by default. But like our API we want to create a custom domain in production.
+
+- `frontendUrl` describes where we can reach our `web` project. In production, it should be a custom domain prefixed by `https`. In the development stage we can use the URL of the CloudFront domain with an `https` prefix. This value is used to create appropriate CORS settings.
+
+- `frontendCloudfrontUrl` is only for the development stage so that in the event we decide to add a custom domain to our development stage we can still add the CloudFront URL to our CORS setup.
+
+- `awsProfile` is crucial. In our `~/.aws/credentials` (Mac & Linux) or `%USERPROFILE%\.aws\credentials` (Windows) file, we must set up at least two profiles that Saruni can use to modify resources. We provide the names of those profiles here.
+
+- `frontendS3Bucket` is the name of the S3 bucket that holds our `web` project and is used to sync our local files with the given bucket.
+
+- `distId` is the ID of our CloudFront distribution and is used to invalidate old deployments.
+
+- `devServerPort.web` is the port of our `web` project on our dev server.
+
+- `devServerPort.api` is the port of our `api` project on our dev server.

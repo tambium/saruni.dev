@@ -48,6 +48,6 @@
     - title: Testing
       items:
         - title: Frontend
-          link: /docs/testing/frontend-testing
+          link: /docs/testing/frontend
         - title: Backend
-          link: /docs/testing/backend-testing
+          link: /docs/testing/backend

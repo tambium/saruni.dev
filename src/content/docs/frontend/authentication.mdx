@@ -1,1 +1,46 @@
 # Authentication
+
+To protect resources with an authentication mechanism we identify, authenticate and authorize users. Frontend clients should send data that enables the backend to identify and authenticate, and then respond to authorization success or failure appropriately.
+
+## In practice
+
+Saruni applications ship with an `Auth` context component wrapping all routes in `web/src/pages/_app.tsx`. That `Auth` component has several values that can be modified according to needs.
+
+- `defaultRedirect` configures where end-users should be redirected to in the event a route is unavailable given their authentication status.
+- `isAuthenticated` is a convenience boolean that can be used widely to quickly identify if an end-user is authenticated or not.
+- `loading` is a boolean that reflects whether authorization checks are complete.
+- `login` is a function that should take care of attempts to identify and authenticate a user.
+- `logout` is a function that should take care of cleaning up artifacts related to previous authentications of a user.
+- `signup` is a function that should take care of attempts to register a new user, likely providing authorization as part of that process.
+
+The `Auth` component also includes the import of a hook from the `@saruni/auth` package called `useJwt`. This hook provides a convenient means of setting and removing JSON web tokens, through its `setToken` and `removeToken` functions.
+
+```ts title=web/src/components/auth/Auth.tsx
+import React from "react";
+import { AuthContext, useJwt } from "@saruni/auth";
+
+// Custom mutation handling user creation, which returns JWT token.
+import { useCreateUserMutation } from "../../../generated";
+
+export const Auth: React.FC = (props) => {
+  const { setToken } = useJwt();
+  const [createUserHandler] = useCreateUserMutation();
+
+  return (
+    <AuthContext.Provider
+      value={{
+        signup: async (options) => {
+          const result = await createUserHandler(options);
+          const token = result.data.createUser.token;
+          if (token) await setToken(token);
+        },
+        // Other values (`defaultRedirect`, etc.) omitted for brevity.
+      }}
+    >
+      {props.children}
+    </AuthContext.Provider>
+  );
+};
+```
+
+Since the `setToken` function takes care of assigning the JWT as an authorization header for requests made through Apollo, the job is done.

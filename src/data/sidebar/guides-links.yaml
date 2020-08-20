@@ -15,3 +15,5 @@
           link: /guides/nat-instance
         - title: NAT with Serverless
           link: /guides/nat-with-serverless
+        - title: Babel, Jest, Monorepos
+          link: /guides/babel-jest-monorepo

@@ -1,0 +1,57 @@
+Setting up the Jest testing framework in a monorepo with Babel can be a bit tricky. This guide hopefully will save some time for others. We will guide you through what we did with Saruni, how we set up Jest.
+
+# What we are testing?
+
+In Saruni there are two Jest projects currently: api and web.
+
+```js
+module.exports = {
+  verbose: true,
+  rootDir: getPaths().base,
+  projects: ['<rootDir>/packages/api', '<rootDir>/packages/web'],
+};
+```
+
+In this Jest configuration file we define the `rootDir`. Under the hood `getPaths().base` eveluates to Saruni projects' root directory. Then it is easy to see the two projects relative to that directory.
+
+Then both in web and api folders we have a `.babelrc.js` file that contains the needed babel configurations.
+
+```js
+module.exports = {
+  presets: [
+    [
+      "@tambium/babel-preset/node",
+      {
+        corejs: {
+          version: 3.6,
+          proposals: true,
+        },
+        targets: {
+          node: "current",
+        },
+        useBuiltIns: "usage",
+      },
+    ],
+  ],
+};
+```
+
+According to Jest's documentation, `babel-jest` that is a middlaware between Babel and Jest and is responsiblet for transpiling your files is setup to very good defaults. It is. The problem is with the nature of monorepos.
+
+It turns out we need to let Jest know how to look for the project specific Babel configs.
+
+# Top level config
+
+We need to create a `babel.config.js` in the root folder.
+
+```js
+module.exports = {
+  /*
+   * This configuration is necessary so Jest can identify
+   * .babelrc files for the web and api packages.
+   */
+  babelrcRoots: [".", "./packages/*"],
+};
+```
+
+Here the `babelrcRoots` tells how to resolve the project level Babel configs. So when we run `yarn sr test` from the root (important to run it from the root), Jest can use the project level Babel configs.

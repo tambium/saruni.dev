@@ -1,0 +1,91 @@
+Using conditionals and / or mappings in serverless / cloudformation becomes more valuable as more stages we have. There are a few ways to use conditions. We go through over some.
+
+# Mappings
+
+One the best ways to do conditionals in Serverless is to create some mappings. Assume we have an EC2 VM but we want to feed different values to some of its fields. Instance type for example.
+
+We can then create a mapping.
+
+```yml
+provider:
+  stage: dev
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  ec2InstanceMapping:
+    dev: t2.nano
+    prod: t2.xlarge
+```
+
+This can than be our EC2 declaration.
+
+```yml
+Type: AWS::EC2::Instance
+Properties:
+  ImageId: ami-06ce3edf0cff21f07
+  InstanceType: ${self:custom.ec2InstanceMapping.${self:custom.stage}}
+```
+
+The way to use it is referencing the the `ec2InstanceMapping` object with the field of the current stage. We can do it relatively easy with Serverless. Instead of hard coding the field like `${self:custom.ec2InstanceMapping.dev}` we can substitute dev with `${self:custom.stage}`
+
+# Conditional
+
+Mapping works great when in all of our environments we want to put some value to a given field. Like the `InstanceType` above. But what happens when we don't even want to crate a resource in a stage?
+
+## Conditional resource creation
+
+So let's assume we only want to create that VM in prod.
+
+```yml
+Type: AWS::EC2::Instance
+Condition: IsProd
+Properties:
+  ImageId: ami-06ce3edf0cff21f07
+  InstanceType: t2.nano
+```
+
+The condition property on CloudFormation template allows us to control when the resource should be created. That is fine but where is `IsProd` coming from?
+
+We can specify a Conditions field in the resource part of our `serverless.yml`.
+
+```yml
+resources:
+  Conditions:
+    IsProd: !Equals ["${self:custom.stage}", prod]
+```
+
+From here we can reference the the condition in any of our resource. One question remains: what is `!Equals`.
+
+## Equals
+
+`!Equals` is a built in function (among many others) in CloudFormation to make our life a little bit easier. It takes an array with two arguments and compares them. Returns `true` or `false` based on the comparison.
+
+## Conditional value on resource field
+
+What happens when we want to create a resource on every stage but we want a certain field to have a value only under certain conditions.
+
+For example, we only want to add an alias to a CloudFront distribution in certain stages:
+
+```yml
+Type: "AWS::CloudFront::Distribution"
+Properties:
+  DistributionConfig:
+    Aliases:
+      !If [
+        IsProd,
+        [somedomain.com],
+        !Ref "AWS::NoValue",
+      ]
+```
+
+`Aliases` field takes an array by default. With that in mind, what happens here?
+
+The `!If` function takes an array. Its first element is a condition we must already provided in the Conditions section. Second element is what it will return if the condition is `true` and third is the one that will be returned when it is `false`.
+
+Since `Aliases` takes an array by default the second argument of `!If` must be an array. But what about the third?
+
+We said we want to return nothing. AWS has us covered. `"AWS::NoValue"` return nothing. We can treat aliases as on omitted field there.
+
+# Verdict
+
+These tools can cover most of the cases where we want to diverge from the basic template. It is most widely used with different environment but can be used in other circumstances as well.

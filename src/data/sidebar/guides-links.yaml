@@ -15,3 +15,5 @@
           link: /guides/nat-instance
         - title: NAT with Serverless
           link: /guides/nat-with-serverless
+        - title: CloudFormation conditionals
+          link: /guides/sls-cloudformation-conditionals

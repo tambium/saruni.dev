@@ -13,13 +13,13 @@ Ensure you have the following installed:
 - [npm](https://www.npmjs.com/get-npm)
 - [Prisma CLI](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-cli/installation)
 
-# After you have your Saruni app
+## After creating Saruni project
 
 - Add `accessToken` to `.env`
 - Add `refreshToken` to `.env`
 - Add `DATABASE_URL` to `.env`
 
-# Deployment to dev environment
+## Deploy to development environment
 
 - Create root AWS account
 - Create AWS organization
@@ -31,17 +31,17 @@ Ensure you have the following installed:
 - Add project name to `saruni.json`
 - Create env variables in AWS System Manager in a format like: `/${yourProjectName}/DBName/dev`
 - Deploy resources with `yarn deploy --service=resources`
-- Copy the CloudFront domain to `saruni.json` under `serverless.dev.fortendUrl` and `serverless.dev.cloudfrontUrl` and prefix the domain with `https://`
+- Copy the CloudFront domain to `saruni.json` under `serverless.dev.frontendUrl` and `serverless.dev.cloudfrontUrl` and prefix the domain with `https://`
 - Deploy the GraphQL service with `yarn sr deploy --resource=graphql`
-- Copy the the endpoint of the API without the `/graphql`, like `https://4v9v16mc76.execute-api.eu-west-1.amazonaws.com/dev`, to `saruni.json`, and in there `serverless.dev.domainUrl`
-- Copy the name of your frontend bucket from S3 to `saruni.json`, `serverless.dev.frontendS3Bucket`, it should be something like `resources-dev-frontendbucket-1stc7i12ez8nh`
-- Copy the your CloudFront distribution id (`E6ABKOF10NAN7`) to `saruni.json` `serverless.dev.distId`
+- Copy the the endpoint of the API without `/graphql`, like `https://{id}.execute-api.eu-west-1.amazonaws.com/dev`, to `saruni.json`, and in there `serverless.dev.domainUrl`
+- Copy the name of your frontend bucket from S3 to `saruni.json`, `serverless.dev.frontendS3Bucket`, it should be something like `resources-dev-frontendbucket-{id}`
+- Copy the your CloudFront distribution ID (like `E6ACKOF13NAJ7`) to `saruni.json` `serverless.dev.distId`
 - Deploy the web service with `yarn sr deploy --stage=web`
 - Deploy the auth service with `yarn sr deploy --stage=auth`
 - Create an SSH tunnel with the command `ssh -L 2222:${yourDBPort}:5432 -i dev-bastion-key.pem ec2-user@${yourEC2domain}`
-- In another tab do the migration with `yarn sr db migrate up --stage=dev`
+- In another tab apply a migration with `yarn sr db migrate up --stage=dev`
 
-# Deployment to prod environment
+## Deploy to production environment
 
 - Create a prod account
 - Create CLI access on prod account
@@ -51,15 +51,15 @@ Ensure you have the following installed:
 - Buy your domain (the easiest way being through AWS Route53)
 - Add the domain you would like your API in `saruni.json` `serverless.prod.domainName`, like `chat-api.saruni-samples.com`
 - Add the web domain you would like your web to `serverless.prod.frontendDomain` in `saruni.json`, like `chat.saruni-samples.com`
-- Add the web url you would like your web to serverless.prod.frontendUrl in `saruni.json`, like `https://chat.saruni-samples.com`
+- Add the web URL you would like your web to `serverless.prod.frontendUrl` in `saruni.json`, like `https://chat.saruni-samples.com`
 - Create SSL certificate for your domain, with name of your domain and alternate name prefixed with wildcard, like `saruni-samples.com` and `*.saruni-samples.com`
-- Add the arn of your SSL certificate to `serverless.prod.certificateArn`
+- Add the ARN of your SSL certificate to `serverless.prod.certificateArn`
 - Add the hosted zone id of your chosen domain to `serverless.prod.hostedZoneId`
 - Create env vars in AWS System Manager in a format like: `/${yourProjectName}/DBName/prod`
 - Deploy resources with `yarn deploy --service=resources --stage=prod`
 - Copy the CloudFront domain to `saruni.json` under `serverless.prod.cloudfrontUrl` and prefix the domain with `https://`
 - Copy the name of your frontend bucket from S3 to `saruni.json` under `serverless.dev.frontendS3Bucket`, it should be something like `resources-dev-frontendbucket-1stc7i12ez8nh`
-- Copy the your CloudFront distribution id (like `E6ABKOF10NAN7`) to `saruni.json` `serverless.dev.distId`
+- Copy the your CloudFront distribution id (like `E6ACKOF13NAJ7`) to `saruni.json` `serverless.dev.distId`
 - Create custom domain for your API with `yarn sr deploy --service=domain`
 - Deploy the GraphQL service with `yarn sr deploy --resource=graphql`
 - Deploy the web service with `yarn sr deploy --stage=web`

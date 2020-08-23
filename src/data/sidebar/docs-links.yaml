@@ -11,8 +11,8 @@
           link: /docs/getting-started/directory-structure
         - title: Deployment
           link: /docs/getting-started/deployment
-        - title: Deployment - step by step guide
-          link: /docs/getting-started/step-by-step
+        - title: Quick start
+          link: /docs/getting-started/quick-start
     - title: API Reference
       items:
         - title: CLI

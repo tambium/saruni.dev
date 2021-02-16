@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import React from "react";
 
 export const useActiveHash = (itemIds, rootMargin = undefined) => {
-  const [activeHash, setActiveHash] = useState(``);
+  const [activeHash, setActiveHash] = React.useState(``);
 
-  useEffect(() => {
+  React.useLayoutEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -16,12 +16,16 @@ export const useActiveHash = (itemIds, rootMargin = undefined) => {
     );
 
     itemIds.forEach((id) => {
-      observer.observe(document.getElementById(id));
+      if (document.getElementById(id)) {
+        observer.observe(document.getElementById(id));
+      }
     });
 
     return () => {
       itemIds.forEach((id) => {
-        observer.unobserve(document.getElementById(id));
+        if (document.getElementById(id)) {
+          observer.unobserve(document.getElementById(id));
+        }
       });
     };
   }, [itemIds, rootMargin]);
